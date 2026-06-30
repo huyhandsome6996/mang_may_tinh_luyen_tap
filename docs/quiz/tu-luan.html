@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tự luận · 30+ câu ôn tập Mạng máy tính</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+.essay-filter { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.filter-btn {
+  padding: .5rem 1rem; border: 1px solid var(--border);
+  background: var(--surface); border-radius: 999px;
+  cursor: pointer; font-size: .9rem; transition: all .15s;
+}
+.filter-btn.active { background: var(--gradient); color: white; border-color: transparent; }
+</style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="quiz-container">
+  <span class="section-eyebrow">Luyện thi</span>
+  <h1 style="font-size:2.2rem;font-weight:800;background:var(--gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem;">✍️ Tự luận Mạng máy tính</h1>
+  <p style="color:var(--text-muted);font-size:1.05rem;margin-bottom:1.5rem;">
+    30+ câu tự luận có đáp án gợi ý chi tiết. Ấn "Hiện đáp án" để kiểm tra. Lọc theo chương để ôn tập trọng tâm.
+  </p>
+
+  <div class="essay-filter">
+    <button class="filter-btn active" onclick="filterEssay(0, this)">Tất cả</button>
+    <button class="filter-btn" onclick="filterEssay(1, this)">Chương 1</button>
+    <button class="filter-btn" onclick="filterEssay(2, this)">Chương 2</button>
+    <button class="filter-btn" onclick="filterEssay(3, this)">Chương 3</button>
+    <button class="filter-btn" onclick="filterEssay(4, this)">Chương 4</button>
+    <button class="filter-btn" onclick="filterEssay(5, this)">Chương 5</button>
+    <button class="filter-btn" onclick="filterEssay(6, this)">Chương 6</button>
+  </div>
+
+  <div id="essayList"></div>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="../js/main.js"></script>
+<script>
+const ESSAY_QUESTIONS = [
+  // Chương 1
+  {chapter: 1, q: "Thế nào là mạng máy tính? Nêu các lợi ích chính của việc nối mạng.",
+   a: "Mạng máy tính là tập hợp các máy tính và thiết bị ngoại vi kết nối qua môi trường truyền dẫn (cáp, sóng) nhằm trao đổi thông tin và chia sẻ tài nguyên.\n\nLợi ích chính:\n1. Chia sẻ tài nguyên phần cứng: máy in, máy quét, ổ cứng.\n2. Chia sẻ dữ liệu & phần mềm: nhiều người cùng truy cập 1 CSDL.\n3. Tăng độ tin cậy: sao lưu chéo, máy hỏng có máy khác thay thế.\n4. Tiết kiệm chi phí & thời gian: không cần đi lại trao file.\n5. Truyền thông đa phương tiện: chat, gọi điện, video call."},
+  {chapter: 1, q: "Trình bày các cách phân loại mạng máy tính.",
+   a: "1. Theo khoảng cách địa lý: PAN (vài mét), LAN (văn phòng, tòa nhà), MAN (thành phố), WAN (quốc gia/lục địa), GAN (toàn cầu).\n\n2. Theo phương thức kết nối: Point-to-Point (điểm-điểm, đường riêng 2 máy), Point-to-Multipoint (một trạm đến nhiều trạm).\n\n3. Theo cấu trúc topology: Bus (đường trục), Ring (vòng), Star (sao, có trung tâm), Mesh (lưới, mỗi máy nối tất cả).\n\n4. Theo chức năng: Peer-to-Peer/Workgroup (bình đẳng, file SAM, <15 máy), Client-Server/Domain (có server chuyên dụng, AD tập trung)."},
+  {chapter: 1, q: "So sánh ưu nhược điểm của mô hình Workgroup và Domain.",
+   a: "WORKGROUP (Peer-to-Peer):\n- Ưu: Dễ cài đặt, chi phí thấp, không cần server chuyên dụng.\n- Nhược: Bảo mật kém, khó quản lý tập trung, hiệu năng giảm khi nhiều máy, chỉ phù hợp <15 máy. DB tài khoản lưu file SAM cục bộ.\n\nDOMAIN (Client-Server):\n- Ưu: Quản lý tập trung tại Domain Controller, bảo mật cao, toàn vẹn dữ liệu, dễ tích hợp công nghệ mới, mở rộng tốt.\n- Nhược: Chi phí đầu tư cao (phần cứng, bản quyền), cần nhân sự quản trị chuyên trách. DB tài khoản lưu NTDS.DIT trên AD."},
+  {chapter: 1, q: "So sánh topology Bus và Star.",
+   a: "BUS:\n- Ưu: Ít cáp, dễ lắp đặt, giá rẻ.\n- Nhược: Ùn tắc khi lưu lượng lớn, hỏng 1 đoạn cable → ngưng toàn hệ thống, khó phát hiện lỗi.\n\nSTAR:\n- Ưu: Thiết bị độc lập (1 máy hỏng không ảnh hưởng), dễ mở rộng, cấu trúc đơn giản.\n- Nhược: Phụ thuộc hoàn toàn vào thiết bị trung tâm (Hub/Switch hỏng → toàn mạng sập), khoảng cách máy-trung tâm ≤100m, tốn nhiều cáp hơn.\n\nĐiểm chung: Đều có 1 điểm lỗi duy nhất (cáp chính Bus / Switch Star)."},
+  {chapter: 1, q: "Trình bày lịch sử phát triển của mạng máy tính.",
+   a: "- 1970: ARPANET ra đời — mạng chuyển mạch gói đầu tiên do Bộ Quốc phòng Mỹ tài trợ. Liên kết các cơ sở nghiên cứu, đại học.\n- 1980: PC & LAN bùng nổ — máy tính cá nhân dẫn đến nhu cầu nối mạng nội bộ văn phòng.\n- 1983: DARPA yêu cầu mọi máy kết nối ARPANET phải dùng TCP/IP → Internet chính thức ra đời.\n- 1990: ARPANET 'về hưu', Internet thương mại hóa.\n- Hiện nay: Internet toàn cầu, Cloud, IoT, 5G."},
+
+  // Chương 2
+  {chapter: 2, q: "Trình bày các loại môi trường truyền dẫn trong mạng máy tính.",
+   a: "1. Cáp đồng trục (Coaxial): lõi đồng đặc, bọc kim loại chống nhiễu. Thin (185m), Thick (500m). Hiện ít dùng trong LAN.\n\n2. Cáp xoắn đôi (Twisted Pair): 4 cặp dây xoắn chống nhiễu.\n   - UTP (Unshielded): không bọc bạc, rẻ, phổ biến (Cat 5e: 1Gbps).\n   - STP (Shielded): có bọc bạc, chống nhiễu tốt hơn, dùng môi trường công nghiệp.\n\n3. Cáp quang (Fiber Optic): truyền ánh sáng trong lõi thủy tinh. Tốc độ Gbps-Tbps, khoảng cách xa (hàng chục km), miễn nhiễm nhiễu điện từ. Dùng cho backbone.\n\n4. Không dây (Wireless): sóng vô tuyến (Wifi), hồng ngoại, vi ba, vệ tinh."},
+  {chapter: 2, q: "Trình bày chuẩn bấm cáp RJ-45 T568A và T568B. Khi nào dùng cáp thẳng, khi nào dùng cáp chéo?",
+   a: "T568B (phổ biến): Trắng Cam - Cam - Trắng Xanh lá - Xanh dương - Trắng Xanh dương - Xanh lá - Trắng Nâu - Nâu.\nT568A: Đổi chỗ cặp Cam với cặp Xanh lá so với T568B. Cụ thể: Trắng Xanh lá - Xanh lá - Trắng Cam - Xanh dương - Trắng Xanh dương - Cam - Trắng Nâu - Nâu.\n\n- Cáp thẳng (2 đầu cùng chuẩn B-B hoặc A-A): nối 2 thiết bị KHÁC loại. VD: PC ↔ Switch, Switch ↔ Router.\n- Cáp chéo (1 đầu A, 1 đầu B): nối 2 thiết bị CÙNG loại. VD: PC ↔ PC, Switch ↔ Switch, Router ↔ Router.\n\nQuy tắc nhớ: 'Khác loại → thẳng, Cùng loại → chéo'."},
+  {chapter: 2, q: "Phân biệt Hub, Switch, Router, Gateway. Mỗi thiết bị hoạt động ở tầng nào của OSI?",
+   a: "- HUB (Tầng 1 - Physical): nhận tín hiệu 1 cổng → broadcast ra TẤT CẢ cổng. Khuếch đại, không đọc địa chỉ. Miền đụng độ lớn. Không còn dùng.\n\n- SWITCH (Tầng 2 - Data Link): đọc MAC đích, tra MAC Table, gửi chỉ ra cổng đích (unicast). Học MAC qua frame. Chia nhỏ collision domain. Phổ biến trong LAN.\n\n- ROUTER (Tầng 3 - Network): đọc IP đích, tra Routing Table, định tuyến giữa các mạng khác nhau. Chặn broadcast. Kết nối LAN-Internet.\n\n- GATEWAY (Tầng 7 - Application): chuyển đổi giữa các giao thức khác nhau (IP ↔ IPX, IP ↔ SNA). Hoặc chuyển đổi ứng dụng (email giữa các mạng)."},
+  {chapter: 2, q: "Địa chỉ MAC là gì? Khác gì với địa chỉ IP?",
+   a: "Địa chỉ MAC (Media Access Control): địa chỉ vật lý 48 bit (6 octet), biểu diễn hex (vd: E7:96:C9:F4:00:1A). 24 bit đầu = OUI (mã nhà sản xuất), 24 bit sau = serial. Gắn cố định trên NIC, KHÔNG thay đổi.\n\nĐịa chỉ IP: địa chỉ logic 32 bit (IPv4), CÓ THỂ thay đổi khi 'chuyển mạng'.\n\nPhân biệt: MAC = số CMND (không đổi, định danh vĩnh viễn). IP = địa chỉ nhà (đổi khi chuyển nhà). MAC dùng trong LAN (tầng 2), IP dùng trong liên mạng (tầng 3)."},
+  {chapter: 2, q: "Vì sao cáp xoắn đôi phải xoắn từng cặp? Vì sao cáp quang truyền xa hơn cáp đồng?",
+   a: "Cáp xoắn đôi: các sợi dây xoắn vào nhau từng cặp để TRIỆT TIÊU NHIỄU ĐIỆN TỪ chéo (crosstalk) giữa các cặp và từ môi trường. Mỗi cặp xoắn có bước xoắn khác nhau để giảm nhiễu lẫn nhau.\n\nCáp quang truyền xa hơn vì:\n1. Truyền bằng ánh sáng trong lõi thủy tinh → KHÔNG bị suy hao do điện từ.\n2. Có lớp Cladding phản xạ toàn phần → giữ ánh sáng trong lõi.\n3. Tín hiệu ánh sáng ít suy hao hơn dòng điện trong đồng.\n4. Có thể dùng Repeater quang khuếch đại để đi hàng trăm km.\n5. Cáp đồng (UTP) giới hạn 100m do suy hao điện."},
+
+  // Chương 3
+  {chapter: 3, q: "Tại sao phải phân tầng trong mô hình OSI? Trình bày chức năng từng tầng.",
+   a: "Phân tầng để:\n- Giảm độ phức tạp (chia bài toán lớn thành phần nhỏ)\n- Chuẩn hóa giao diện\n- Modun hóa: thay 1 tầng không ảnh hưởng tầng khác\n- Dễ bảo trì, sửa lỗi\n- Thúc đẩy tiến hóa mạng\n\n7 tầng OSI (từ dưới lên):\n1. Physical: truyền bit 0/1 qua cáp.\n2. Data Link: đóng Frame, gắn MAC, kiểm soát truy nhập.\n3. Network: định tuyến, cấp IP, tạo Packet.\n4. Transport: truyền End-to-End, cắt Segment, TCP/UDP.\n5. Session: thiết lập, duy trì phiên.\n6. Presentation: định dạng, mã hóa, nén.\n7. Application: giao tiếp ứng dụng với người dùng."},
+  {chapter: 3, q: "So sánh mô hình OSI và TCP/IP.",
+   a: "OSI (7 tầng) — mô hình lý thuyết ra đời 1984:\nApplication, Presentation, Session, Transport, Network, Data Link, Physical.\n\nTCP/IP (4 tầng) — mô hình thực tế chạy Internet:\n1. Application (gộp tầng 5,6,7 OSI)\n2. Transport (= tầng 4 OSI)\n3. Internet (= tầng 3 OSI, chạy IP)\n4. Network Access (gộp tầng 1,2 OSI)\n\nKhác biệt:\n- OSI: lý thuyết, dạy học, thiết kế\n- TCP/IP: thực tế, triển khai Internet\n- OSI tách rõ Presentation/Session, TCP/IP gộp\n- OSI tách Physical/Data Link, TCP/IP gộp"},
+  {chapter: 3, q: "So sánh TCP và UDP. Cho ví dụ ứng dụng mỗi loại.",
+   a: "TCP (Transmission Control Protocol):\n- Hướng kết nối (3-way handshake)\n- Tin cậy: ACK, sequence number, truyền lại nếu mất gói\n- Kiểm soát luồng, tắc nghẽn\n- Chậm hơn UDP\n- Ứng dụng: HTTP/HTTPS (web), SMTP (email), FTP (file), SSH — cần chính xác.\n\nUDP (User Datagram Protocol):\n- Không kết nối, gửi ngay\n- Không tin cậy: không ACK, không truyền lại\n- Tiết kiệm overhead, độ trễ thấp\n- Nhanh hơn TCP\n- Ứng dụng: Streaming video, Voice/Video call, Game online, DNS — cần tốc độ, chấp nhận mất gói."},
+  {chapter: 3, q: "Trình bày nguyên lý hoạt động của DHCP (quy trình DORA).",
+   a: "DHCP (Dynamic Host Configuration Protocol) cấp IP động. Quy trình DORA:\n\n1. DISCOVER: Client mới vào mạng chưa có IP → gửi DHCPDISCOVER broadcast (src 0.0.0.0, dst 255.255.255.255) 'Có DHCP Server nào không?'\n\n2. OFFER: DHCP Server nhận → gửi DHCPOFFER unicast đề xuất IP + Subnet Mask + Gateway + DNS.\n\n3. REQUEST: Client đồng ý → gửi DHCPREQUEST broadcast 'Tôi nhận IP đó' (để các DHCP Server khác rút offer).\n\n4. ACK: Server xác nhận DHCPACK, cấp IP trong khoảng lease time. Hết hạn → client xin lại.\n\nƯu điểm DHCP: tránh trùng IP, quản lý tập trung, thiết bị tự cấu hình.\nLệnh Windows: ipconfig /release (trả IP), ipconfig /renew (xin lại)."},
+  {chapter: 3, q: "DHCP Server và Client khác mạng. Làm sao để Client nhận được IP?",
+   a: "Vì DHCPDISCOVER là BROADCAST, Router mặc định chặn broadcast → Client không tìm được DHCP Server ở mạng khác.\n\nGiải pháp: cấu hình ip helper-address trên cổng Router của mạng Client:\n\nRouter(config)# interface <cổng mạng Client>\nRouter(config-if)# ip helper-address <IP DHCP Server>\n\nLệnh này chuyển DHCP broadcast thành Unicast, gửi thẳng đến DHCP Server ở mạng khác. Server gửi DHCPOFFER/ACK về Client qua Router."},
+  {chapter: 3, q: "Trình bày vai trò của DNS và các loại Record phổ biến.",
+   a: "DNS (Domain Name System) phân giải tên miền (google.com) → IP (142.250.74.14) để máy kết nối được.\n\nNguyên lý:\n1. User nhập tên miền vào trình duyệt.\n2. Máy hỏi DNS Server sơ cấp (ISP hoặc 8.8.8.8).\n3. Nếu không biết → hỏi DNS cấp cao hơn (TLD .com, rồi DNS của domain).\n4. Trả IP cho máy → máy kết nối web server.\n5. Lưu cache để lần sau không hỏi lại.\n\nCác loại Record:\n- A: tên miền → IPv4\n- AAAA: tên miền → IPv6\n- CNAME: alias trỏ tới tên miền khác\n- MX: mail server của domain\n- TXT: văn bản (SPF, DKIM)\n- NS: name server quản lý domain"},
+  {chapter: 3, q: "ARP là gì? Trình bày quá trình phân giải ARP.",
+   a: "ARP (Address Resolution Protocol) phân giải ngược DNS: tìm MAC từ IP đã biết.\n\nQuá trình:\n1. PC A cần gửi data cho PC C (IP 192.168.1.5). Tra ARP Cache - không có.\n2. PC A gửi ARP Request BROADCAST: 'Who has 192.168.1.5? Tell 192.168.1.10 (MAC AA:11...)' → tất cả máy trong mạng nhận.\n3. PC C thấy IP trùng → trả ARP Reply UNICAST: '192.168.1.5 is at CC:33:44:55:66:77'\n4. PC A lưu vào ARP Cache để lần sau không hỏi lại (có TTL).\n5. Bây giờ PC A có MAC đích → đóng Frame gửi data.\n\nLệnh Windows: arp -a (xem cache), arp -d (xoá cache)."},
+  {chapter: 3, q: "Đóng gói (Encapsulation) và Gỡ gói (Decapsulation) là gì? PDU ở mỗi tầng gọi tên gì?",
+   a: "Đóng gói (khi data đi từ tầng 7 xuống 1 ở máy gửi): mỗi tầng thêm Header (tầng 2 thêm cả Trailer).\n\nGỡ gói (khi data đi từ tầng 1 lên 7 ở máy nhận): mỗi tầng gỡ bỏ 1 Header.\n\nPDU (Protocol Data Unit) ở mỗi tầng:\n- Tầng 7,6,5 (Application, Presentation, Session): Data\n- Tầng 4 (Transport): Segment (TCP) / Datagram (UDP)\n- Tầng 3 (Network): Packet\n- Tầng 2 (Data Link): Frame\n- Tầng 1 (Physical): Bit\n\nVí dụ: HTTP Request (Data) → thêm TCP Header thành Segment → thêm IP Header thành Packet → thêm MAC Header + FCS thành Frame → chuyển thành Bits truyền đi."},
+
+  // Chương 4
+  {chapter: 4, q: "Trình bày cấu trúc địa chỉ IPv4 và các lớp IP.",
+   a: "IPv4 dài 32 bit, chia 4 octet (mỗi octet 8 bit, giá trị 0-255). Biểu diễn dotted-decimal (vd: 192.168.1.10).\n\nGồm 2 phần: Network ID (cực trái) + Host ID (cực phải). Ranh giới do Subnet Mask quy định.\n\n5 lớp:\n- A: octet 1 từ 1-126, mask /8 (255.0.0.0), 126 mạng, 16.777.214 host/mạng.\n- B: octet 1 từ 128-191, mask /16 (255.255.0.0), 16.384 mạng, 65.534 host/mạng.\n- C: octet 1 từ 192-223, mask /24 (255.255.255.0), 2.097.152 mạng, 254 host/mạng.\n- D: 224-239, Multicast.\n- E: 240-255, dự trữ.\n\nLưu ý: 127.x.x.x là Loopback. IP Private: 10.x.x.x, 172.16-31.x.x, 192.168.x.x."},
+  {chapter: 4, q: "Phân biệt Network ID, Broadcast, Host ID trong 1 subnet.",
+   a: "Trong 1 subnet có 3 loại địa chỉ:\n\n1. NETWORK ID (địa chỉ mạng): tất cả bit Host = 0. Định danh cả dải mạng. KHÔNG gán cho thiết bị. VD: 192.168.1.0/24.\n\n2. BROADCAST (địa chỉ quảng bá): tất cả bit Host = 1. Gửi tới tất cả máy trong mạng. KHÔNG gán cho thiết bị. VD: 192.168.1.255/24.\n\n3. HOST ID (địa chỉ máy): ít nhất 1 bit Host = 1 và không phải tất cả = 1. Khả dụng, gán được cho PC/Router. VD: 192.168.1.1 đến 192.168.1.254.\n\nSố host khả dụng = 2^(bit host) - 2 (trừ Network và Broadcast)."},
+  {chapter: 4, q: "Vì sao phải chia mạng con (Subnetting)? Nêu các công thức tính.",
+   a: "Mục đích Subnetting:\n- Giảm kích thước mạng, phù hợp mô hình công ty\n- Phân cấp quản lý\n- Giảm nghẽn mạng (giới hạn phạm vi broadcast)\n- Cô lập sự cố trong từng subnet\n- Tăng bảo mật (áp dụng policy từng subnet)\n- Áp dụng cấu hình khác nhau từng subnet\n\nNguyên tắc: mượn bit đầu phần Host chuyển sang Network.\n\nCông thức:\n- n = số bit mượn\n- m = số bit Host còn lại (n + m = bit Host ban đầu)\n- Số Subnet mới = 2^n\n- Số Host khả dụng/subnet = 2^m - 2 (trừ Network + Broadcast)\n- Bước nhảy (Block size) = 256 - giá trị thập phân của octet mượn cuối cùng"},
+  {chapter: 4, q: "Cho IP 192.168.1.130/26. Hãy xác định: loại địa chỉ, Network ID, Broadcast, dải host khả dụng, Subnet Mask.",
+   a: "Bước 1: /26 → 26 bit Network → 6 bit Host (cực phải, trong octet 4).\nBước 2: SM = 255.255.255.192 (vì 26 bit = 24 + 2, octet 4 = 11000000 = 192).\nBước 3: Octet 4 = 130 = 10000010. 6 bit host phải: 000010 ≠ 0 → địa chỉ HOST.\nBước 4: Network: bit host = 0 → octet 4 = 10000000 = 128 → 192.168.1.128/26.\nBước 5: Broadcast: bit host = 1 → octet 4 = 10111111 = 191 → 192.168.1.191/26.\nBước 6: Dải khả dụng: 192.168.1.129 → 192.168.1.190 (62 host).\nBước 7: Số host = 2^6 - 2 = 62."},
+  {chapter: 4, q: "Cho IP 184.156.12.165/27. Tính Network, Broadcast, dải khả dụng, SM.",
+   a: "/27 → 27 bit Network → 5 bit Host (octet 4).\nSM = 255.255.255.224 (vì 27 = 24+3, octet 4 = 11100000 = 224).\nOctet 4 = 165 = 10100101. 5 bit host phải: 00101 ≠ 0 → địa chỉ HOST.\n\nNetwork: bit host = 0 → octet 4 = 10100000 = 160 → 184.156.12.160/27.\nBroadcast: bit host = 1 → octet 4 = 10111111 = 191 → 184.156.12.191/27.\nDải khả dụng: 184.156.12.161 → 184.156.12.190 (30 host).\nSố host = 2^5 - 2 = 30."},
+  {chapter: 4, q: "Cho mạng 139.12.0.0/16 (lớp B). Chia thành 4 subnet. Tính subnet mask mới và liệt kê 4 subnet.",
+   a: "Y = 4 subnet = 2^X → X = 2 bit mượn.\nSubnet mask mới = 16 + 2 = 18 bit → /18.\nSM = 255.255.192.0 (vì octet 3 = 11000000 = 192).\nSố host/subnet = 2^(32-18) - 2 = 2^14 - 2 = 16.382.\nBước nhảy = 256 - 192 = 64 (ở octet 3).\n\n4 subnet:\n1. Network 139.12.0.0/18 | Host: .0.1 → .63.254 | Broadcast 139.12.63.255\n2. Network 139.12.64.0/18 | Host: .64.1 → .127.254 | Broadcast 139.12.127.255\n3. Network 139.12.128.0/18 | Host: .128.1 → .191.254 | Broadcast 139.12.191.255\n4. Network 139.12.192.0/18 | Host: .192.1 → .255.254 | Broadcast 139.12.255.255"},
+  {chapter: 4, q: "Phân biệt IP Private và IP Public. Nêu dải IP Private của 3 lớp A, B, C.",
+   a: "IP Private (IP nội bộ): không gian địa chỉ dùng riêng trong tổ chức, KHÔNG định tuyến ra Internet công cộng. Nhà cung cấp Internet sẽ chặn gói có IP Private. Trong mạng nội bộ, dùng Private + NAT để ra Internet.\n\nIP Public: IP mua từ ISP, định tuyến được trên Internet. Độc nhất toàn cầu.\n\nDải Private:\n- Lớp A: 10.0.0.0 → 10.255.255.255 (16.777.216 địa chỉ)\n- Lớp B: 172.16.0.0 → 172.31.255.255 (1.048.576 địa chỉ)\n- Lớp C: 192.168.0.0 → 192.168.255.255 (65.536 địa chỉ)\n\nNgoài ra: 127.0.0.0/8 là Loopback. 169.254.0.0/16 là APIPA (tự cấp khi không có DHCP)."},
+
+  // Chương 5
+  {chapter: 5, q: "Phân biệt Workgroup và Domain. File nào lưu DB tài khoản trong mỗi mô hình?",
+   a: "WORKGROUP (Peer-to-Peer):\n- Các máy bình đẳng, vừa client vừa server.\n- Quản trị phân tán, từng máy tự quản.\n- DB tài khoản lưu file SAM (Security Accounts Manager) cục bộ trên từng máy.\n- Chứng thực do máy cục bộ đảm nhiệm.\n- Bảo mật kém, phù hợp <15 máy.\n\nDOMAIN (Client-Server):\n- Phân rõ server/client. Có Domain Controller (DC).\n- Quản trị tập trung tại DC.\n- DB tài khoản lưu file NTDS.DIT trên DC (Active Directory).\n- Chứng thực do DC đảm nhiệm qua Kerberos.\n- Bảo mật cao, phù hợp công ty lớn."},
+  {chapter: 5, q: "Active Directory là gì? Trình bày các thành phần và lợi ích.",
+   a: "Active Directory (AD) là dịch vụ thư mục của Microsoft, lưu thông tin tài nguyên mạng (File Server, Printer, User, Group, Web Server) và cho phép tra cứu/sử dụng.\n\nThành phần:\n- Object: đối tượng cơ bản (user, máy in, server...)\n- Attribute: thuộc tính mô tả object (tên, IP, mật khẩu)\n- Schema: định nghĩa thuộc tính cho mỗi loại object\n- Container: vật chứa. 3 loại:\n  + Domain: đơn vị nòng cốt của AD\n  + Site: phân biệt vị trí cục bộ/xa\n  + OU (Organizational Unit): chứa user, group, máy tính\n- Global Catalog: xác định vị trí object\n\nLợi ích: Quản lý tập trung, uỷ quyền, tích hợp DNS, mở rộng tốt (10 triệu object/domain)."},
+  {chapter: 5, q: "DCPROMO là gì? Trình bày các bước cài đặt và gia nhập máy trạm vào Domain.",
+   a: "DCPROMO (Active Directory Installation Wizard) nâng cấp Standalone Server → Domain Controller (DC) hoặc giáng cấp DC → Standalone Server.\n\nCác bước cài đặt DC:\n1. Start → Run → dcpromo\n2. Cảnh báo: DOS/Win95/WinNT SP3 trở trước bị loại khỏi AD → Next\n3. Chọn 'Domain in a new forest' (nếu domain đầu)\n4. Nhập tên DNS đầy đủ (vd: netclass.local)\n5. Nhập tên NetBIOS\n6. Chỉ định vị trí database AD + log\n7. Chỉ định thư mục SYSVOL (bắt buộc NTFS)\n8. Nếu DNS chưa cài → chọn cài tự động\n9. Chọn mức tương thích server\n10. Nhập mật khẩu Restore Mode\n11. Tóm tắt → Next → cài → Reboot\n\nGia nhập máy trạm vào Domain:\n- Đăng nhập máy cục bộ bằng Administrator\n- Right click My Computer → Properties → Computer Name → Change\n- Nhập tên domain → máy tìm DC → DC yêu cầu xác thực admin domain\n- Reboot → hộp logon có 2 lựa chọn: domain hoặc máy cục bộ."},
+  {chapter: 5, q: "Group Policy là gì? Trình bày Password Policy và Account Lockout Policy.",
+   a: "Group Policy (gpedit.msc) là công cụ cấu hình chính sách cho máy và user. Có 2 nhánh: Computer Configuration (toàn user) và User Configuration (user hiện tại).\n\nPASSWORD POLICY (mặc định):\n- Enforce password history: 24 lần không trùng\n- Maximum password age: 42 ngày\n- Minimum password age: 1 ngày\n- Minimum password length: 7 ký tự\n- Password must meet complexity: Yes\n- Store passwords using reversible encryption: No\n\nACCOUNT LOCKOUT POLICY:\n- Account Lockout Threshold: số lần đăng nhập sai → khoá (vd: 5)\n- Account Lockout Duration: thời gian khoá (mặc định 30 phút)\n- Reset Lockout Counter After: thời gian đếm lại (mặc định 30 phút)\n\nMục đích: chống brute force, tăng bảo mật tài khoản."},
+  {chapter: 5, q: "NTFS Permission là gì? So sánh với Share Permission. Cách cấp quyền?",
+   a: "NTFS Permission: 13 quyền chi tiết để bảo mật file/folder trên partition NTFS.\n\nCác quyền: Traverse Folder, List Folder, Read Attributes, Read Extended, Create File, Create Folder, Write Attributes, Write Extended, Delete Subfolders, Delete, Read Permissions, Change Permissions, Take Ownership.\n\nSo sánh:\n- SHARE PERMISSION: chỉ áp dụng khi truy cập QUA MẠNG.\n- NTFS PERMISSION: áp dụng CẢ khi truy cập mạng VÀ local.\n- NTFS chi tiết hơn, bảo mật hơn.\n\nCấp quyền:\n1. Right click folder → Properties → Security → Add\n2. Find Now → chọn user/group → OK\n3. Mặc định 3 quyền tối thiểu. Có thể cấp thêm.\n4. Để cấu hình riêng: tắt inherit (Advanced → bỏ check 'Inherit from parent')\n5. Check 'Replace permission entries' để áp cho thư mục con\n6. Apply → OK"},
+  {chapter: 5, q: "Disk Quota là gì? Cách cấu hình và lưu ý quan trọng.",
+   a: "Disk Quota: giới hạn dung lượng ổ cứng tối đa cho từng user trên partition NTFS. Tránh lãng phí, quản lý hiệu quả.\n\nQuota chỉ set cho từng PARTITION (không set cả ổ cứng).\n\nCấu hình:\n1. Properties partition → tab Quota\n2. Check 'Enable quota management'\n3. Check 'Deny disk space to users exceeding quota limit'\n4. Quota Entries → New Quota Entry → Add user\n5. Nhập dung lượng tối đa → OK\n\nLƯU Ý QUAN TRỌNG:\n- Nếu chỉ check 'Enable quota management' mà KHÔNG check 'Deny disk space...' → user vẫn ghi vượt dung lượng (chỉ bị cảnh báo). PHẢI CHECK CẢ 2 Ô mới chặn được thật.\n- Quota áp dụng cho từng user riêng, không cho group.\n- Có thể set warning level (cảnh báo trước khi đạt giới hạn)."},
+
+  // Chương 6
+  {chapter: 6, q: "Điện toán đám mây là gì? Nêu 5 đặc trưng cơ bản theo NIST.",
+   a: "Theo NIST SP 800-145: Điện toán đám mây là mô hình cho phép truy cập tài nguyên tính toán (mạng, máy chủ, lưu trữ, ứng dụng) qua mạng thuận tiện, theo nhu cầu, pay-as-you-go.\n\n5 đặc trưng:\n1. ON-DEMAND SELF-SERVICE: Khách hàng tự cấp phát tài nguyên qua portal, không cần nhân viên hỗ trợ.\n\n2. BROAD NETWORK ACCESS: Truy cập mọi lúc, mọi nơi qua Internet, trên mọi thiết bị.\n\n3. RESOURCE POOLING: Tài nguyên tập trung, ảo hóa, phục vụ nhiều khách hàng (multi-tenant).\n\n4. RAPID ELASTICITY: Tài nguyên co giãn nhanh — tăng khi quá tải, thu hồi khi rảnh.\n\n5. MEASURED SERVICE: Đo lường mức sử dụng → tính phí pay-as-you-go như đồng hồ điện/nước."},
+  {chapter: 6, q: "Trình bày 3 mô hình dịch vụ Cloud: IaaS, PaaS, SaaS. Cho ví dụ.",
+   a: "1. IaaS (Infrastructure as a Service): Nhà cung cấp cho hạ tầng (máy chủ ảo, lưu trữ, mạng). Khách hàng lo HĐH, DB, code, bảo mật.\n- Ví dụ: Amazon EC2, Google Compute Engine, Azure VM, DigitalOcean.\n- Ưu: linh hoạt tối đa. Nhược: đòi hỏi kỹ thuật cao.\n\n2. PaaS (Platform as a Service): Nhà cung cấp lo cả HĐH + môi trường chạy (Database, Web server, Runtime). Khách hàng chỉ cần đưa code lên.\n- Ví dụ: Google App Engine, AWS Elastic Beanstalk, Heroku, Vercel.\n- Ưu: rút ngắn thời gian phát triển. Nhược: tùy biến hạn chế.\n\n3. SaaS (Software as a Service): Nhà cung cấp lo toàn bộ. Khách hàng chỉ việc dùng qua Web.\n- Ví dụ: Gmail, Google Drive, Microsoft 365, Salesforce, Zoom, Netflix.\n- Ưu: tiện lợi, không cần cài đặt. Nhược: ít tùy biến, vendor lock-in."},
+  {chapter: 6, q: "Trình bày 4 mô hình triển khai Cloud: Public, Private, Hybrid, Community.",
+   a: "1. PUBLIC CLOUD (Đám mây công cộng): Hạ tầng thuộc nhà cung cấp (AWS, Azure, GCP), phục vụ nhiều khách hàng qua Internet.\n- Ưu: chi phí thấp, mở rộng nhanh, đa dạng dịch vụ.\n- Nhược: lo ngại bảo mật (dùng chung hạ tầng).\n\n2. PRIVATE CLOUD (Đám mây riêng): Xây riêng cho 1 tổ chức. Có thể tại datacenter nội bộ hoặc thuê.\n- Ưu: kiểm soát tuyệt đối, tùy chỉnh bảo mật, tuân thủ pháp lý.\n- Nhược: chi phí đầu tư và vận hành lớn.\n- Phù hợp: ngân hàng, y tế, chính phủ.\n\n3. HYBRID CLOUD (Đám mây lai): Kết hợp Public + Private.\n- Data nhạy cảm → Private, App public → Public.\n- Ưu: cân bằng chi phí và bảo mật.\n- Nhược: phức tạp quản trị.\n\n4. COMMUNITY CLOUD (Đám mây cộng đồng): Hạ tầng chia sẻ giữa nhóm tổ chức có cùng lợiích (đại học, viện nghiên cứu, chính phủ).\n- Ưu: chia sẻ chi phí, đồng bộ tiêu chuẩn.\n- Nhược: ít phổ biến."},
+  {chapter: 6, q: "So sánh mô hình CNTT truyền thống (On-premise) với Cloud Computing.",
+   a: "| Tiêu chí | On-premise | Cloud |\n|----------|------------|-------|\n| Đầu tư ban đầu | Cao, mua sắm hạ tầng | Thấp, trả theo nhu cầu |\n| Thời gian triển khai | Hàng tuần/tháng | Vài phút/giờ |\n| Mở rộng | Khó, mua thêm thiết bị | Dễ, co giãn tức thì |\n| Quản trị | Tự vận hành | Nhà cung cấp lo hạ tầng |\n| Bảo mật | Toàn quyền | Chia sẻ trách nhiệm |\n| Truy cập | Hạn chế nội bộ | Toàn cầu, mọi thiết bị |\n| Chi phí | CapEx (vốn) | OpEx (vận hành) |\n\nCloud phù hợp: startup, ứng dụng biến động tải, cần mở rộng nhanh. On-premise phù hợp: tổ chức có dữ liệu tối mật, yêu cầu tuân thủ khắt khe, đã có hạ tầng sẵn."},
+  {chapter: 6, q: "Vì sao doanh nghiệp chọn Hybrid Cloud? Cho ví dụ thực tế.",
+   a: "Hybrid Cloud = Public + Private, mang lại sự cân bằng giữa chi phí và bảo mật.\n\nLý do chọn Hybrid:\n1. Data nhạy cảm (thông tin tài khoản, hồ sơ y tế) → giữ ở Private Cloud nội bộ để đảm bảo bảo mật, tuân thủ pháp lý.\n2. Website bán hàng, app marketing → đẩy lên Public Cloud để chịu tải tốt, mở rộng nhanh khi sale lớn (Black Friday).\n3. Backup/Disaster Recovery: Private chứa data chính, Public làm backup dự phòng.\n4. Tiết kiệm chi phí: chỉ đầu tư Private cho phần cốt lõi, dùng Public cho phần biến động.\n\nVí dụ: Ngân hàng có hệ thống core banking trên Private Cloud (bảo mật tuyệt đối), nhưng app mobile banking và website giới thiệu sản phẩm trên AWS (chịu tải cao, scale nhanh khi cần).\n\nNhược điểm: phức tạp quản trị, cần tích hợp 2 môi trường, đòi hỏi nhân sự chuyên môn."}
+];
+
+function renderEssay(filter = 0) {
+  const list = document.getElementById('essayList');
+  const filtered = filter === 0 ? ESSAY_QUESTIONS : ESSAY_QUESTIONS.filter(e => e.chapter === filter);
+  list.innerHTML = filtered.map((e, i) => `
+    <div class="essay-card">
+      <div class="essay-q">
+        <div class="essay-num">${i+1}</div>
+        <div style="flex:1;">
+          <div class="essay-text">${e.q}</div>
+          <span class="essay-tag">Chương ${e.chapter}</span>
+        </div>
+      </div>
+      <button class="essay-toggle" onclick="toggleAnswer(this)">💡 Hiện đáp án gợi ý</button>
+      <div class="essay-answer">${e.a.replace(/\n/g, '<br>')}</div>
+    </div>
+  `).join('');
+}
+
+function toggleAnswer(btn) {
+  const ans = btn.nextElementSibling;
+  if (ans.classList.contains('show')) {
+    ans.classList.remove('show');
+    btn.textContent = '💡 Hiện đáp án gợi ý';
+  } else {
+    ans.classList.add('show');
+    btn.textContent = '🙈 Ẩn đáp án';
+  }
+}
+
+function filterEssay(chap, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderEssay(chap);
+}
+
+renderEssay(0);
+</script>
+</body>
+</html>

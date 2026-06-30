@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub vs Switch · Mô phỏng miền đụng độ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+.network-stage {
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  border-radius: 16px; padding: 2rem; margin: 1.5rem 0;
+  min-height: 420px; color: white; position: relative;
+}
+.device-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.net-pc {
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.15);
+  border-radius: 10px; padding: .85rem; text-align: center;
+  transition: all .3s;
+}
+.net-pc.active { background: rgba(99,102,241,.25); border-color: var(--accent); box-shadow: 0 0 20px rgba(99,102,241,.4); }
+.net-pc.target { background: rgba(16,185,129,.2); border-color: var(--success); box-shadow: 0 0 20px rgba(16,185,129,.4); }
+.net-pc.collide { background: rgba(239,68,68,.2); border-color: var(--danger); }
+.net-pc-icon { font-size: 2rem; }
+.net-pc-name { font-weight: 700; font-size: .9rem; margin: .25rem 0; }
+.net-pc-mac { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: #94A3B8; }
+
+.center-device {
+  background: rgba(255,255,255,.08); border: 2px solid rgba(255,255,255,.25);
+  border-radius: 12px; padding: 1rem; text-align: center;
+  max-width: 220px; margin: 0 auto 1.5rem;
+}
+.center-device-name { font-weight: 700; font-size: 1.1rem; }
+.center-device-tag { font-size: .82rem; color: #C7D2FE; margin-top: .25rem; }
+
+.line-viz {
+  height: 60px; position: relative; margin: 1rem 0;
+}
+.line-pkt {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  padding: .35rem .75rem; border-radius: 6px;
+  font-size: .8rem; font-weight: 600;
+  animation: pktMove 1.5s linear forwards;
+}
+@keyframes pktMove {
+  0% { left: 0; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+.pkt-broadcast { background: rgba(239,68,68,.3); border: 1px solid #EF4444; color: #FCA5A5; }
+.pkt-unicast { background: rgba(16,185,129,.3); border: 1px solid #10B981; color: #6EE7B7; }
+
+.mac-table {
+  background: rgba(0,0,0,.3); border-radius: 10px; padding: 1rem;
+  margin-top: 1rem; font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+}
+.mac-table-title { color: #C7D2FE; font-weight: 700; margin-bottom: .5rem; font-family: inherit; }
+.mac-row { display: grid; grid-template-columns: 80px 1fr 80px; padding: .25rem 0; color: #CBD5E1; }
+.mac-row.head { color: #94A3B8; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,.1); padding-bottom: .5rem; margin-bottom: .25rem; }
+</style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="container" style="padding:2rem 1.25rem;">
+  <span class="section-eyebrow">Mô phỏng 5 · Animation</span>
+  <h1 style="font-size:2.2rem;font-weight:800;background:var(--gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem;">Hub vs Switch</h1>
+  <p style="color:var(--text-muted);font-size:1.05rem;margin-bottom:1rem;max-width:780px;">
+    Cùng tình huống: PC-A muốn gửi dữ liệu cho PC-C. Hãy xem cách <strong>Hub</strong> (broadcast ra mọi cổng)
+    và <strong>Switch</strong> (gửi đúng cổng đích) xử lý khác nhau thế nào.
+  </p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem;" id="twoCols">
+    <!-- HUB -->
+    <div>
+      <h3 style="color:#FCA5A5;margin-bottom:.5rem;">🔴 Hub (Tầng 1) — Broadcast</h3>
+      <div class="network-stage">
+        <div class="center-device">
+          <div style="font-size:2rem;">📡</div>
+          <div class="center-device-name">HUB</div>
+          <div class="center-device-tag">Broadcast ra mọi cổng</div>
+        </div>
+        <div class="device-grid" id="hubDevices"></div>
+        <div class="line-viz" id="hubLine"></div>
+        <div style="font-size:.85rem;color:#CBD5E1;text-align:center;" id="hubStatus">
+          Sẵn sàng. Ấn "Mô phỏng Hub" để bắt đầu.
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="runHub()" style="width:100%;margin-top:.5rem;">▶ Mô phỏng Hub</button>
+    </div>
+
+    <!-- SWITCH -->
+    <div>
+      <h3 style="color:#6EE7B7;margin-bottom:.5rem;">🟢 Switch (Tầng 2) — Unicast</h3>
+      <div class="network-stage">
+        <div class="center-device">
+          <div style="font-size:2rem;">🔀</div>
+          <div class="center-device-name">SWITCH</div>
+          <div class="center-device-tag">Đọc MAC, gửi đúng cổng</div>
+        </div>
+        <div class="device-grid" id="switchDevices"></div>
+        <div class="line-viz" id="switchLine"></div>
+        <div style="font-size:.85rem;color:#CBD5E1;text-align:center;" id="switchStatus">
+          Sẵn sàng. Ấn "Mô phỏng Switch" để bắt đầu.
+        </div>
+        <div class="mac-table">
+          <div class="mac-table-title">📋 MAC Table (đã học)</div>
+          <div class="mac-row head"><span>PORT</span><span>MAC</span><span>PC</span></div>
+          <div class="mac-row"><span>P1</span><span>AA:11</span><span>PC-A</span></div>
+          <div class="mac-row"><span>P2</span><span>BB:22</span><span>PC-B</span></div>
+          <div class="mac-row"><span>P3</span><span>CC:33</span><span>PC-C</span></div>
+          <div class="mac-row"><span>P4</span><span>DD:44</span><span>PC-D</span></div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="runSwitch()" style="width:100%;margin-top:.5rem;">▶ Mô phỏng Switch</button>
+    </div>
+  </div>
+
+  <div class="callout callout-info" style="margin-top:2rem;">
+    <div class="callout-title">💡 Bài học rút ra</div>
+    <ul style="margin:0;">
+      <li><strong>Hub:</strong> 1 miền đụng độ (Collision Domain) lớn cho tất cả cổng → nhiều máy cùng gửi sẽ đụng độ → mạng chậm.</li>
+      <li><strong>Switch:</strong> Mỗi cổng là 1 miền đụng độ riêng → nhiều máy gửi đồng thời không đụng độ → mạng nhanh.</li>
+      <li><strong>Switch "thông minh hơn"</strong> nhờ có bảng MAC Table, học MAC qua frame nhận được.</li>
+      <li>Hub hiện nay <strong>gần như không còn dùng</strong> — Switch đã rẻ và phổ biến.</li>
+    </ul>
+  </div>
+
+  <div class="callout callout-everyday" style="margin-top:1rem;">
+    <div class="callout-title">🏠 Ví dụ đời thường</div>
+    <p>
+      <strong>Hub</strong> như 1 người đưa thư mù: nhận thư → đọc to cho cả tòa nhà nghe → ai thấy tên mình thì lấy. Ồn ào, dễ nhầm.
+      <strong>Switch</strong> như người đưa thư có sổ địa chỉ: nhận thư → tra tên → gửi đúng phòng. Yên tĩnh, nhanh, chính xác.
+    </p>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="../js/main.js"></script>
+<script>
+const pcs = [
+  { name: 'PC-A', mac: 'AA:11:22:33:44:01', icon: '💻' },
+  { name: 'PC-B', mac: 'BB:22:33:44:55:02', icon: '💻' },
+  { name: 'PC-C', mac: 'CC:33:44:55:66:03', icon: '💻' },
+  { name: 'PC-D', mac: 'DD:44:55:66:77:04', icon: '💻' }
+];
+function renderDevices(containerId) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = pcs.map((p, i) => `
+    <div class="net-pc" id="${containerId}-${i}">
+      <div class="net-pc-icon">${p.icon}</div>
+      <div class="net-pc-name">${p.name}</div>
+      <div class="net-pc-mac">${p.mac}</div>
+    </div>
+  `).join('');
+}
+renderDevices('hubDevices');
+renderDevices('switchDevices');
+
+function clearDeviceStates(prefix) {
+  for (let i = 0; i < 4; i++) {
+    const el = document.getElementById(`${prefix}-${i}`);
+    el.classList.remove('active', 'target', 'collide');
+  }
+}
+
+function runHub() {
+  clearDeviceStates('hubDevices');
+  document.getElementById('hubLine').innerHTML = '';
+  document.getElementById('hubStatus').textContent = 'PC-A gửi frame đến PC-C...';
+
+  // Step 1: A sends, Hub broadcasts to all
+  document.getElementById('hubDevices-0').classList.add('active');
+  setTimeout(() => {
+    document.getElementById('hubStatus').innerHTML = '<strong style="color:#FCA5A5;">📡 Hub phát (BROADCAST) frame ra TẤT CẢ cổng!</strong>';
+    // Broadcast to B, C, D
+    for (let i = 1; i < 4; i++) {
+      const el = document.getElementById(`hubDevices-${i}`);
+      if (i === 2) {
+        el.classList.add('target');
+      } else {
+        el.classList.add('collide'); // B and D receive but it's not for them — wasted bandwidth
+      }
+    }
+  }, 800);
+  setTimeout(() => {
+    document.getElementById('hubStatus').innerHTML = '⚠️ <strong style="color:#FCA5A5;">PC-B và PC-D cũng nhận được</strong> (nhưng bỏ qua vì MAC không khớp). Băng thông lãng phí, miền đụng độ lớn.';
+  }, 2200);
+}
+
+function runSwitch() {
+  clearDeviceStates('switchDevices');
+  document.getElementById('switchLine').innerHTML = '';
+  document.getElementById('switchStatus').textContent = 'PC-A gửi frame đến PC-C...';
+
+  document.getElementById('switchDevices-0').classList.add('active');
+  setTimeout(() => {
+    document.getElementById('switchStatus').innerHTML = '🔀 <strong style="color:#6EE7B7;">Switch tra MAC Table: CC:33 → Port 3</strong>';
+  }, 800);
+  setTimeout(() => {
+    document.getElementById('switchStatus').innerHTML = '✓ <strong style="color:#6EE7B7;">Switch chỉ gửi frame ra Port 3 (PC-C).</strong> PC-B và PC-D không bị ảnh hưởng.';
+    document.getElementById('switchDevices-2').classList.add('target');
+  }, 2200);
+}
+</script>
+</body>
+</html>

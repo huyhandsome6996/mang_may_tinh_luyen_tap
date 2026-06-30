@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chương 1 · Khái niệm cơ bản về mạng máy tính</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="theory-layout">
+  <!-- SIDEBAR -->
+  <aside class="theory-sidebar">
+    <div class="toc-title">Mục lục</div>
+    <nav class="toc">
+      <a href="#dinh-nghia">Định nghĩa</a>
+      <a href="#loi-ich">Lợi ích</a>
+      <a href="#lich-su">Lịch sử</a>
+      <a href="#phan-loai-khoang-cach">Phân loại theo khoảng cách</a>
+      <a href="#phan-loai-ket-noi">Phân loại theo kết nối</a>
+      <a href="#phan-loai-chuc-nang">Phân loại theo chức năng</a>
+      <a href="#topology">Topology</a>
+      <a href="#tom-tat">Tóm tắt chương</a>
+    </nav>
+    <hr style="margin:1rem 0;border:0;border-top:1px solid var(--border);">
+    <div class="toc-title">Chương khác</div>
+    <nav class="toc">
+      <a href="chuong2.html">→ Chương 2: Môi trường & Thiết bị</a>
+      <a href="chuong3.html">→ Chương 3: OSI & TCP/IP</a>
+      <a href="chuong4.html">→ Chương 4: IPv4 & Subnetting</a>
+      <a href="chuong5.html">→ Chương 5: Quản trị Windows</a>
+      <a href="chuong6.html">→ Chương 6: Cloud Computing</a>
+    </nav>
+  </aside>
+
+  <!-- CONTENT -->
+  <article class="theory-content">
+    <span class="section-eyebrow">Chương 1</span>
+    <h1>Khái niệm cơ bản về mạng máy tính</h1>
+    <p class="lead">
+      Chương này giới thiệu định nghĩa, mục đích, lịch sử và các cách phân loại mạng máy tính.
+      Đây là nền tảng để hiểu các chương sau về giao thức, địa chỉ IP và quản trị mạng.
+    </p>
+
+    <h2 id="dinh-nghia">1.1. Mạng máy tính là gì?</h2>
+    <p>
+      <strong>Mạng máy tính (Computer Network)</strong> là một tập hợp gồm hai hay nhiều máy tính
+      và các thiết bị ngoại vi được kết nối với nhau thông qua một phương thức truyền dẫn
+      (cáp đồng, cáp quang, sóng vô tuyến...) nhằm mục đích <em>trao đổi thông tin</em> và
+      <em>chia sẻ tài nguyên</em> cho nhau.
+    </p>
+    <p>
+      Chữ "kết nối" ở đây không chỉ đơn thuần là nối dây vật lý — mà còn phải có cả phần mềm
+      (giao thức) quy định cách thức trao đổi dữ liệu. Nếu hai máy tính chỉ đặt cạnh nhau
+      mà không có cách nào "nói chuyện" được với nhau thì chưa coi là một mạng.
+    </p>
+
+    <div class="callout callout-everyday">
+      <div class="callout-title">🏠 Ví dụ đời thường</div>
+      <p>
+        Tưởng tượng bạn có 2 máy tính ở nhà. Máy A có máy in, máy B không có. Nếu không nối mạng,
+        mỗi lần muốn in từ máy B, bạn phải copy file sang USB → cắm sang máy A → in → xong lại copy ngược lại.
+        Nối mạng lại: máy B gọi lệnh in → file tự bay qua máy A → in ra giấy. Đó chính là
+        "<strong>chia sẻ thiết bị</strong>" — một trong những lợi ích lớn nhất của mạng máy tính.
+      </p>
+    </div>
+
+    <h2 id="loi-ich">1.2. Lợi ích của việc nối mạng</h2>
+    <p>Việc kết nối các máy tính thành mạng mang lại những lợi ích cốt lõi sau:</p>
+    <ul>
+      <li><strong>Chia sẻ tài nguyên phần cứng:</strong> dùng chung máy in, máy quét, ổ cứng lưu trữ — tránh phải mua cho từng máy.</li>
+      <li><strong>Chia sẻ dữ liệu & phần mềm:</strong> nhiều người cùng truy cập một cơ sở dữ liệu, không cần copy đi copy lại.</li>
+      <li><strong>Tăng độ tin cậy:</strong> dữ liệu có thể được sao lưu trên nhiều máy, nếu một máy hỏng, máy khác vẫn có dữ liệu.</li>
+      <li><strong>Tiết kiệm chi phí & thời gian:</strong> không cần đi lại để trao file, gửi email nội bộ tức thì.</li>
+      <li><strong>Truyền thông đa phương tiện:</strong> chat, gọi điện, video call, họp online (Zoom, Teams...).</li>
+    </ul>
+
+    <div class="callout callout-info">
+      <div class="callout-title">ℹ️ Ghi nhớ</div>
+      <p>
+        Trong các tổ chức, mạng máy tính giúp: <em>chia sẻ tài nguyên mạng, cung cấp độ tin cậy cao,
+        tiết kiệm ngân sách, tạo môi trường liên lạc tốt</em>. Đối với nhiều người: <em>truy xuất thông tin
+        từ xa (WWW, FTP), liên lạc (Mail, Chat, Voice), giải trí (Video, Music)</em>.
+      </p>
+    </div>
+
+    <h2 id="lich-su">1.3. Lịch sử phát triển</h2>
+    <p>
+      Lịch sử mạng máy tính gắn liền với 3 mốc quan trọng: <strong>ARPANET (1970)</strong>,
+      <strong>PC & LAN (1980)</strong> và sự ra đời của <strong>Internet (1983)</strong>.
+    </p>
+    <ul>
+      <li><strong>ARPANET (1970):</strong> Mạng chuyển mạch gói đầu tiên, do Bộ Quốc phòng Mỹ tài trợ (Advanced Research Project Agency). Liên kết các cơ sở nghiên cứu, phòng thí nghiệm, trường đại học. Nó dần trở thành đường trục của Internet, chính thức "về hưu" năm 1990.</li>
+      <li><strong>PC & LAN (1980):</strong> Sự bùng nổ máy tính cá nhân (PC) dẫn đến nhu cầu nối mạng nội bộ trong văn phòng — ra đời mạng LAN.</li>
+      <li><strong>Internet (1983):</strong> Khi DARPA yêu cầu mọi máy kết nối ARPANET phải dùng TCP/IP, Internet chính thức ra đời. Đây cũng là lúc khái niệm "mạng toàn cầu" bắt đầu成形.</li>
+    </ul>
+
+    <div class="callout callout-tip">
+      <div class="callout-title">💡 Mẹo thi</div>
+      <p>Nhớ thứ tự: <strong>ARPANET (1970) → PC&LAN (1980) → Internet (1983)</strong>. Hay bị hỏi "mạng nào là tiền thân của Internet?" → đáp án: ARPANET.</p>
+    </div>
+
+    <h2 id="phan-loai-khoang-cach">1.4. Phân loại theo khoảng cách địa lý</h2>
+    <p>Đây là cách phân loại phổ biến nhất, dựa trên diện tích phủ sóng của mạng.</p>
+
+    <div class="table-wrap">
+      <table class="table-accent">
+        <thead><tr><th>Loại</th><th>Tên đầy đủ</th><th>Phạm vi</th><th>Đặc điểm</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><strong>PAN</strong></td><td>Personal Area Network</td><td>Vài mét</td><td>Mạng cá nhân, kết nối thiết bị gần</td><td>Bluetooth điện thoại - tai nghe</td></tr>
+          <tr><td><strong>LAN</strong></td><td>Local Area Network</td><td>Vài trăm mét</td><td>Tốc độ cao, băng thông lớn, do 1 tổ chức quản lý, ít lỗi</td><td>Mạng văn phòng, phòng lab, mạng nhà</td></tr>
+          <tr><td><strong>MAN</strong></td><td>Metropolitan Area Network</td><td>Một thành phố (&lt;100km)</td><td>Kết nối nhiều LAN trong thành phố</td><td>Mạng các chi nhánh ngân hàng trong 1 tỉnh</td></tr>
+          <tr><td><strong>WAN</strong></td><td>Wide Area Network</td><td>Quốc gia / lục địa</td><td>Tốc độ phụ thuộc viễn thông, độ trễ cao, chi phí đắt</td><td>Internet (WAN lớn nhất)</td></tr>
+          <tr><td><strong>GAN</strong></td><td>Global Area Network</td><td>Toàn cầu</td><td>Kết nối giữa các châu lục</td><td>Mạng cáp quang xuyên đại dương</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-everyday">
+      <div class="callout-title">🌍 Ví dụ đời thường</div>
+      <p>
+        Wifi nhà bạn = LAN (vài chục mét). Mạng nội bộ công ty bạn có chi nhánh ở Hà Nội & TP.HCM nối với nhau = MAN/WAN.
+        Khi bạn mở Facebook, dữ liệu đi từ VN sang Mỹ = WAN/GAN (chính là Internet).
+      </p>
+    </div>
+
+    <h2 id="phan-loai-ket-noi">1.5. Phân loại theo phương thức kết nối</h2>
+    <ul>
+      <li><strong>Point-to-Point (Điểm-điểm):</strong> Đường truyền riêng biệt nối 2 cặp máy (hoặc Hub-Hub). Mỗi đường chỉ phục vụ 2 thiết bị.</li>
+      <li><strong>Point-to-Multipoint (Điểm-đa điểm):</strong> Từ một trạm có thể kết nối đến nhiều trạm khác (kiểu trạm chủ - trạm tớ).</li>
+    </ul>
+
+    <h2 id="phan-loai-chuc-nang">1.6. Phân loại theo chức năng (kiến trúc logic)</h2>
+    <p>Đây là cách phân loại quan trọng nhất, hay bị hỏi trong thi.</p>
+
+    <h3>1.6.1. Mạng Peer-to-Peer (Workgroup / Ngang hàng)</h3>
+    <p>
+      Các máy tính trong mạng <strong>hoàn toàn bình đẳng</strong>, mỗi máy vừa đóng vai trò client
+      vừa đóng vai trò server. Không có máy phục vụ chuyên dụng.
+    </p>
+    <ul>
+      <li><strong>Đặc điểm:</strong> Mỗi máy tự quản lý tài nguyên của mình; người dùng từng máy tự quyết định dữ liệu dùng chung; cơ sở dữ liệu tài khoản lưu trong file <code>SAM</code> trên từng máy cục bộ.</li>
+      <li><strong>Ưu điểm:</strong> Dễ cài đặt, cấu hình; chi phí thấp; không cần máy chủ chuyên dụng.</li>
+      <li><strong>Nhược điểm:</strong> Bảo mật kém, khó quản lý tập trung; hiệu năng giảm mạnh khi nhiều máy; chỉ phù hợp mạng nhỏ (&lt;15 máy).</li>
+    </ul>
+
+    <h3>1.6.2. Mạng Client-Server (Domain / Khách-Chủ)</h3>
+    <p>
+      Phân chia rõ ràng vai trò: có <strong>máy chủ (Server)</strong> cấu hình mạnh chuyên cung cấp dịch vụ
+      và <strong>máy khách (Client)</strong> truy cập để sử dụng.
+    </p>
+    <ul>
+      <li><strong>Đặc điểm:</strong> Bảo mật tập trung tại máy chủ Điều khiển vùng (Domain Controller) thông qua dịch vụ Active Directory (file <code>NTDS.DIT</code>).</li>
+      <li><strong>Ưu điểm:</strong> Quản lý tập trung hàng ngàn thiết bị; tính toàn vẹn dữ liệu & bảo mật cao; dễ tích hợp công nghệ mới; TCP/IP là giao thức chuẩn.</li>
+      <li><strong>Nhược điểm:</strong> Chi phí đầu tư cao (máy chủ, bản quyền); cần nhân sự quản trị chuyên trách.</li>
+    </ul>
+
+    <div class="table-wrap">
+      <table class="compare-table">
+        <thead><tr><th>Tiêu chí</th><th>Workgroup (Peer-to-Peer)</th><th>Domain (Client-Server)</th></tr></thead>
+        <tbody>
+          <tr><td>Vai trò máy</td><td>Bình đẳng, vừa client vừa server</td><td>Phân rõ: server phục vụ, client dùng</td></tr>
+          <tr><td>Quản trị</td><td>Phân tán, từng máy tự quản</td><td>Tập trung tại Domain Controller</td></tr>
+          <tr><td>Cơ sở dữ liệu tài khoản</td><td>File SAM trên từng máy</td><td>File NTDS.DIT trên AD</td></tr>
+          <tr><td>Bảo mật</td><td>Kém</td><td>Cao</td></tr>
+          <tr><td>Chi phí</td><td>Thấp</td><td>Cao</td></tr>
+          <tr><td>Phù hợp</td><td>Mạng nhỏ &lt;15 máy</td><td>Mạng công ty lớn</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-everyday">
+      <div class="callout-title">🏠 Ví dụ đời thường</div>
+      <p>
+        <strong>Workgroup:</strong> 2 máy tính nhà bạn nối với nhau để in chung — mỗi máy tự quản user của nó, không ai "cầm đầu".
+        <br><strong>Domain:</strong> Mạng trường ĐH — mỗi sinh viên dùng 1 tài khoản đăng nhập ở bất kỳ máy nào trong lab đều được,
+        vì có máy chủ AD tập trung xác thực. Nếu pass của bạn bị admin đổi, mọi máy đều biết ngay.
+      </p>
+    </div>
+
+    <h2 id="topology">1.7. Cấu trúc topo mạng (Topology)</h2>
+    <p>Topology là cách sắp xếp vật lý hoặc logic các thiết bị trong mạng. Có 4 loại chính:</p>
+
+    <div class="topology-grid">
+      <div class="topology-card">
+        <svg class="topology-svg" viewBox="0 0 200 140">
+          <line x1="20" y1="70" x2="180" y2="70" stroke="#6366F1" stroke-width="4"/>
+          <circle cx="40" cy="70" r="6" fill="#06B6D4"/>
+          <circle cx="80" cy="70" r="6" fill="#06B6D4"/>
+          <circle cx="120" cy="70" r="6" fill="#06B6D4"/>
+          <circle cx="160" cy="70" r="6" fill="#06B6D4"/>
+          <rect x="32" y="80" width="16" height="20" fill="#1E293B"/>
+          <rect x="72" y="80" width="16" height="20" fill="#1E293B"/>
+          <rect x="112" y="80" width="16" height="20" fill="#1E293B"/>
+          <rect x="152" y="80" width="16" height="20" fill="#1E293B"/>
+          <rect x="10" y="60" width="10" height="20" fill="#EF4444"/>
+          <rect x="180" y="60" width="10" height="20" fill="#EF4444"/>
+        </svg>
+        <h4>Bus (Tuyến)</h4>
+        <p>Máy nối vào 1 đường trục (bus), 2 đầu có terminator</p>
+      </div>
+      <div class="topology-card">
+        <svg class="topology-svg" viewBox="0 0 200 140">
+          <circle cx="100" cy="70" r="50" fill="none" stroke="#6366F1" stroke-width="3"/>
+          <circle cx="100" cy="20" r="8" fill="#06B6D4"/>
+          <circle cx="150" cy="70" r="8" fill="#06B6D4"/>
+          <circle cx="100" cy="120" r="8" fill="#06B6D4"/>
+          <circle cx="50" cy="70" r="8" fill="#06B6D4"/>
+        </svg>
+        <h4>Ring (Vòng)</h4>
+        <p>Máy nối thành vòng tròn, điểm-điểm</p>
+      </div>
+      <div class="topology-card">
+        <svg class="topology-svg" viewBox="0 0 200 140">
+          <rect x="85" y="55" width="30" height="30" rx="5" fill="#6366F1"/>
+          <line x1="100" y1="55" x2="40" y2="20" stroke="#06B6D4" stroke-width="2"/>
+          <line x1="100" y1="55" x2="160" y2="20" stroke="#06B6D4" stroke-width="2"/>
+          <line x1="100" y1="85" x2="40" y2="120" stroke="#06B6D4" stroke-width="2"/>
+          <line x1="100" y1="85" x2="160" y2="120" stroke="#06B6D4" stroke-width="2"/>
+          <circle cx="40" cy="20" r="8" fill="#06B6D4"/>
+          <circle cx="160" cy="20" r="8" fill="#06B6D4"/>
+          <circle cx="40" cy="120" r="8" fill="#06B6D4"/>
+          <circle cx="160" cy="120" r="8" fill="#06B6D4"/>
+        </svg>
+        <h4>Star (Sao)</h4>
+        <p>Máy nối vào thiết bị trung tâm (Hub/Switch)</p>
+      </div>
+      <div class="topology-card">
+        <svg class="topology-svg" viewBox="0 0 200 140">
+          <line x1="40" y1="30" x2="160" y2="30" stroke="#06B6D4" stroke-width="2"/>
+          <line x1="40" y1="30" x2="40" y2="110" stroke="#06B6D4" stroke-width="2"/>
+          <line x1="160" y1="30" x2="160" y2="110" stroke="#06B6D4" stroke-width="2"/>
+          <line x1="40" y1="110" x2="160" y2="110" stroke="#06B6D4" stroke-width="2"/>
+          <line x1="40" y1="30" x2="160" y2="110" stroke="#06B6D4" stroke-width="2"/>
+          <line x1="160" y1="30" x2="40" y2="110" stroke="#06B6D4" stroke-width="2"/>
+          <circle cx="40" cy="30" r="8" fill="#6366F1"/>
+          <circle cx="160" cy="30" r="8" fill="#6366F1"/>
+          <circle cx="40" cy="110" r="8" fill="#6366F1"/>
+          <circle cx="160" cy="110" r="8" fill="#6366F1"/>
+        </svg>
+        <h4>Mesh (Lưới)</h4>
+        <p>Mỗi máy nối với tất cả máy còn lại</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Topology</th><th>Ưu điểm</th><th>Nhược điểm</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Bus</strong></td><td>Ít cáp, dễ lắp đặt, giá rẻ</td><td>Ùn tắc khi lưu lượng lớn; hỏng 1 đoạn cable → ngưng toàn hệ thống; khó phát hiện lỗi</td></tr>
+          <tr><td><strong>Ring</strong></td><td>Mở rộng với ít cáp; mỗi trạm đạt tốc độ tối đa khi truy cập</td><td>Đường khép kín — ngắt 1 vị trí → toàn mạng ngừng</td></tr>
+          <tr><td><strong>Star</strong></td><td>Thiết bị độc lập — 1 máy hỏng không ảnh hưởng; dễ mở rộng; cấu trúc đơn giản</td><td>Phụ thuộc hoàn toàn vào thiết bị trung tâm — nếu Hub/Switch hỏng → toàn mạng sập; khoảng cách máy-trung tâm ≤100m</td></tr>
+          <tr><td><strong>Mesh</strong></td><td>Đảm bảo dữ liệu, security; dễ cô lập lỗi; nhiều đường dự phòng</td><td>Đắt tiền, khó cài đặt (n(n-1)/2 đường dây)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-tip">
+      <div class="callout-title">💡 Hay bị hỏi</div>
+      <ul>
+        <li>"Topology nào dễ sụp đổ toàn hệ thống khi thiết bị trung tâm hỏng?" → <strong>Star</strong></li>
+        <li>"Topology nào đắt nhất?" → <strong>Mesh</strong> (vì số dây = n(n-1)/2)</li>
+        <li>"Topology phổ biến nhất hiện nay trong LAN?" → <strong>Star</strong> (vì Switch rẻ)</li>
+      </ul>
+    </div>
+
+    <h2 id="tom-tat">1.8. Tóm tắt chương</h2>
+    <ul>
+      <li><strong>Mạng máy tính</strong> = tập hợp thiết bị kết nối để trao đổi thông tin & chia sẻ tài nguyên.</li>
+      <li><strong>Lợi ích:</strong> chia sẻ phần cứng/phần mềm, tăng độ tin cậy, tiết kiệm chi phí, truyền thông.</li>
+      <li><strong>Phân loại theo khoảng cách:</strong> PAN → LAN → MAN → WAN → GAN.</li>
+      <li><strong>Phân loại theo chức năng:</strong> Peer-to-Peer (Workgroup, file SAM, &lt;15 máy) vs Client-Server (Domain, file NTDS.DIT, AD).</li>
+      <li><strong>Topology:</strong> Bus, Ring, Star (phổ biến), Mesh (đắt, an toàn).</li>
+    </ul>
+
+    <div class="callout callout-info" style="margin-top:2rem;">
+      <div class="callout-title">➡️ Chương tiếp theo</div>
+      <p>
+        Sang <a href="chuong2.html" style="color:var(--accent);font-weight:600;">Chương 2: Môi trường truyền & Thiết bị mạng</a>,
+        bạn sẽ tìm hiểu về các loại cáp (UTP, STP, quang), chuẩn RJ-45, và các thiết bị
+        Repeater, Hub, Switch, Bridge, Router, Gateway hoạt động như thế nào.
+      </p>
+    </div>
+  </article>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="../js/main.js"></script>
+</body>
+</html>

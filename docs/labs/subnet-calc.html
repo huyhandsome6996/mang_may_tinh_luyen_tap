@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subnet Calculator · Mô phỏng tính địa chỉ mạng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="container" style="padding:2rem 1.25rem;">
+  <span class="section-eyebrow">Mô phỏng 1 · Tool tính toán</span>
+  <h1 style="font-size:2.2rem;font-weight:800;background:var(--gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem;">Subnet Calculator</h1>
+  <p style="color:var(--text-muted);font-size:1.05rem;margin-bottom:2rem;max-width:780px;">
+    Nhập địa chỉ IP và prefix length (số bit Network). Tool sẽ tự động tính Network ID, Broadcast, dải host khả dụng,
+    Subnet Mask, và liệt kê tất cả subnet cùng dải. Có visualize bit net/host để bạn dễ hiểu.
+  </p>
+
+  <div class="calc-tool">
+    <div class="calc-input-row">
+      <div class="calc-field">
+        <label for="ipInput">Địa chỉ IP</label>
+        <input id="ipInput" type="text" value="192.168.1.130" placeholder="vd: 192.168.1.130">
+      </div>
+      <div class="calc-field">
+        <label for="prefixInput">Prefix Length (CIDR)</label>
+        <select id="prefixInput">
+          <option value="8">/8 (255.0.0.0) — Lớp A</option>
+          <option value="16">/16 (255.255.0.0) — Lớp B</option>
+          <option value="24" selected>/24 (255.255.255.0) — Lớp C</option>
+          <option value="25">/25 (255.255.255.128)</option>
+          <option value="26">/26 (255.255.255.192)</option>
+          <option value="27">/27 (255.255.255.224)</option>
+          <option value="28">/28 (255.255.255.240)</option>
+          <option value="29">/29 (255.255.255.248)</option>
+          <option value="30">/30 (255.255.255.252)</option>
+          <option value="18">/18 (255.255.192.0)</option>
+          <option value="19">/19 (255.255.224.0)</option>
+          <option value="20">/20 (255.255.240.0)</option>
+          <option value="21">/21 (255.255.248.0)</option>
+          <option value="22">/22 (255.255.252.0)</option>
+          <option value="23">/23 (255.255.254.0)</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="calculate()">Tính toán</button>
+      <button class="btn btn-ghost" onclick="randomIp()">Ngẫu nhiên</button>
+    </div>
+
+    <div id="errorBox" style="display:none;color:var(--danger);background:#FEF2F2;padding:.75rem 1rem;border-radius:8px;margin-bottom:1rem;"></div>
+
+    <div id="results" style="display:none;">
+      <h3 style="margin-bottom:1rem;">📊 Kết quả</h3>
+      <div class="calc-result">
+        <div class="calc-result-card net">
+          <div class="calc-result-label">Loại địa chỉ đã cho</div>
+          <div class="calc-result-value" id="addrType">—</div>
+        </div>
+        <div class="calc-result-card net">
+          <div class="calc-result-label">Network ID</div>
+          <div class="calc-result-value" id="netId">—</div>
+        </div>
+        <div class="calc-result-card broadcast">
+          <div class="calc-result-label">Broadcast Address</div>
+          <div class="calc-result-value" id="broadcast">—</div>
+        </div>
+        <div class="calc-result-card host">
+          <div class="calc-result-label">Dải Host khả dụng</div>
+          <div class="calc-result-value" id="hostRange" style="font-size:.95rem;">—</div>
+        </div>
+        <div class="calc-result-card mask">
+          <div class="calc-result-label">Subnet Mask</div>
+          <div class="calc-result-value" id="subnetMask">—</div>
+        </div>
+        <div class="calc-result-card">
+          <div class="calc-result-label">Số Host/Subnet</div>
+          <div class="calc-result-value" id="hostCount">—</div>
+        </div>
+        <div class="calc-result-card">
+          <div class="calc-result-label">Số bit Network / Host</div>
+          <div class="calc-result-value" id="bitInfo">—</div>
+        </div>
+      </div>
+
+      <h3 style="margin:1.5rem 0 .75rem;">🔢 Visualize Bit (Net = xanh dương, Host = xanh lá)</h3>
+      <div id="bitVisualizer" class="bit-visualizer"></div>
+
+      <h3 style="margin:1.5rem 0 .75rem;">📋 Các subnet trong dải lớn (8 subnet đầu)</h3>
+      <div class="table-wrap">
+        <table class="subnet-list">
+          <thead><tr><th>#</th><th>Network ID</th><th>Host đầu</th><th>Host cuối</th><th>Broadcast</th></tr></thead>
+          <tbody id="subnetList"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout callout-tip" style="margin-top:2rem;">
+      <div class="callout-title">💡 Cách dùng</div>
+      <p>Thử nhập các ví dụ trong lý thuyết: <code>184.156.12.165/27</code>, <code>175.25.37.110/28</code>, <code>163.128.170.0/19</code>, <code>182.145.14.143/21</code>. Tool sẽ tính ra cả Network, Broadcast, dải khả dụng và visualize bit để bạn dễ hình dung.</p>
+    </div>
+
+    <div class="callout callout-info" style="margin-top:1rem;">
+      <div class="callout-title">📐 Công thức áp dụng</div>
+      <ul style="margin:0;">
+        <li>Số bit Host = 32 − prefix</li>
+        <li>Số Host khả dụng = 2^(bit host) − 2</li>
+        <li>Network ID: tất cả bit Host = 0</li>
+        <li>Broadcast: tất cả bit Host = 1</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="../js/main.js"></script>
+<script>
+// ====== Subnet Calculator ======
+function ipToInt(ip) {
+  const parts = ip.split('.').map(Number);
+  if (parts.length !== 4 || parts.some(p => isNaN(p) || p < 0 || p > 255)) {
+    throw new Error('Địa chỉ IP không hợp lệ');
+  }
+  return (parts[0] << 24) >>> 0 | (parts[1] << 16) | (parts[2] << 8) | parts[3];
+}
+function intToIp(int) {
+  return [(int >>> 24) & 255, (int >>> 16) & 255, (int >>> 8) & 255, int & 255].join('.');
+}
+function intToBinary(int) {
+  let bin = (int >>> 0).toString(2);
+  while (bin.length < 32) bin = '0' + bin;
+  return bin;
+}
+function maskFromPrefix(prefix) {
+  return (0xFFFFFFFF << (32 - prefix)) >>> 0;
+}
+function formatBin(bin, prefix) {
+  let html = '<div class="bit-octet">';
+  for (let i = 0; i < 32; i++) {
+    if (i > 0 && i % 8 === 0) html += '</div><div class="bit-octet">';
+    const isNet = i < prefix;
+    html += `<span class="bit ${isNet ? 'bit-net' : 'bit-host'}">${bin[i]}</span>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function calculate() {
+  const ipStr = document.getElementById('ipInput').value.trim();
+  const prefix = parseInt(document.getElementById('prefixInput').value);
+  const errorBox = document.getElementById('errorBox');
+  const results = document.getElementById('results');
+
+  try {
+    const ipInt = ipToInt(ipStr);
+    const maskInt = maskFromPrefix(prefix);
+    const netInt = (ipInt & maskInt) >>> 0;
+    const broadcastInt = (netInt | (~maskInt >>> 0)) >>> 0;
+    const hostBits = 32 - prefix;
+    const hostCount = Math.pow(2, hostBits) - 2;
+
+    // Determine address type
+    let type;
+    if (ipInt === netInt) type = 'Network';
+    else if (ipInt === broadcastInt) type = 'Broadcast';
+    else if (hostCount > 0) type = 'Host';
+    else type = 'N/A';
+
+    const hostFirst = netInt + 1;
+    const hostLast = broadcastInt - 1;
+
+    document.getElementById('addrType').textContent = type;
+    document.getElementById('netId').textContent = intToIp(netInt) + '/' + prefix;
+    document.getElementById('broadcast').textContent = intToIp(broadcastInt);
+    document.getElementById('hostRange').textContent = hostCount > 0
+      ? `${intToIp(hostFirst)} → ${intToIp(hostLast)}`
+      : '(không có host khả dụng)';
+    document.getElementById('subnetMask').textContent = intToIp(maskInt);
+    document.getElementById('hostCount').textContent = hostCount >= 0 ? hostCount.toLocaleString() : '0';
+    document.getElementById('bitInfo').textContent = `${prefix} bit Net / ${hostBits} bit Host`;
+
+    // Bit visualizer
+    document.getElementById('bitVisualizer').innerHTML = `
+      ${formatBin(intToBinary(ipInt), prefix)}
+      <div style="width:100%;display:flex;justify-content:space-between;font-size:.78rem;color:#94A3B8;margin-top:.5rem;">
+        <span>🟦 ${prefix} bit Network</span>
+        <span>${hostBits} bit Host 🟩</span>
+      </div>
+    `;
+
+    // Subnet list (8 subnets starting from network containing the IP)
+    const blockSize = Math.pow(2, hostBits);
+    const startSubnet = Math.floor(netInt / blockSize) * blockSize;
+    const list = document.getElementById('subnetList');
+    list.innerHTML = '';
+    for (let i = 0; i < 8; i++) {
+      const sub = (startSubnet + i * blockSize) >>> 0;
+      if (sub > 0xFFFFFFFE) break;
+      const bcast = (sub + blockSize - 1) >>> 0;
+      const hFirst = (sub + 1) >>> 0;
+      const hLast = (bcast - 1) >>> 0;
+      const isCurrent = (sub === netInt);
+      list.innerHTML += `<tr ${isCurrent ? 'style="background:rgba(99,102,241,.08);font-weight:600;"' : ''}>
+        <td>${i + 1}${isCurrent ? ' ⬅' : ''}</td>
+        <td>${intToIp(sub)}/${prefix}</td>
+        <td>${intToIp(hFirst)}</td>
+        <td>${intToIp(hLast)}</td>
+        <td>${intToIp(bcast)}</td>
+      </tr>`;
+    }
+
+    errorBox.style.display = 'none';
+    results.style.display = 'block';
+  } catch (e) {
+    errorBox.textContent = '⚠️ ' + e.message;
+    errorBox.style.display = 'block';
+    results.style.display = 'none';
+  }
+}
+
+function randomIp() {
+  const ip = `${1 + Math.floor(Math.random() * 254)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${1 + Math.floor(Math.random() * 254)}`;
+  const prefixes = [8, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
+  const p = prefixes[Math.floor(Math.random() * prefixes.length)];
+  document.getElementById('ipInput').value = ip;
+  document.getElementById('prefixInput').value = p;
+  calculate();
+}
+
+// Auto-calc on load
+window.addEventListener('load', calculate);
+document.getElementById('ipInput').addEventListener('input', calculate);
+document.getElementById('prefixInput').addEventListener('change', calculate);
+</script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCP 3-way Handshake · Mô phỏng thiết lập kết nối TCP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+.tcp-stage {
+  background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%);
+  border-radius: 16px; padding: 2rem; margin: 1.5rem 0;
+  min-height: 420px; position: relative;
+  color: white;
+}
+.tcp-endpoints {
+  display: flex; justify-content: space-between;
+  position: relative; margin-bottom: 2rem;
+}
+.tcp-node {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 12px; padding: 1rem 1.5rem;
+  text-align: center; min-width: 180px;
+  backdrop-filter: blur(8px);
+}
+.tcp-node-label { color: #C7D2FE; font-size: .85rem; margin-bottom: .25rem; }
+.tcp-node-name { font-weight: 700; font-size: 1.1rem; }
+.tcp-node-port { font-family: 'JetBrains Mono', monospace; font-size: .82rem; color: #67E8F9; margin-top: .25rem; }
+.tcp-line {
+  position: absolute; top: 50%; left: 25%; right: 25%;
+  height: 2px; background: rgba(255,255,255,.15);
+}
+.tcp-steps {
+  display: flex; flex-direction: column; gap: 1rem;
+  padding: 1rem 0;
+}
+.tcp-step {
+  display: flex; align-items: center; gap: 1rem;
+  opacity: 0; transform: translateX(-30px);
+  transition: all .5s ease;
+}
+.tcp-step.show { opacity: 1; transform: translateX(0); }
+.tcp-step-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--gradient); color: white;
+  display: grid; place-items: center;
+  font-weight: 700; flex-shrink: 0;
+}
+.tcp-step-content { flex: 1; }
+.tcp-step-title { font-weight: 600; }
+.tcp-step-detail { font-size: .85rem; color: #CBD5E1; }
+.tcp-packet-vis {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .8rem; padding: .5rem .75rem;
+  border-radius: 6px; display: inline-block;
+  margin-top: .25rem;
+}
+.tcp-packet-vis.syn { background: rgba(59,130,246,.2); border: 1px solid #3B82F6; color: #93C5FD; }
+.tcp-packet-vis.synack { background: rgba(168,85,247,.2); border: 1px solid #A855F7; color: #C4B5FD; }
+.tcp-packet-vis.ack { background: rgba(16,185,129,.2); border: 1px solid #10B981; color: #6EE7B7; }
+.tcp-state {
+  background: rgba(255,255,255,.05);
+  border-radius: 8px; padding: .75rem;
+  margin-top: 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .85rem;
+}
+.tcp-state-row { display: flex; justify-content: space-between; padding: .25rem 0; }
+.tcp-state-label { color: #94A3B8; }
+.tcp-state-val { color: #67E8F9; font-weight: 600; }
+</style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="container" style="padding:2rem 1.25rem;">
+  <span class="section-eyebrow">Mô phỏng 3 · Animation</span>
+  <h1 style="font-size:2.2rem;font-weight:800;background:var(--gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem;">TCP 3-way Handshake</h1>
+  <p style="color:var(--text-muted);font-size:1.05rem;margin-bottom:1rem;max-width:780px;">
+    Trước khi truyền dữ liệu, TCP phải thiết lập kết nối bằng 3 bước: <strong>SYN → SYN-ACK → ACK</strong>.
+    Đây là lý do TCP "tin cậy" hơn UDP — nhưng đánh đổi bằng độ trễ khởi tạo.
+  </p>
+
+  <div class="tcp-stage">
+    <div class="tcp-endpoints">
+      <div class="tcp-node">
+        <div class="tcp-node-label">Client</div>
+        <div class="tcp-node-name">💻 Máy bạn</div>
+        <div class="tcp-node-port">Port: 54321 · Seq=x</div>
+      </div>
+      <div class="tcp-line"></div>
+      <div class="tcp-node">
+        <div class="tcp-node-label">Server</div>
+        <div class="tcp-node-name">🌐 Web Server</div>
+        <div class="tcp-node-port">Port: 80 · Seq=y</div>
+      </div>
+    </div>
+
+    <div class="tcp-steps" id="steps">
+      <div class="tcp-step" id="step1">
+        <div class="tcp-step-num">1</div>
+        <div class="tcp-step-content">
+          <div class="tcp-step-title">SYN (Synchronize)</div>
+          <div class="tcp-step-detail">Client gửi SYN với Sequence number x, yêu cầu thiết lập kết nối.</div>
+          <div class="tcp-packet-vis syn">→ SYN, Seq=x</div>
+        </div>
+      </div>
+      <div class="tcp-step" id="step2">
+        <div class="tcp-step-num">2</div>
+        <div class="tcp-step-content">
+          <div class="tcp-step-title">SYN-ACK (Synchronize + Acknowledge)</div>
+          <div class="tcp-step-detail">Server nhận SYN, đáp lại bằng SYN-ACK: ACK=x+1 và Seq=y.</div>
+          <div class="tcp-packet-vis synack">← SYN+ACK, Seq=y, ACK=x+1</div>
+        </div>
+      </div>
+      <div class="tcp-step" id="step3">
+        <div class="tcp-step-num">3</div>
+        <div class="tcp-step-content">
+          <div class="tcp-step-title">ACK (Acknowledge)</div>
+          <div class="tcp-step-detail">Client gửi ACK=y+1. Kết nối được thiết lập. Bắt đầu truyền dữ liệu.</div>
+          <div class="tcp-packet-vis ack">→ ACK, ACK=y+1</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tcp-state" id="stateBox">
+      <div class="tcp-state-row"><span class="tcp-state-label">Client state:</span><span class="tcp-state-val" id="clientState">CLOSED</span></div>
+      <div class="tcp-state-row"><span class="tcp-state-label">Server state:</span><span class="tcp-state-val" id="serverState">LISTEN</span></div>
+      <div class="tcp-state-row"><span class="tcp-state-label">Kết nối:</span><span class="tcp-state-val" id="connState">Chưa thiết lập</span></div>
+    </div>
+
+    <div class="sim-controls">
+      <button class="btn btn-primary" onclick="runHandshake()">▶ Bắt đầu handshake</button>
+      <button class="btn btn-ghost" onclick="resetHandshake()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:2rem;">
+    <div class="callout callout-info">
+      <div class="callout-title">💡 Vì sao cần 3 bước?</div>
+      <ul style="margin:0;">
+        <li><strong>Bước 1 (SYN):</strong> Client thông báo "tôi muốn kết nối, seq của tôi là x".</li>
+        <li><strong>Bước 2 (SYN-ACK):</strong> Server xác nhận đã nhận seq x (ACK=x+1), đồng thời gửi seq của mình (y).</li>
+        <li><strong>Bước 3 (ACK):</strong> Client xác nhận đã nhận seq y (ACK=y+1). Hai bên đã đồng bộ seq number.</li>
+      </ul>
+    </div>
+    <div class="callout callout-warn">
+      <div class="callout-title">⚠️ So sánh với UDP</div>
+      <p>UDP <strong>không có handshake</strong> — gửi ngay dữ liệu, không cần biết đầu kia có sẵn sàng không.
+      Nhanh nhưng có thể mất gói. UDP phù hợp streaming, game online. TCP phù hợp Web, Email, FTP.</p>
+    </div>
+  </div>
+
+  <div class="callout callout-everyday" style="margin-top:1rem;">
+    <div class="callout-title">🏠 Ví dụ đời thường</div>
+    <p>
+      <strong>TCP handshake</strong> giống khi bạn gọi điện: "Alo, tôi là A, nghe rõ không?" (SYN) →
+      "Tôi nghe rõ, tôi là B, bạn nghe rõ không?" (SYN-ACK) → "Tôi nghe rõ, bắt đầu nói chuyện nhé" (ACK).
+      <strong>UDP</strong> như phát thanh radio — đài cứ phát, ai bắt được thì nghe.
+    </p>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="../js/main.js"></script>
+<script>
+const states = [
+  { client: 'CLOSED', server: 'LISTEN', conn: 'Chưa thiết lập' },
+  { client: 'SYN_SENT', server: 'LISTEN', conn: 'Đang thiết lập...' },
+  { client: 'SYN_SENT', server: 'SYN_RCVD', conn: 'Đang thiết lập...' },
+  { client: 'ESTABLISHED', server: 'ESTABLISHED', conn: '✓ Đã thiết lập — có thể truyền data' }
+];
+
+function runHandshake() {
+  resetHandshake();
+  let step = 1;
+  setTimeout(() => {
+    document.getElementById('step1').classList.add('show');
+    updateState(1);
+  }, 500);
+  setTimeout(() => {
+    document.getElementById('step2').classList.add('show');
+    updateState(2);
+  }, 2000);
+  setTimeout(() => {
+    document.getElementById('step3').classList.add('show');
+    updateState(3);
+  }, 3500);
+}
+function updateState(n) {
+  document.getElementById('clientState').textContent = states[n].client;
+  document.getElementById('serverState').textContent = states[n].server;
+  document.getElementById('connState').textContent = states[n].conn;
+}
+function resetHandshake() {
+  ['step1','step2','step3'].forEach(id => document.getElementById(id).classList.remove('show'));
+  updateState(0);
+}
+</script>
+</body>
+</html>

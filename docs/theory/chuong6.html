@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chương 6 · Điện toán Đám mây (Cloud Computing)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="theory-layout">
+  <aside class="theory-sidebar">
+    <div class="toc-title">Mục lục</div>
+    <nav class="toc">
+      <a href="#khai-niem">Khái niệm</a>
+      <a href="#lich-su">Lịch sử</a>
+      <a href="#dong-luc">Động lực phát triển</a>
+      <a href="#so-sanh-truyen-thong">So sánh on-premise</a>
+      <a href="#5-dac-trung">5 đặc trưng</a>
+      <a href="#service-models">IaaS / PaaS / SaaS</a>
+      <a href="#deployment-models">Public/Private/Hybrid/Community</a>
+      <a href="#multi-cloud">Multi-cloud</a>
+      <a href="#tom-tat">Tóm tắt</a>
+    </nav>
+    <hr style="margin:1rem 0;border:0;border-top:1px solid var(--border);">
+    <div class="toc-title">Chương khác</div>
+    <nav class="toc">
+      <a href="chuong1.html">→ Chương 1</a>
+      <a href="chuong2.html">→ Chương 2</a>
+      <a href="chuong3.html">→ Chương 3</a>
+      <a href="chuong4.html">→ Chương 4</a>
+      <a href="chuong5.html">→ Chương 5</a>
+    </nav>
+  </aside>
+
+  <article class="theory-content">
+    <span class="section-eyebrow">Chương 6 · Chương cuối</span>
+    <h1>Điện toán Đám mây (Cloud Computing)</h1>
+    <p class="lead">
+      Chương cuối giới thiệu mô hình điện toán đám mây theo định nghĩa NIST,
+      các đặc trưng, mô hình dịch vụ và mô hình triển khai — nền tảng của chuyển đổi số hiện đại.
+    </p>
+
+    <h2 id="khai-niem">6.1. Khái niệm điện toán đám mây</h2>
+    <p>
+      Theo định nghĩa chính thức của <strong>Viện Tiêu chuẩn và Công nghệ Hoa Kỳ (NIST, 2011)</strong>:
+    </p>
+    <div class="callout callout-info">
+      <div class="callout-title">Định nghĩa NIST SP 800-145</div>
+      <p>
+        <em>"Điện toán đám mây là mô hình cho phép truy cập mạng thuận tiện, phổ biến và theo yêu cầu
+        đến một tập hợp tài nguyên tính toán có thể cấu hình và được chia sẻ (mạng, máy chủ, bộ nhớ,
+        ứng dụng và dịch vụ). Các tài nguyên này có thể được cấp phát và thu hồi nhanh chóng với nỗ lực
+        quản lý tối thiểu hoặc ít cần tương tác với nhà cung cấp dịch vụ."</em>
+      </p>
+    </div>
+    <p>
+      Nói đơn giản: điện toán đám mây biến tài nguyên CNTT thành một <strong>"dịch vụ tiện ích"</strong>.
+      Thay vì tự mua máy chủ, cài đặt, vận hành — người dùng chỉ cần kết nối Internet để sử dụng tài nguyên
+      khi cần và trả phí theo mức sử dụng. Đây là bước chuyển từ <strong>"sở hữu công nghệ"</strong> sang
+      <strong>"thuê và sử dụng công nghệ như một dịch vụ"</strong>.
+    </p>
+
+    <div class="callout callout-everyday">
+      <div class="callout-title">🏠 Ví dụ đời thường</div>
+      <p>
+        Thay vì mua máy giặt về nhà (sở hữu), bạn đi tiệm giặt và trả tiền theo số kg quần áo (dịch vụ).
+        Cloud cũng vậy: thay vì mua server đắt tiền, bạn thuê AWS/Azure và trả tiền theo giờ sử dụng.
+        <strong>Gmail, Google Drive, Microsoft 365, Zoom, Netflix</strong> — tất cả đều là Cloud.
+      </p>
+    </div>
+
+    <h2 id="lich-su">6.2. Lịch sử phát triển</h2>
+    <ul>
+      <li><strong>1961:</strong> Giáo sư John McCarthy (MIT) dự báo năng lực tính toán sẽ được cung cấp như dịch vụ tiện ích (điện, nước).</li>
+      <li><strong>1970-1990:</strong> Mô hình time-sharing, grid computing — nhưng giới hạn bởi hạ tầng mạng và chi phí.</li>
+      <li><strong>2006:</strong> <strong>Amazon ra mắt EC2</strong> — máy chủ ảo pay-as-you-go. Bước ngoặt cloud hiện đại.</li>
+      <li><strong>2008:</strong> Google Cloud Platform ra mắt.</li>
+      <li><strong>2010:</strong> Microsoft Azure ra mắt.</li>
+      <li><strong>Hiện nay:</strong> Cloud hỗ trợ Big Data, AI/ML, IoT, Blockchain, Edge Computing.</li>
+    </ul>
+
+    <h2 id="dong-luc">6.3. Ba động lực phát triển</h2>
+    <ul>
+      <li><strong>Kinh tế:</strong> Chuyển CapEx (đầu tư vốn) sang OpEx (chi phí vận hành) — trả phí theo mức sử dụng, giảm chi phí, nâng hiệu quả.</li>
+      <li><strong>Kỹ thuật:</strong> Ứng dụng hiện đại (TMĐT, MXH, streaming) cần mở rộng nhanh, phân phối toàn cầu → cloud đáp ứng tính co giãn.</li>
+      <li><strong>Xã hội:</strong> Chuyển đổi số, làm việc từ xa, học trực tuyến → nhu cầu truy cập mọi lúc mọi nơi.</li>
+    </ul>
+
+    <h2 id="so-sanh-truyen-thong">6.4. So sánh với mô hình truyền thống (On-premise)</h2>
+    <div class="table-wrap">
+      <table class="compare-table">
+        <thead><tr><th>Tiêu chí</th><th>Mạng truyền thống (On-premise)</th><th>Cloud Computing</th></tr></thead>
+        <tbody>
+          <tr><td>Đầu tư ban đầu</td><td>Cao, mua sắm hạ tầng</td><td>Thấp, trả theo nhu cầu</td></tr>
+          <tr><td>Thời gian triển khai</td><td>Hàng tuần / tháng</td><td>Vài phút / giờ</td></tr>
+          <tr><td>Mở rộng tài nguyên</td><td>Khó, cần mua thêm thiết bị</td><td>Dễ, co giãn tức thì</td></tr>
+          <tr><td>Quản trị</td><td>Doanh nghiệp tự vận hành</td><td>Nhà cung cấp đảm trách hạ tầng</td></tr>
+          <tr><td>Bảo mật</td><td>Doanh nghiệp toàn quyền</td><td>Mô hình chia sẻ trách nhiệm</td></tr>
+          <tr><td>Khả năng truy cập</td><td>Hạn chế trong nội bộ</td><td>Toàn cầu, mọi thiết bị</td></tr>
+          <tr><td>Chi phí</td><td>CapEx (vốn)</td><td>OpEx (vận hành)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="5-dac-trung">6.5. 5 đặc trưng cơ bản của Cloud (theo NIST)</h2>
+    <p>Một hệ thống chỉ được xem là cloud khi đáp ứng đủ 5 đặc trưng:</p>
+
+    <div class="grid-2">
+      <div class="callout callout-info">
+        <div class="callout-title">1️⃣ On-demand Self-Service</div>
+        <p><strong>Tự phục vụ theo nhu cầu.</strong> Người dùng tự cấp phát tài nguyên qua portal (AWS Console, Azure Portal) mà không cần tương tác với nhân viên nhà cung cấp.</p>
+      </div>
+      <div class="callout callout-info">
+        <div class="callout-title">2️⃣ Broad Network Access</div>
+        <p><strong>Truy cập mạng rộng rãi.</strong> Truy cập mọi lúc, mọi nơi qua Internet, trên mọi thiết bị (PC, mobile, tablet).</p>
+      </div>
+      <div class="callout callout-info">
+        <div class="callout-title">3️⃣ Resource Pooling</div>
+        <p><strong>Gom góp tài nguyên.</strong> Tài nguyên tập trung, ảo hóa, phân bổ linh hoạt cho nhiều khách hàng (multi-tenant) theo nhu cầu.</p>
+      </div>
+      <div class="callout callout-info">
+        <div class="callout-title">4️⃣ Rapid Elasticity</div>
+        <p><strong>Co giãn nhanh chóng.</strong> Tài nguyên có thể tăng/giảm nhanh theo nhu cầu. Quá tải → tự động thêm server; rảnh → tự thu hồi.</p>
+      </div>
+      <div class="callout callout-info">
+        <div class="callout-title">5️⃣ Measured Service</div>
+        <p><strong>Dịch vụ đo lường được.</strong> Hệ thống tự động đo lường, giám sát, kiểm soát, báo cáo mức sử dụng → tính phí Pay-as-you-go như đồng hồ điện/nước.</p>
+      </div>
+      <div class="callout callout-tip">
+        <div class="callout-title">💡 Ghi nhớ</div>
+        <p>5 đặc trưng: <strong>"On-demand, Broad-access, Pooling, Elasticity, Measured"</strong> — hay bị hỏi trong thi.</p>
+      </div>
+    </div>
+
+    <h2 id="service-models">6.6. Các mô hình dịch vụ (Service Models)</h2>
+    <p>
+      3 mô hình dịch vụ kinh điển — hình dung như các "tầng" dịch vụ từ thấp đến cao,
+      thể hiện phân chia trách nhiệm giữa nhà cung cấp và khách hàng.
+    </p>
+
+    <div class="cloud-stack">
+      <div class="cloud-layer cloud-layer-saas">
+        <div class="cloud-layer-name">SaaS<br><small>Software</small></div>
+        <div class="cloud-cell provider">
+          <div class="cloud-cell-title">Nhà cung cấp lo</div>
+          Tất cả: hạ tầng, hệ điều hành, ứng dụng, dữ liệu sao lưu, bảo mật
+        </div>
+        <div class="cloud-cell customer">
+          <div class="cloud-cell-title">Khách hàng lo</div>
+          Chỉ dữ liệu nghiệp vụ & phân quyền user. Mua tài khoản, dùng ngay.
+        </div>
+      </div>
+      <div class="cloud-layer cloud-layer-paas">
+        <div class="cloud-layer-name">PaaS<br><small>Platform</small></div>
+        <div class="cloud-cell provider">
+          <div class="cloud-cell-title">Nhà cung cấp lo</div>
+          Hạ tầng + HĐH + môi trường chạy ứng dụng (Database, Web server)
+        </div>
+        <div class="cloud-cell customer">
+          <div class="cloud-cell-title">Khách hàng lo</div>
+          Code ứng dụng + dữ liệu. Đưa code lên là chạy.
+        </div>
+      </div>
+      <div class="cloud-layer cloud-layer-iaas">
+        <div class="cloud-layer-name">IaaS<br><small>Infrastructure</small></div>
+        <div class="cloud-cell provider">
+          <div class="cloud-cell-title">Nhà cung cấp lo</div>
+          Chỉ phần cứng + ảo hóa + mạng. Cấp máy chủ ảo.
+        </div>
+        <div class="cloud-cell customer">
+          <div class="cloud-cell-title">Khách hàng lo</div>
+          HĐH + Database + Code + Bảo mật ứng dụng + Dữ liệu
+        </div>
+      </div>
+    </div>
+
+    <h3>6.6.1. IaaS (Infrastructure as a Service)</h3>
+    <p>
+      Cung cấp thành phần hạ tầng cơ bản: <strong>máy chủ ảo, lưu trữ, mạng</strong>.
+      Nhà cung cấp lo phần cứng, mạng, ảo hóa. Khách hàng toàn quyền cài HĐH, phần mềm, ứng dụng.
+    </p>
+    <ul>
+      <li><strong>Ưu:</strong> Linh hoạt cao, không cần đầu tư phần cứng.</li>
+      <li><strong>Nhược:</strong> Đòi hỏi năng lực quản trị kỹ thuật lớn.</li>
+      <li><strong>Ví dụ:</strong> Amazon EC2, Google Compute Engine. Công ty khởi nghiệp triển khai TMĐT toàn cầu vài giờ mà không cần mua server.</li>
+    </ul>
+
+    <h3>6.6.2. PaaS (Platform as a Service)</h3>
+    <p>
+      Nhà cung cấp lo cả <strong>môi trường phát triển và triển khai ứng dụng</strong>. Lập trình viên chỉ việc code và deploy.
+    </p>
+    <ul>
+      <li><strong>Ưu:</strong> Rút ngắn thời gian phát triển, giảm vận hành, phù hợp Agile/DevOps.</li>
+      <li><strong>Nhược:</strong> Tùy biến không cao, phụ thuộc framework nền tảng.</li>
+      <li><strong>Ví dụ:</strong> Google App Engine, AWS Elastic Beanstalk, Heroku. Upload code → auto scale.</li>
+    </ul>
+
+    <h3>6.6.3. SaaS (Software as a Service)</h3>
+    <p>
+      Tầng cao nhất. Khách hàng dùng trực tiếp <strong>phần mềm hoàn chỉnh</strong> qua Internet. Không cần lo gì cả.
+    </p>
+    <ul>
+      <li><strong>Ưu:</strong> Tiện lợi, chi phí thấp, tiếp cận rộng.</li>
+      <li><strong>Nhược:</strong> Tùy biến hạn chế, phụ thuộc nhà cung cấp (vendor lock-in).</li>
+      <li><strong>Ví dụ:</strong> Gmail, Google Drive, Microsoft 365, Salesforce CRM, Zoom.</li>
+    </ul>
+
+    <div class="callout callout-everyday">
+      <div class="callout-title">🏠 Ví dụ đời thường</div>
+      <p>
+        <strong>IaaS</strong> = thuê đất trống, tự xây nhà, tự nội thất.<br>
+        <strong>PaaS</strong> = thuê căn hộ đã có sẵn, chỉ việc mang đồ dùng cá nhân vào.<br>
+        <strong>SaaS</strong> = thuê khách sạn, vào ở ngay, đồ đạc sẵn sàng, chỉ cần xách vali.
+      </p>
+    </div>
+
+    <h2 id="deployment-models">6.7. Các mô hình triển khai (Deployment Models)</h2>
+    <p>Mô hình triển khai trả lời câu hỏi: "Hạ tầng cloud này thuộc về ai, đặt ở đâu, phục vụ cho ai?"</p>
+
+    <h3>6.7.1. Public Cloud (Đám mây công cộng)</h3>
+    <p>
+      Toàn bộ hạ tầng thuộc nhà cung cấp (AWS, Azure, Google Cloud), phân phối tới nhiều khách hàng qua Internet.
+      Phổ biến nhất.
+    </p>
+    <ul>
+      <li><strong>Ưu:</strong> Chi phí thấp (chia sẻ), mở rộng nhanh, kho dịch vụ đa dạng.</li>
+      <li><strong>Nhược:</strong> Lo ngại bảo mật (dùng chung hạ tầng với nhiều khách hàng).</li>
+    </ul>
+
+    <h3>6.7.2. Private Cloud (Đám mây riêng)</h3>
+    <p>
+      Thiết kế riêng cho 1 tổ chức. Có thể xây tại datacenter nội bộ hoặc thuê bên thứ 3 nhưng chỉ phục vụ 1 đơn vị.
+    </p>
+    <ul>
+      <li><strong>Ưu:</strong> Kiểm soát tuyệt đối, tùy chỉnh bảo mật, tuân thủ pháp lý.</li>
+      <li><strong>Nhược:</strong> Chi phí đầu tư và vận hành lớn, gần với mô hình truyền thống.</li>
+      <li>Phù hợp: tổ chức tài chính, ngân hàng, y tế, chính phủ.</li>
+    </ul>
+
+    <h3>6.7.3. Hybrid Cloud (Đám mây lai)</h3>
+    <p>
+      Kết hợp Public + Private. Dữ liệu nhạy cảm (tài khoản ngân hàng) → Private. Website bán hàng/Marketing → Public.
+    </p>
+    <ul>
+      <li><strong>Ưu:</strong> Cân bằng chi phí và bảo mật.</li>
+      <li><strong>Nhược:</strong> Phức tạp quản trị, cần tích hợp 2 môi trường.</li>
+    </ul>
+
+    <h3>6.7.4. Community Cloud (Đám mây cộng đồng)</h3>
+    <p>
+      Hạ tầng phục vụ nhóm tổ chức có cùng lợi ích — trường đại học, viện nghiên cứu, cơ quan chính phủ.
+    </p>
+    <ul>
+      <li><strong>Ưu:</strong> Chia sẻ chi phí, đồng bộ tiêu chuẩn.</li>
+      <li><strong>Nhược:</strong> Ít phổ biến, đòi hỏi hợp tác.</li>
+    </ul>
+
+    <h2 id="multi-cloud">6.8. Xu hướng Multi-cloud</h2>
+    <p>
+      Ranh giới giữa các mô hình ngày càng mờ. Nhiều doanh nghiệp không chỉ chọn 1 nhà cung cấp
+      mà kết hợp nhiều nền tảng — đó là <strong>multi-cloud</strong>.
+    </p>
+    <p>Lợi ích:</p>
+    <ul>
+      <li>Tránh phụ thuộc vào 1 nhà cung cấp (vendor lock-in).</li>
+      <li>Khai thác thế mạnh riêng từng nền tảng (AWS mạnh AI, Azure mạnh enterprise, GCP mạnh data).</li>
+      <li>Đa dạng hóa rủi ro.</li>
+    </ul>
+
+    <div class="callout callout-tip">
+      <div class="callout-title">💡 Hay bị hỏi</div>
+      <ul>
+        <li>"Mô hình nào Gmail thuộc?" → <strong>SaaS</strong></li>
+        <li>"Mô hình nào Amazon EC2 thuộc?" → <strong>IaaS</strong></li>
+        <li>"Mô hình nào Google App Engine thuộc?" → <strong>PaaS</strong></li>
+        <li>"Cloud nào doanh nghiệp tự xây?" → <strong>Private</strong></li>
+        <li>"Cloud kết hợp Public + Private?" → <strong>Hybrid</strong></li>
+        <li>"Đặc trưng nào tính tiền theo mức sử dụng?" → <strong>Measured Service</strong></li>
+        <li>"Lợi ích tài chính lớn nhất?" → <strong>CapEx → OpEx</strong></li>
+      </ul>
+    </div>
+
+    <h2 id="tom-tat">6.9. Tóm tắt chương</h2>
+    <ul>
+      <li><strong>Cloud Computing</strong> (NIST): Mô hình truy cập tài nguyên tính toán qua mạng, theo nhu cầu, pay-as-you-go.</li>
+      <li><strong>3 động lực:</strong> Kinh tế (CapEx→OpEx), Kỹ thuật (co giãn), Xã hội (chuyển đổi số).</li>
+      <li><strong>5 đặc trưng:</strong> On-demand, Broad-access, Pooling, Elasticity, Measured.</li>
+      <li><strong>3 mô hình dịch vụ:</strong> IaaS (hạ tầng) → PaaS (nền tảng) → SaaS (phần mềm).</li>
+      <li><strong>4+1 mô hình triển khai:</strong> Public, Private, Hybrid, Community, Multi-cloud.</li>
+    </ul>
+
+    <div class="callout callout-info" style="margin-top:2rem;background:linear-gradient(135deg, rgba(99,102,241,.1), rgba(6,182,212,.1));">
+      <div class="callout-title">🎉 Hoàn thành 6 chương!</div>
+      <p>
+        Bạn đã học xong toàn bộ lý thuyết môn Mạng máy tính. Bây giờ hãy:
+      </p>
+      <ul>
+        <li>📝 Làm <a href="../quiz/trac-nghiem.html" style="color:var(--accent);font-weight:600;">100+ câu trắc nghiệm</a> để kiểm tra</li>
+        <li>✍️ Luyện <a href="../quiz/tu-luan.html" style="color:var(--accent);font-weight:600;">30+ câu tự luận</a> có đáp án gợi ý</li>
+        <li>🧪 Thử <a href="../labs/subnet-calc.html" style="color:var(--accent);font-weight:600;">Subnet Calculator</a> để rèn tính toán</li>
+      </ul>
+    </div>
+  </article>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trắc nghiệm · 100 câu ôn tập Mạng máy tính</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="quiz-container">
+  <span class="section-eyebrow">Luyện thi</span>
+  <h1 style="font-size:2.2rem;font-weight:800;background:var(--gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem;">📝 Trắc nghiệm Mạng máy tính</h1>
+  <p style="color:var(--text-muted);font-size:1.05rem;margin-bottom:2rem;">
+    100+ câu trắc nghiệm chia 5 chương + đề tổng hợp. Chọn chương, số câu, có chấm điểm tự động và giải thích đáp án.
+  </p>
+
+  <!-- SETUP -->
+  <div class="quiz-setup" id="setupBox">
+    <h3 style="margin-bottom:1rem;">⚙️ Cấu hình đề thi</h3>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+      <div class="calc-field">
+        <label>Chương</label>
+        <select id="chapterSelect">
+          <option value="0">Tổng hợp (100 câu)</option>
+          <option value="1">Chương 1 · Khái niệm cơ bản (20 câu)</option>
+          <option value="2">Chương 2 · Môi trường & Thiết bị (20 câu)</option>
+          <option value="3">Chương 3 · OSI & TCP/IP (20 câu)</option>
+          <option value="4">Chương 4 · IPv4 & Subnetting (20 câu)</option>
+          <option value="5">Chương 5 · Windows Server (10 câu)</option>
+          <option value="6">Chương 6 · Cloud Computing (10 câu)</option>
+        </select>
+      </div>
+      <div class="calc-field">
+        <label>Số câu</label>
+        <select id="numSelect">
+          <option value="10">10 câu (nhanh)</option>
+          <option value="20" selected>20 câu (tiêu chuẩn)</option>
+          <option value="30">30 câu</option>
+          <option value="50">50 câu (chuyên sâu)</option>
+          <option value="100">100 câu (full)</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+      <div class="calc-field">
+        <label>Thời gian (phút)</label>
+        <select id="timeSelect">
+          <option value="0">Không giới hạn</option>
+          <option value="5">5 phút</option>
+          <option value="10" selected>10 phút</option>
+          <option value="20">20 phút</option>
+          <option value="30">30 phút</option>
+        </select>
+      </div>
+      <div class="calc-field">
+        <label>Tùy chọn</label>
+        <select id="modeSelect">
+          <option value="instant">Hiện đáp án ngay sau mỗi câu</option>
+          <option value="end" selected>Hiện đáp án cuối bài</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;" onclick="startQuiz()">▶ Bắt đầu làm bài</button>
+
+    <div class="callout callout-tip" style="margin-top:1.5rem;">
+      <div class="callout-title">💡 Mẹo làm bài</div>
+      <ul style="margin:0;">
+        <li>Đọc kỹ câu hỏi, loại trừ các đáp án sai rõ ràng trước.</li>
+        <li>Subnetting: nhớ bảng 128-64-32-16-8-4-2-1 và công thức 2^n, 2^m - 2.</li>
+        <li>OSI: nhớ 7 tầng theo thứ tự + PDU tương ứng (Data, Segment, Packet, Frame, Bit).</li>
+        <li>Giao thức: nhớ port (HTTP=80, HTTPS=443, FTP=21, SMTP=25, DNS=53, DHCP=67/68).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- QUIZ BOX -->
+  <div id="quizBox" style="display:none;">
+    <div class="quiz-card">
+      <div class="quiz-progress">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+        <div class="progress-text"><span id="curIdx">1</span>/<span id="totalIdx">20</span> · ⏱️ <span id="timer">--:--</span></div>
+      </div>
+      <div class="question-num">Câu hỏi <span id="qNum">1</span></div>
+      <div class="question-text" id="qText">—</div>
+      <div class="options" id="qOptions"></div>
+      <div id="explanation" style="display:none;"></div>
+      <div class="quiz-actions">
+        <button class="btn btn-ghost" id="prevBtn" onclick="prevQuestion()">← Quay lại</button>
+        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Tiếp theo →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultBox" style="display:none;">
+    <div class="quiz-result">
+      <div class="result-score">
+        <div class="result-circle" id="scoreCircle">
+          <div class="result-circle-inner" id="scoreText">0</div>
+        </div>
+        <div class="result-message" id="resultMsg">—</div>
+        <p style="color:var(--text-muted);">Bạn trả lời đúng <strong id="correctCount">0</strong>/<span id="totalCount">0</span> câu</p>
+        <p style="color:var(--text-muted);font-size:.9rem;">Thời gian: <span id="timeUsed">--</span></p>
+      </div>
+
+      <h3 style="margin:1.5rem 0 1rem;">📋 Chi tiết đáp án</h3>
+      <div id="reviewList"></div>
+
+      <div class="quiz-actions">
+        <button class="btn btn-ghost" onclick="restart()">🔄 Làm lại</button>
+        <button class="btn btn-primary" onclick="goHome()">🏠 Về trang chủ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="../js/main.js"></script>
+<script src="../js/quiz-data.js"></script>
+<script>
+let quiz = {
+  questions: [], current: 0, answers: [], startTime: 0, timer: null, timeLimit: 0
+};
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  const chap = parseInt(document.getElementById('chapterSelect').value);
+  const num = parseInt(document.getElementById('numSelect').value);
+  const time = parseInt(document.getElementById('timeSelect').value);
+  const mode = document.getElementById('modeSelect').value;
+
+  let pool = QUIZ_QUESTIONS.filter(q => chap === 0 || q.chapter === chap);
+  pool = shuffle(pool).slice(0, Math.min(num, pool.length));
+
+  // Shuffle options too (and adjust answer index)
+  quiz.questions = pool.map(q => {
+    const opts = q.options.map((text, i) => ({ text, correct: i === q.answer }));
+    const shuffled = shuffle(opts);
+    return {
+      q: q.q,
+      options: shuffled.map(o => o.text),
+      answer: shuffled.findIndex(o => o.correct),
+      chapter: q.chapter,
+      explain: q.explain
+    };
+  });
+  quiz.current = 0;
+  quiz.answers = new Array(quiz.questions.length).fill(-1);
+  quiz.mode = mode;
+  quiz.timeLimit = time * 60;
+  quiz.startTime = Date.now();
+
+  document.getElementById('setupBox').style.display = 'none';
+  document.getElementById('quizBox').style.display = 'block';
+  document.getElementById('resultBox').style.display = 'none';
+  document.getElementById('totalIdx').textContent = quiz.questions.length;
+
+  if (time > 0) {
+    quiz.timer = setInterval(updateTimer, 1000);
+  } else {
+    document.getElementById('timer').textContent = '∞';
+  }
+
+  renderQuestion();
+}
+
+function updateTimer() {
+  const elapsed = Math.floor((Date.now() - quiz.startTime) / 1000);
+  const remaining = Math.max(0, quiz.timeLimit - elapsed);
+  const m = Math.floor(remaining / 60);
+  const s = remaining % 60;
+  document.getElementById('timer').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  if (remaining === 0) {
+    clearInterval(quiz.timer);
+    alert('⏰ Hết giờ!'); finishQuiz();
+  }
+}
+
+function renderQuestion() {
+  const q = quiz.questions[quiz.current];
+  document.getElementById('curIdx').textContent = quiz.current + 1;
+  document.getElementById('qNum').textContent = quiz.current + 1;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('progressFill').style.width = ((quiz.current + 1) / quiz.questions.length * 100) + '%';
+
+  const optsHtml = q.options.map((opt, i) => {
+    let cls = 'option';
+    if (quiz.answers[quiz.current] === i) cls += ' selected';
+    if (quiz.mode === 'instant' && quiz.answers[quiz.current] !== -1) {
+      if (i === q.answer) cls += ' correct';
+      else if (quiz.answers[quiz.current] === i) cls += ' incorrect';
+    }
+    return `<div class="${cls}" onclick="selectOption(${i})">
+      <div class="option-letter">${String.fromCharCode(65 + i)}</div>
+      <div class="option-text">${opt}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('qOptions').innerHTML = optsHtml;
+
+  const exp = document.getElementById('explanation');
+  if (quiz.mode === 'instant' && quiz.answers[quiz.current] !== -1) {
+    exp.style.display = 'block';
+    exp.className = 'explanation';
+    exp.innerHTML = `<strong>💡 Giải thích:</strong> ${q.explain}`;
+  } else {
+    exp.style.display = 'none';
+  }
+
+  document.getElementById('prevBtn').disabled = quiz.current === 0;
+  document.getElementById('prevBtn').style.opacity = quiz.current === 0 ? .4 : 1;
+  document.getElementById('nextBtn').textContent = quiz.current === quiz.questions.length - 1 ? '🏁 Nộp bài' : 'Tiếp theo →';
+}
+
+function selectOption(i) {
+  if (quiz.mode === 'instant' && quiz.answers[quiz.current] !== -1) return; // lock after answer
+  quiz.answers[quiz.current] = i;
+  renderQuestion();
+}
+
+function prevQuestion() {
+  if (quiz.current > 0) { quiz.current--; renderQuestion(); }
+}
+
+function nextQuestion() {
+  if (quiz.current < quiz.questions.length - 1) {
+    quiz.current++;
+    renderQuestion();
+  } else {
+    if (quiz.answers.includes(-1)) {
+      if (!confirm('Bạn chưa trả lời tất cả câu hỏi. Nộp bài?')) return;
+    }
+    finishQuiz();
+  }
+}
+
+function finishQuiz() {
+  if (quiz.timer) clearInterval(quiz.timer);
+  const correct = quiz.questions.filter((q, i) => quiz.answers[i] === q.answer).length;
+  const total = quiz.questions.length;
+  const pct = Math.round(correct / total * 100);
+  const elapsed = Math.floor((Date.now() - quiz.startTime) / 1000);
+  const m = Math.floor(elapsed / 60), s = elapsed % 60;
+
+  document.getElementById('quizBox').style.display = 'none';
+  document.getElementById('resultBox').style.display = 'block';
+
+  document.getElementById('scoreText').textContent = pct + '%';
+  document.getElementById('correctCount').textContent = correct;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('timeUsed').textContent = `${m}m ${s}s`;
+
+  document.getElementById('scoreCircle').style.background =
+    `conic-gradient(${pct >= 80 ? '#10B981' : pct >= 50 ? '#F59E0B' : '#EF4444'} ${pct * 3.6}deg, #E2E8F0 ${pct * 3.6}deg)`;
+
+  let msg;
+  if (pct >= 90) msg = '🏆 Xuất sắc! Bạn đã sẵn sàng cho kỳ thi';
+  else if (pct >= 75) msg = '✅ Khá tốt! Học thêm chút nữa là giỏi';
+  else if (pct >= 50) msg = '🙂 Tạm ổn. Cần ôn lại lý thuyết';
+  else msg = '💪 Cần cố gắng hơn. Đọc kỹ lại các chương';
+  document.getElementById('resultMsg').textContent = msg;
+
+  // Review list
+  const reviewHtml = quiz.questions.map((q, i) => {
+    const userAns = quiz.answers[i];
+    const isCorrect = userAns === q.answer;
+    return `<div class="essay-card" style="border-left: 4px solid ${isCorrect ? 'var(--success)' : 'var(--danger)'};">
+      <div class="essay-q">
+        <div class="essay-num" style="background:${isCorrect ? 'var(--success)' : 'var(--danger)'};">${i+1}</div>
+        <div>
+          <div class="essay-text">Câu ${i+1}: ${q.q}</div>
+          <div style="margin-top:.5rem;font-size:.88rem;">
+            ${q.options.map((opt, j) => {
+              let bg = '';
+              if (j === q.answer) bg = 'background:#ECFDF5;color:#047857;font-weight:600;';
+              else if (j === userAns && !isCorrect) bg = 'background:#FEF2F2;color:#B91C1C;';
+              return `<div style="padding:.3rem .5rem;margin:.2rem 0;border-radius:4px;${bg}">
+                <strong>${String.fromCharCode(65+j)}.</strong> ${opt}
+                ${j === q.answer ? ' ✓' : ''}
+                ${j === userAns && !isCorrect ? ' (bạn chọn)' : ''}
+              </div>`;
+            }).join('')}
+          </div>
+          <div style="margin-top:.5rem;font-size:.85rem;color:var(--text-muted);background:var(--surface-2);padding:.5rem .75rem;border-radius:6px;">
+            <strong>💡 Giải thích:</strong> ${q.explain}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('reviewList').innerHTML = reviewHtml;
+}
+
+function restart() {
+  document.getElementById('setupBox').style.display = 'block';
+  document.getElementById('quizBox').style.display = 'none';
+  document.getElementById('resultBox').style.display = 'none';
+}
+function goHome() {
+  window.location.href = '../index.html';
+}
+</script>
+</body>
+</html>

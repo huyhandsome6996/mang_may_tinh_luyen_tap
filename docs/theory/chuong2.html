@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chương 2 · Môi trường truyền & Thiết bị mạng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="theory-layout">
+  <aside class="theory-sidebar">
+    <div class="toc-title">Mục lục</div>
+    <nav class="toc">
+      <a href="#thanh-phan">Thành phần mạng</a>
+      <a href="#cap-dong-truc">Cáp đồng trục</a>
+      <a href="#cap-xoan-doi">Cáp xoắn đôi UTP/STP</a>
+      <a href="#cap-quang">Cáp quang</a>
+      <a href="#rj45">Chuẩn RJ-45</a>
+      <a href="#cap-thang-cheo">Cáp thẳng & chéo</a>
+      <a href="#nic">NIC & MAC</a>
+      <a href="#repeater-hub">Repeater & Hub</a>
+      <a href="#bridge-switch">Bridge & Switch</a>
+      <a href="#router-gateway">Router & Gateway</a>
+      <a href="#tom-tat">Tóm tắt</a>
+    </nav>
+    <hr style="margin:1rem 0;border:0;border-top:1px solid var(--border);">
+    <div class="toc-title">Chương khác</div>
+    <nav class="toc">
+      <a href="chuong1.html">→ Chương 1: Khái niệm cơ bản</a>
+      <a href="chuong3.html">→ Chương 3: OSI & TCP/IP</a>
+      <a href="chuong4.html">→ Chương 4: IPv4 & Subnetting</a>
+      <a href="chuong5.html">→ Chương 5: Quản trị Windows</a>
+      <a href="chuong6.html">→ Chương 6: Cloud Computing</a>
+    </nav>
+  </aside>
+
+  <article class="theory-content">
+    <span class="section-eyebrow">Chương 2</span>
+    <h1>Môi trường truyền & Thiết bị mạng</h1>
+    <p class="lead">
+      Một mạng máy tính đơn giản gồm: ít nhất 2 trạm (PC), 1 NIC trên mỗi trạm,
+      1 môi trường truyền (cáp/sóng), 1 hệ điều hành mạng (NOS), và thường dùng Hub/Switch
+      làm thiết bị trung tâm. Chương này đi sâu vào từng thành phần.
+    </p>
+
+    <h2 id="thanh-phan">2.1. Các thành phần tạo nên mạng</h2>
+    <p>Một hệ thống mạng đầy đủ gồm 3 nhóm thành phần:</p>
+    <ul>
+      <li><strong>Phần cứng (Hardware):</strong> Môi trường truyền (cáp, sóng), thiết bị mạng (Hub, Switch, Router...), Card mạng (NIC).</li>
+      <li><strong>Phần mềm (Software):</strong> Hệ điều hành mạng (NOS) — Windows Server, Linux, Novell Netware; các ứng dụng mạng.</li>
+      <li><strong>Giao thức (Protocol):</strong> TCP/IP, IPX/SPX, NetBEUI — quy tắc truyền nhận dữ liệu.</li>
+    </ul>
+
+    <h2 id="cap-dong-truc">2.2. Cáp đồng trục (Coaxial)</h2>
+    <p>
+      Có lõi đồng đặc ở giữa, bọc bởi lớp cách điện và lưới kim loại chống nhiễu.
+      <strong>2 loại chính:</strong>
+    </p>
+    <ul>
+      <li><strong>Thin Ethernet (RG-58, 50Ω):</strong> Đường kính 0.25 inch, tầm hoạt động 185m.</li>
+      <strong>Thick Ethernet (RG-58 dày, RG-8):</strong> Đường kính 0.5 inch, tầm 500m.</li>
+      <li>Loại <strong>RG-59 (75Ω)</strong>: dùng cho truyền hình cáp.</li>
+      <li>Loại <strong>RG-62 (93Ω)</strong>: dùng cho mạng ARCnet.</li>
+    </ul>
+    <p>Ưu điểm: ít suy hao, ít ảnh hưởng môi trường, dùng được cho mạng kích thước vài ngàn mét. <em>Hiện nay ít dùng trong LAN.</em></p>
+
+    <h2 id="cap-xoan-doi">2.3. Cáp xoắn đôi (Twisted Pair) — UTP & STP</h2>
+    <p>
+      Gồm 4 cặp dây đồng xoắn vào nhau nhằm <strong>giảm nhiễu điện từ</strong> (crosstalk)
+      gây ra bởi môi trường và giữa chúng với nhau.
+    </p>
+    <ul>
+      <li><strong>STP (Shielded Twisted Pair):</strong> Có lớp bọc kim loại chống nhiễu. Dùng trong môi trường công nghiệp nhiều nhiễu. Đắt hơn.</li>
+      <li><strong>UTP (Unshielded Twisted Pair):</strong> Không có lớp bọc bạc. Phổ biến nhất trong LAN văn phòng/nhà. Rẻ, dễ lắp đặt.</li>
+    </ul>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Loại cáp UTP</th><th>Tốc độ tối đa</th><th>Băng thông</th><th>Ứng dụng</th></tr></thead>
+        <tbody>
+          <tr><td>Cat 5</td><td>100 Mbps</td><td>100 MHz</td><td>LAN cũ</td></tr>
+          <tr><td><strong>Cat 5e</strong></td><td><strong>1 Gbps</strong></td><td>100 MHz</td><td>Phổ biến nhất</td></tr>
+          <tr><td>Cat 6</td><td>10 Gbps (≤55m)</td><td>250 MHz</td><td>Server, datacenter</td></tr>
+          <tr><td>Cat 6a</td><td>10 Gbps (100m)</td><td>500 MHz</td><td>Datacenter</td></tr>
+          <tr><td>Cat 7</td><td>10 Gbps+</td><td>600 MHz</td><td>Đặc biệt</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-everyday">
+      <div class="callout-title">🏠 Ví dụ đời thường</div>
+      <p>
+        Dây mạng cắm từ PC vào Router wifi nhà bạn <strong>thường là Cat 5e UTP</strong>,
+        dài không quá 100m. Nếu dây dài hơn → tín hiệu suy hao → cần Repeater để khuếch đại.
+      </p>
+    </div>
+
+    <h2 id="cap-quang">2.4. Cáp quang (Fiber Optic)</h2>
+    <p>
+      Sử dụng <strong>ánh sáng</strong> để truyền tín hiệu trong lõi thủy tinh. Cấu trúc 3 lớp:
+    </p>
+    <ul>
+      <li><strong>Core (lõi):</strong> Thủy tinh trong suốt truyền ánh sáng.</li>
+      <li><strong>Cladding (lớp phản xạ):</strong> Thủy tinh phản xạ toàn phần, giữ ánh sáng trong lõi.</li>
+      <li><strong>Coating (vỏ bọc):</strong> Lớp nhựa bảo vệ.</li>
+    </ul>
+    <p><strong>Ưu điểm vượt trội:</strong> Băng thông cực lớn (tới Gbps/Tbps), tốc độ ánh sáng, không bị nhiễu điện từ, khoảng cách truyền xa (hàng chục km), bảo mật cao (không bắt sóng được).</p>
+    <p><strong>Nhược điểm:</strong> Đắt, khó đấu nối (cần thiết bị chuyên dụng), dễ gãy.</p>
+    <p>Thường dùng cho <strong>backbone</strong> (đường trục chính) trong mạng lớn, kết nối giữa các tòa nhà, giữa các thành phố, cáp quang biển.</p>
+
+    <h2 id="rj45">2.5. Chuẩn bấm cáp RJ-45</h2>
+    <p>
+      Đầu nối RJ-45 (Registered Jack 45) có 8 chân kim loại, dùng cho cáp xoắn đôi.
+      Có 2 chuẩn bấm phổ biến:
+    </p>
+
+    <div class="grid-2">
+      <div class="callout callout-info">
+        <div class="callout-title">Chuẩn T568B (phổ biến nhất)</div>
+        <p>Thứ tự màu dây (chân 1→8):</p>
+        <ol>
+          <li>Trắng Cam</li>
+          <li>Cam</li>
+          <li>Trắng Xanh lá</li>
+          <li>Xanh dương</li>
+          <li>Trắng Xanh dương</li>
+          <li>Xanh lá</li>
+          <li>Trắng Nâu</li>
+          <li>Nâu</li>
+        </ol>
+      </div>
+      <div class="callout callout-info">
+        <div class="callout-title">Chuẩn T568A</div>
+        <p>Thứ tự màu dây (chân 1→8):</p>
+        <ol>
+          <li>Trắng Xanh lá</li>
+          <li>Xanh lá</li>
+          <li>Trắng Cam</li>
+          <li>Xanh dương</li>
+          <li>Trắng Xanh dương</li>
+          <li>Cam</li>
+          <li>Trắng Nâu</li>
+          <li>Nâu</li>
+        </ol>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:.9rem;color:var(--text-muted);">
+      💡 Khác nhau duy nhất giữa T568A và T568B: <strong>đổi chỗ cặp Cam với cặp Xanh lá</strong>.
+    </p>
+
+    <h2 id="cap-thang-cheo">2.6. Cáp thẳng (Straight-through) & Cáp chéo (Crossover)</h2>
+    <div class="table-wrap">
+      <table class="table-accent">
+        <thead><tr><th>Loại cáp</th><th>Cách bấm 2 đầu</th><th>Dùng để nối</th><th>Ví dụ</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Cáp thẳng</strong></td><td>2 đầu cùng chuẩn (B-B hoặc A-A)</td><td>2 thiết bị KHÁC loại</td><td>PC ↔ Switch, Switch ↔ Router</td></tr>
+          <tr><td><strong>Cáp chéo</strong></td><td>1 đầu A, 1 đầu B</td><td>2 thiết bị CÙNG loại</td><td>PC ↔ PC, Switch ↔ Switch, Router ↔ Router</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-tip">
+      <div class="callout-title">💡 Mẹo nhớ</div>
+      <p>
+        Quy tắc: <strong>"Khác loại → thẳng, Cùng loại → chéo"</strong>.<br>
+        PC và Router được xếp cùng nhóm (như nhau), Switch/Hub xếp nhóm khác.
+        Vậy PC-Router cần cáp chéo (cùng loại), PC-Switch cần cáp thẳng (khác loại).
+      </p>
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">⚠️ Lưu ý hiện đại</div>
+      <p>
+        Các Switch/Router/NIC đời mới có tính năng <strong>Auto-MDIX</strong> tự phát hiện loại cáp
+        và đảo tín hiệu — nên dùng cáp thẳng cho mọi trường hợp cũng OK. Nhưng khi đi thi, vẫn áp dụng quy tắc cũ.
+      </p>
+    </div>
+
+    <h2 id="nic">2.7. Card mạng (NIC) & Địa chỉ MAC</h2>
+    <p>
+      <strong>NIC (Network Interface Card)</strong> là card giao tiếp mạng, kết nối với PC qua khe cắm
+      (ISA, PCI, PCIe) hoặc cổng USB. Vai trò: <em>biến dữ liệu số thành tín hiệu điện/quang</em> để đưa lên cáp.
+    </p>
+    <ul>
+      <li>Tốc độ truyền: 10 / 100 / 1000 / 10000 Mbps.</li>
+      <li>Chuẩn kỹ thuật: Ethernet, Token Ring, Wi-Fi.</li>
+      <li>Mỗi NIC có 1 <strong>địa chỉ MAC duy nhất toàn cầu</strong>, do nhà sản xuất nạp sẵn.</li>
+    </ul>
+    <p>
+      <strong>Địa chỉ MAC (Media Access Control):</strong> dài 48 bit (6 octet), biểu diễn dạng hex
+      (ví dụ: <code>E7:96:C9:F4:00:1A</code>). 24 bit đầu = OUI (mã nhà sản xuất), 24 bit sau = serial.
+    </p>
+
+    <div class="callout callout-everyday">
+      <div class="callout-title">🏠 Ví dụ đời thường</div>
+      <p>
+        MAC giống <strong>số CMND của NIC</strong>: gắn cố định, duy nhất, không thay đổi.
+        IP giống <strong>địa chỉ nhà</strong>: có thể thay đổi khi bạn "chuyển nhà" sang mạng khác.
+        Điện thoại của bạn có 1 MAC cho wifi, 1 MAC cho Bluetooth, 1 MAC cho cellular.
+      </p>
+    </div>
+
+    <h2 id="repeater-hub">2.8. Repeater & Hub</h2>
+    <h3>2.8.1. Repeater (Bộ tiếp sóng)</h3>
+    <p>
+      Thuộc <strong>tầng 1 (Physical Layer)</strong> của OSI.
+      Vai trò: <em>khuếch đại tín hiệu vật lý ở đầu vào và phát lại ở đầu ra</em> để tín hiệu đi xa hơn.
+      Vì cáp UTP giới hạn 100m, khi cần kết nối xa hơn phải dùng Repeater.
+    </p>
+
+    <h3>2.8.2. Hub (Bộ集 trung)</h3>
+    <p>
+      Cũng thuộc <strong>tầng 1 (Physical Layer)</strong>. Hub là thiết bị trung tâm cho topology Star.
+      Hoạt động theo cơ chế: <strong>nhận tín hiệu ở 1 cổng → phát (broadcast) ra TẤT CẢ cổng còn lại</strong>.
+    </p>
+    <p><strong>3 loại Hub:</strong></p>
+    <ul>
+      <li><strong>Hub thụ động (Passive):</strong> Chỉ là bộ nối dây, phát tán tín hiệu, không cần nguồn.</li>
+      <li><strong>Hub chủ động (Active):</strong> Có khả năng tái tạo và truyền lại tín hiệu, kiểm soát lưu lượng, sửa lỗi.</li>
+      <li><strong>Hub lai (Hybrid):</strong> Chấp nhận nhiều loại cáp khác nhau, có thể mở rộng bằng cách nối thêm Hub khác.</li>
+    </ul>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">⚠️ Nhược điểm chí mạng của Hub</div>
+      <p>
+        Vì broadcast ra mọi cổng nên tạo ra <strong>miền đụng độ (Collision Domain)</strong> rất lớn.
+        Khi 2 máy cùng gửi → đụng độ → tất cả phải chờ → mạng chậm. <strong>Hiện nay gần như không còn dùng Hub.</strong>
+      </p>
+    </div>
+
+    <h2 id="bridge-switch">2.9. Bridge & Switch</h2>
+    <h3>2.9.1. Bridge (Cầu nối)</h3>
+    <p>
+      Thuộc <strong>tầng 2 (Data Link Layer)</strong>. Dùng để ghép nối 2 mạng (segment) thành 1 mạng lớn.
+      Bridge quan sát gói tin (frame) trên mọi mạng, khi thấy frame từ máy mạng này gửi sang máy mạng khác
+      thì sao chép và gửi qua.
+    </p>
+    <p><strong>Ưu điểm:</strong> Hoạt động trong suốt — các máy không biết có Bridge can thiệp.</p>
+    <p><strong>Nhược điểm:</strong> Chỉ kết nối mạng cùng loại; khó dùng cho mạng tốc độ cao không gần nhau vật lý.</p>
+
+    <h3>2.9.2. Switch (Bộ chuyển mạch)</h3>
+    <p>
+      Cũng thuộc <strong>tầng 2 (Data Link Layer)</strong>. Switch giống như "Bridge có nhiều cổng".
+      Vài đặc điểm quan trọng:
+    </p>
+    <ul>
+      <li>Nhận frame → đọc <strong>địa chỉ MAC đích</strong> → tra trong <strong>Bảng MAC (MAC Table)</strong> → gửi chỉ ra cổng đích (Unicast).</li>
+      <li>"Học" MAC của các máy qua frame nhận được, tự cập nhật MAC Table.</li>
+      <li>Băng thông cao hơn Hub nhiều — vì mỗi cổng có băng thông riêng.</li>
+      <li>Chia nhỏ <strong>miền đụng độ (Collision Domain)</strong> — mỗi cổng là 1 collision domain riêng.</li>
+      <li>Hỗ trợ tạo <strong>VLAN</strong> (mạng LAN ảo).</li>
+    </ul>
+
+    <div class="callout callout-everyday">
+      <div class="callout-title">🏠 Ví dụ đời thường</div>
+      <p>
+        <strong>Hub</strong> như 1 người đưa thư mù: nhận thư thì đọc to cho cả tòa nhà nghe — ai thấy tên mình thì lấy.
+        Ồn ào, dễ nhầm. <strong>Switch</strong> như người đưa thư có sổ địa chỉ: nhận thư → tra tên → gửi đúng phòng.
+        Yên tĩnh, nhanh, chính xác.
+      </p>
+    </div>
+
+    <h2 id="router-gateway">2.10. Router & Gateway</h2>
+    <h3>2.10.1. Router (Bộ định tuyến)</h3>
+    <p>
+      Thuộc <strong>tầng 3 (Network Layer)</strong>. Vai trò:
+    </p>
+    <ul>
+      <li>Kết nối các mạng không đồng nhất (LAN-LAN, LAN-WAN, LAN-Internet).</li>
+      <li>Dựa vào <strong>địa chỉ IP</strong> và <strong>Bảng định tuyến (Routing Table)</strong> để chọn đường đi tốt nhất cho gói tin.</li>
+      <li>Chặn gói tin Broadcast — không cho lan truyền sang mạng khác.</li>
+    </ul>
+    <p><strong>Ưu điểm:</strong> Kết nối được nhiều loại mạng khác nhau (Ethernet, dial-up, fiber...).</p>
+    <p><strong>Nhược điểm:</strong> Chậm hơn Bridge vì phải tính toán định tuyến nhiều hơn.</p>
+
+    <div class="callout callout-info">
+      <div class="callout-title">ℹ️ Phân biệt 2 loại Router</div>
+      <p>
+        <strong>Router Soft:</strong> Phần mềm chạy trên PC (ví dụ: pfSense, Mikrotik RouterOS).<br>
+        <strong>Router Hard:</strong> Thiết bị phần cứng chuyên dụng (Cisco, Juniper, TP-Link...).
+      </p>
+    </div>
+
+    <h3>2.10.2. Gateway (Cổng giao thức)</h3>
+    <p>
+      Gateway cho phép <strong>nối ghép 2 giao thức khác nhau</strong>. Ví dụ: mạng bạn dùng IP,
+      mạng khác dùng IPX/Novell/DECnet/SNA → Gateway chuyển đổi giữa chúng. Gateway không chỉ phân biệt
+      giao thức mà còn có thể phân biệt ứng dụng (chuyển email giữa mạng khác nhau, chuyển phiên telnet...).
+    </p>
+
+    <h3>2.10.3. Thiết bị khác</h3>
+    <ul>
+      <li><strong>Modem ADSL:</strong> Chuyển đổi tín hiệu số ↔ analog để truyền qua đường điện thoại.</li>
+      <li><strong>Patch Panel:</strong> Bảng đấu dây trung gian, gom nhiều cổng mạng về 1 chỗ để quản lý dễ.</li>
+    </ul>
+
+    <h2 id="tom-tat">2.11. Bảng tổng hợp thiết bị theo tầng OSI</h2>
+    <div class="table-wrap">
+      <table class="table-accent">
+        <thead><tr><th>Thiết bị</th><th>Tầng OSI</th><th>Đơn vị dữ liệu</th><th>Địa chỉ xử lý</th><th>Chức năng chính</th></tr></thead>
+        <tbody>
+          <tr><td>Repeater</td><td>1 - Physical</td><td>Bit</td><td>Không</td><td>Khuếch đại tín hiệu</td></tr>
+          <tr><td>Hub</td><td>1 - Physical</td><td>Bit</td><td>Không</td><td>Nối Star, broadcast</td></tr>
+          <tr><td>Bridge</td><td>2 - Data Link</td><td>Frame</td><td>MAC</td><td>Nối 2 segment, lọc frame</td></tr>
+          <tr><td>Switch</td><td>2 - Data Link</td><td>Frame</td><td>MAC</td><td>Chuyển mạch, lập MAC Table</td></tr>
+          <tr><td>Router</td><td>3 - Network</td><td>Packet</td><td>IP</td><td>Định tuyến, kết nối mạng</td></tr>
+          <tr><td>Gateway</td><td>7 - Application</td><td>Message</td><td>Cả IP+App</td><td>Chuyển đổi giao thức</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-tip">
+      <div class="callout-title">💡 Hay bị hỏi</div>
+      <ul>
+        <li>"Thiết bị nào hoạt động bằng cách broadcast ra mọi cổng?" → <strong>Hub</strong></li>
+        <li>"Switch thông minh hơn Hub ở điểm nào?" → <strong>Đọc MAC, gửi đúng cổng đích</strong></li>
+        <li>"Thiết bị nào ngăn Broadcast lan sang mạng khác?" → <strong>Router</strong></li>
+        <li>"Thiết bị nào chuyển đổi giữa 2 giao thức khác nhau?" → <strong>Gateway</strong></li>
+        <li>"Miền đụng độ lớn nhất khi dùng thiết bị nào?" → <strong>Hub</strong></li>
+      </ul>
+    </div>
+
+    <h2 id="tom-tat-2" style="margin-top:2rem;">2.12. Tóm tắt chương</h2>
+    <ul>
+      <li><strong>Môi trường truyền:</strong> Cáp đồng trục (cũ), UTP/STP (phổ biến), cáp quang (tốc độ cao/xa), sóng vô tuyến (wifi).</li>
+      <li><strong>Chuẩn RJ-45:</strong> T568A & T568B — khác nhau ở chỗ đổi cặp Cam với Xanh lá.</li>
+      <li><strong>Cáp thẳng</strong> (B-B): khác loại (PC-Switch). <strong>Cáp chéo</strong> (A-B): cùng loại (PC-PC, Switch-Switch).</li>
+      <li><strong>NIC + MAC 48 bit</strong>: địa chỉ vật lý duy nhất, không thay đổi.</li>
+      <li><strong>Hub (tầng 1):</strong> broadcast, miền đụng độ lớn — không còn dùng.</li>
+      <li><strong>Switch (tầng 2):</strong> đọc MAC, gửi đúng cổng, phổ biến trong LAN.</li>
+      <li><strong>Router (tầng 3):</strong> đọc IP, định tuyến, chặn broadcast.</li>
+      <li><strong>Gateway (tầng 7):</strong> chuyển đổi giao thức giữa 2 mạng khác biệt.</li>
+    </ul>
+
+    <div class="callout callout-info" style="margin-top:2rem;">
+      <div class="callout-title">➡️ Chương tiếp theo</div>
+      <p>
+        Sang <a href="chuong3.html" style="color:var(--accent);font-weight:600;">Chương 3: Mô hình OSI & TCP/IP</a>,
+        bạn sẽ hiểu được dữ liệu đi từ ứng dụng xuống cáp vật lý thông qua các tầng như thế nào,
+        và tại sao cần phân tầng.
+      </p>
+    </div>
+  </article>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="../js/main.js"></script>
+</body>
+</html>

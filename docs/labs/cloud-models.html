@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud Service Models · IaaS / PaaS / SaaS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+.cloud-tab-row {
+  display: flex; gap: .5rem; margin-bottom: 1rem; flex-wrap: wrap;
+}
+.cloud-tab {
+  flex: 1; min-width: 140px;
+  padding: 1rem; border-radius: 12px; cursor: pointer;
+  border: 2px solid var(--border); background: var(--surface);
+  transition: all .2s; text-align: center;
+}
+.cloud-tab.active { color: white; border-color: transparent; }
+.cloud-tab[data-model="iaas"].active { background: linear-gradient(135deg, #3B82F6, #1E40AF); }
+.cloud-tab[data-model="paas"].active { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
+.cloud-tab[data-model="saas"].active { background: linear-gradient(135deg, #EC4899, #BE185D); }
+.cloud-tab-name { font-weight: 800; font-size: 1.2rem; }
+.cloud-tab-full { font-size: .82rem; color: var(--text-muted); }
+.cloud-tab.active .cloud-tab-full { color: rgba(255,255,255,.85); }
+
+.responsibility-table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  border-radius: 12px; overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.responsibility-table th, .responsibility-table td {
+  padding: .85rem 1rem; text-align: left; border-bottom: 1px solid var(--border);
+}
+.responsibility-table th { background: var(--surface-2); font-weight: 700; }
+.responsibility-table .layer {
+  font-weight: 600; padding-left: 1.5rem;
+}
+.responsibility-table .provider {
+  background: #DBEAFE; color: #1E40AF;
+}
+.responsibility-table .customer {
+  background: #FEF3C7; color: #92400E;
+}
+.responsibility-table tr:hover td { opacity: .9; }
+.resp-icon { font-size: 1.1rem; }
+.cloud-example {
+  background: linear-gradient(135deg, rgba(99,102,241,.08), rgba(6,182,212,.08));
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.5rem; margin-top: 1rem;
+}
+</style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="container" style="padding:2rem 1.25rem;">
+  <span class="section-eyebrow">Mô phỏng 7 · Interactive</span>
+  <h1 style="font-size:2.2rem;font-weight:800;background:var(--gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem;">Cloud Service Models · IaaS / PaaS / SaaS</h1>
+  <p style="color:var(--text-muted);font-size:1.05rem;margin-bottom:1.5rem;max-width:780px;">
+    Click vào từng mô hình để xem phân chia trách nhiệm giữa <strong>nhà cung cấp</strong> và <strong>khách hàng</strong>.
+    Càng lên cao (SaaS), nhà cung cấp lo càng nhiều — khách hàng càng nhàn.
+  </p>
+
+  <div class="cloud-tab-row">
+    <div class="cloud-tab active" data-model="iaas" onclick="selectModel('iaas')">
+      <div class="cloud-tab-name">IaaS</div>
+      <div class="cloud-tab-full">Infrastructure as a Service</div>
+    </div>
+    <div class="cloud-tab" data-model="paas" onclick="selectModel('paas')">
+      <div class="cloud-tab-name">PaaS</div>
+      <div class="cloud-tab-full">Platform as a Service</div>
+    </div>
+    <div class="cloud-tab" data-model="saas" onclick="selectModel('saas')">
+      <div class="cloud-tab-name">SaaS</div>
+      <div class="cloud-tab-full">Software as a Service</div>
+    </div>
+  </div>
+
+  <div id="modelDetail">
+    <!-- Dynamic content -->
+  </div>
+
+  <div class="cloud-example" id="cloudExample"></div>
+
+  <div class="callout callout-info" style="margin-top:2rem;">
+    <div class="callout-title">💡 Quy tắc nhớ</div>
+    <p>
+      Càng lên cao (SaaS), nhà cung cấp chịu trách nhiệm càng nhiều:
+    </p>
+    <ul style="margin:0;">
+      <li><strong>IaaS:</strong> Khách hàng cài HĐH, Database, Code — lo nhiều nhất</li>
+      <li><strong>PaaS:</strong> Khách hàng chỉ lo Code — nhà cung cấp lo HĐH, DB, Runtime</li>
+      <li><strong>SaaS:</strong> Khách hàng chỉ việc dùng — nhà cung cấp lo toàn bộ</li>
+    </ul>
+  </div>
+
+  <div class="callout callout-everyday" style="margin-top:1rem;">
+    <div class="callout-title">🏠 Ví dụ đời thường</div>
+    <p>
+      <strong>IaaS</strong> = thuê đất trống, tự xây nhà, tự nội thất.<br>
+      <strong>PaaS</strong> = thuê căn hộ trống, chỉ việc mang đồ dùng vào.<br>
+      <strong>SaaS</strong> = thuê khách sạn, vào ở ngay, xách vali đến.
+    </p>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="../js/main.js"></script>
+<script>
+const models = {
+  iaas: {
+    name: 'IaaS — Infrastructure as a Service',
+    desc: 'Nhà cung cấp chỉ cho thuê hạ tầng phần cứng: máy chủ ảo, lưu trữ, mạng. Khách hàng toàn quyền cài đặt HĐH, phần mềm, ứng dụng.',
+    layers: [
+      { name: 'Applications', provider: false },
+      { name: 'Data', provider: false },
+      { name: 'Runtime', provider: false },
+      { name: 'Middleware', provider: false },
+      { name: 'OS (Hệ điều hành)', provider: false },
+      { name: 'Virtualization', provider: true },
+      { name: 'Servers', provider: true },
+      { name: 'Storage', provider: true },
+      { name: 'Networking', provider: true }
+    ],
+    examples: ['Amazon EC2', 'Google Compute Engine (GCE)', 'Microsoft Azure VM', 'DigitalOcean Droplet', 'Vultr Cloud Compute'],
+    exampleTitle: 'Ví dụ IaaS',
+    pros: 'Linh hoạt tối đa, tùy biến toàn bộ stack',
+    cons: 'Đòi hỏi năng lực quản trị kỹ thuật cao'
+  },
+  paas: {
+    name: 'PaaS — Platform as a Service',
+    desc: 'Nhà cung cấp lo cả HĐH và môi trường chạy ứng dụng (Database, Web server, Runtime). Lập trình viên chỉ cần đẩy code lên.',
+    layers: [
+      { name: 'Applications', provider: false },
+      { name: 'Data', provider: false },
+      { name: 'Runtime', provider: true },
+      { name: 'Middleware', provider: true },
+      { name: 'OS (Hệ điều hành)', provider: true },
+      { name: 'Virtualization', provider: true },
+      { name: 'Servers', provider: true },
+      { name: 'Storage', provider: true },
+      { name: 'Networking', provider: true }
+    ],
+    examples: ['Google App Engine', 'AWS Elastic Beanstalk', 'Heroku', 'Microsoft Azure App Service', 'Vercel'],
+    exampleTitle: 'Ví dụ PaaS',
+    pros: 'Rút ngắn thời gian phát triển, giảm vận hành, phù hợp Agile/DevOps',
+    cons: 'Tùy biến hạn chế, phụ thuộc framework nền tảng'
+  },
+  saas: {
+    name: 'SaaS — Software as a Service',
+    desc: 'Nhà cung cấp lo toàn bộ stack từ hạ tầng đến ứng dụng. Khách hàng chỉ việc mua tài khoản và dùng qua Web.',
+    layers: [
+      { name: 'Applications', provider: true },
+      { name: 'Data', provider: true },
+      { name: 'Runtime', provider: true },
+      { name: 'Middleware', provider: true },
+      { name: 'OS (Hệ điều hành)', provider: true },
+      { name: 'Virtualization', provider: true },
+      { name: 'Servers', provider: true },
+      { name: 'Storage', provider: true },
+      { name: 'Networking', provider: true }
+    ],
+    examples: ['Gmail, Google Drive', 'Microsoft 365 (Word, Excel online)', 'Salesforce CRM', 'Zoom', 'Netflix', 'Canva'],
+    exampleTitle: 'Ví dụ SaaS',
+    pros: 'Tiện lợi, không cần cài đặt, dùng mọi nơi, chi phí thấp',
+    cons: 'Ít tùy biến, phụ thuộc nhà cung cấp (vendor lock-in)'
+  }
+};
+
+function selectModel(key) {
+  document.querySelectorAll('.cloud-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.cloud-tab[data-model="${key}"]`).classList.add('active');
+  const m = models[key];
+
+  let layersHtml = m.layers.map(l => `
+    <tr>
+      <td class="layer">${l.name}</td>
+      <td class="${l.provider ? 'provider' : 'customer'}">
+        ${l.provider ? '🔵 Nhà cung cấp' : '🟡 Khách hàng'}
+      </td>
+    </tr>
+  `).join('');
+
+  document.getElementById('modelDetail').innerHTML = `
+    <h3 style="margin-bottom:.5rem;">${m.name}</h3>
+    <p style="color:var(--text-muted);margin-bottom:1rem;">${m.desc}</p>
+    <table class="responsibility-table">
+      <thead>
+        <tr>
+          <th>Tầng</th>
+          <th>Ai chịu trách nhiệm?</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${layersHtml}
+      </tbody>
+    </table>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;">
+      <div class="callout callout-tip" style="margin:0;">
+        <div class="callout-title">Ưu điểm</div>
+        <p style="margin:0;">${m.pros}</p>
+      </div>
+      <div class="callout callout-warn" style="margin:0;">
+        <div class="callout-title">Nhược điểm</div>
+        <p style="margin:0;">${m.cons}</p>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('cloudExample').innerHTML = `
+    <h4 style="margin-bottom:.75rem;">${m.exampleTitle}</h4>
+    <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
+      ${m.examples.map(e => `<span style="padding:.4rem .8rem;background:white;border:1px solid var(--border);border-radius:8px;font-size:.9rem;font-weight:600;">${e}</span>`).join('')}
+    </div>
+  `;
+}
+
+selectModel('iaas');
+</script>
+</body>
+</html>

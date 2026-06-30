@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARP Resolution · Mô phỏng phân giải địa chỉ MAC từ IP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+.arp-stage {
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  border-radius: 16px; padding: 2rem; margin: 1.5rem 0;
+  min-height: 480px; color: white;
+}
+.arp-net {
+  display: grid; grid-template-columns: 1fr 200px 1fr; gap: 1rem; align-items: center;
+  margin-bottom: 1rem;
+}
+.arp-pc {
+  background: rgba(255,255,255,.08); border: 2px solid rgba(255,255,255,.2);
+  border-radius: 12px; padding: 1.25rem; text-align: center;
+  transition: all .3s;
+}
+.arp-pc.active { border-color: var(--accent); box-shadow: 0 0 24px rgba(99,102,241,.5); transform: scale(1.05); }
+.arp-pc.target { border-color: var(--success); box-shadow: 0 0 24px rgba(16,185,129,.5); }
+.arp-pc-icon { font-size: 2.4rem; }
+.arp-pc-name { font-weight: 700; font-size: 1.1rem; margin: .25rem 0; }
+.arp-pc-info { font-family: 'JetBrains Mono', monospace; font-size: .82rem; color: #67E8F9; }
+.arp-switch {
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.15);
+  border-radius: 10px; padding: .75rem; text-align: center;
+}
+.arp-step {
+  background: rgba(255,255,255,.04); border-left: 3px solid var(--accent);
+  padding: .75rem 1rem; margin: .5rem 0; border-radius: 6px;
+  opacity: 0; transform: translateX(-20px); transition: all .4s;
+}
+.arp-step.show { opacity: 1; transform: translateX(0); }
+.arp-step-title { font-weight: 700; font-size: .92rem; color: #C7D2FE; }
+.arp-step-detail { font-size: .82rem; color: #CBD5E1; }
+.arp-pkt {
+  font-family: 'JetBrains Mono', monospace; font-size: .78rem;
+  padding: .25rem .5rem; border-radius: 4px; background: rgba(0,0,0,.3);
+  display: inline-block; margin-top: .25rem;
+}
+.arp-cache {
+  background: rgba(0,0,0,.3); border-radius: 8px; padding: .75rem 1rem;
+  margin-top: 1rem; font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+}
+.cache-row { display: grid; grid-template-columns: 1fr 1fr; padding: .2rem 0; color: #CBD5E1; }
+.cache-row.head { color: #94A3B8; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,.1); padding-bottom: .4rem; margin-bottom: .25rem; }
+</style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="container" style="padding:2rem 1.25rem;">
+  <span class="section-eyebrow">Mô phỏng 6 · Animation</span>
+  <h1 style="font-size:2.2rem;font-weight:800;background:var(--gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem;">ARP Resolution · Phân giải MAC từ IP</h1>
+  <p style="color:var(--text-muted);font-size:1.05rem;margin-bottom:1rem;max-width:780px;">
+    PC-A chỉ biết IP của PC-C (192.168.1.5), nhưng để đóng Frame cần phải biết <strong>địa chỉ MAC</strong>.
+    PC-A dùng <strong>ARP (Address Resolution Protocol)</strong> để hỏi cả mạng: "Ai có IP 192.168.1.5?"
+  </p>
+
+  <div class="arp-stage">
+    <div class="arp-net">
+      <div class="arp-pc" id="pcA">
+        <div class="arp-pc-icon">💻</div>
+        <div class="arp-pc-name">PC-A</div>
+        <div class="arp-pc-info">IP: 192.168.1.10<br>MAC: AA:11:22:33:44:55</div>
+      </div>
+      <div class="arp-switch">
+        <div style="font-size:1.8rem;">🔀</div>
+        <div style="font-size:.85rem;color:#C7D2FE;">Switch</div>
+        <div style="font-size:.72rem;color:#94A3B8;">(các PC khác cũng nối vào)</div>
+      </div>
+      <div class="arp-pc" id="pcC">
+        <div class="arp-pc-icon">💻</div>
+        <div class="arp-pc-name">PC-C</div>
+        <div class="arp-pc-info">IP: 192.168.1.5<br>MAC: CC:33:44:55:66:77</div>
+      </div>
+    </div>
+
+    <div id="arpSteps">
+      <div class="arp-step" id="as1">
+        <div class="arp-step-title">① PC-A cần gửi data cho PC-C</div>
+        <div class="arp-step-detail">PC-A chỉ biết IP đích 192.168.1.5. Để đóng Frame, cần MAC đích → tra ARP Cache.</div>
+      </div>
+      <div class="arp-step" id="as2">
+        <div class="arp-step-title">② Tra ARP Cache — không có!</div>
+        <div class="arp-step-detail">PC-A kiểm tra cache, không thấy entry cho 192.168.1.5 → phải gửi ARP Request.</div>
+        <div class="arp-pkt" style="color:#FCA5A5;">ARP Request: Who has 192.168.1.5? Tell 192.168.1.10 (MAC AA:11...)</div>
+      </div>
+      <div class="arp-step" id="as3">
+        <div class="arp-step-title">③ ARP Request BROADCAST</div>
+        <div class="arp-step-detail">PC-A gửi <strong>broadcast</strong> tới FF:FF:FF:FF:FF:FF. Tất cả PC trong mạng đều nhận được.</div>
+        <div class="arp-pkt" style="color:#FCD34D;">Frame: src=AA:11... dst=FF:FF:FF:FF:FF:FF (broadcast) | "Who has 192.168.1.5?"</div>
+      </div>
+      <div class="arp-step" id="as4">
+        <div class="arp-step-title">④ PC-C trả lời ARP Reply</div>
+        <div class="arp-step-detail">PC-C thấy IP trùng với mình → trả lời <strong>unicast</strong>. Các PC khác im lặng.</div>
+        <div class="arp-pkt" style="color:#6EE7B7;">ARP Reply: 192.168.1.5 is at CC:33:44:55:66:77</div>
+      </div>
+      <div class="arp-step" id="as5">
+        <div class="arp-step-title">⑤ PC-A lưu vào ARP Cache</div>
+        <div class="arp-step-detail">PC-A lưu entry vào cache để lần sau không phải hỏi lại. Cache có thời gian TTL.</div>
+      </div>
+      <div class="arp-step" id="as6">
+        <div class="arp-step-title">⑥ Bây giờ PC-A gửi được data cho PC-C</div>
+        <div class="arp-step-detail">Đã có MAC đích, PC-A đóng Frame và gửi. Switch chuyển frame đến đúng cổng PC-C.</div>
+      </div>
+    </div>
+
+    <div class="arp-cache" id="cacheBox" style="display:none;">
+      <div style="color:#C7D2FE;font-weight:700;margin-bottom:.4rem;">📋 ARP Cache của PC-A</div>
+      <div class="cache-row head"><span>IP Address</span><span>MAC Address</span></div>
+      <div class="cache-row" id="cacheContent"></div>
+    </div>
+
+    <div class="sim-controls">
+      <button class="btn btn-primary" onclick="runArp()">▶ Chạy ARP Resolution</button>
+      <button class="btn btn-ghost" onclick="resetArp()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:2rem;">
+    <div class="callout callout-info">
+      <div class="callout-title">ℹ️ Lệnh ARP trên Windows</div>
+      <pre style="margin:0;"><code>C:\> arp -a          <span style="color:#64748B;"># Xem ARP cache</span>
+C:\> arp -d          <span style="color:#64748B;"># Xoá ARP cache</span>
+C:\> ping 192.168.1.5 <span style="color:#64748B;"># Tự sinh ARP request</span></code></pre>
+    </div>
+    <div class="callout callout-warn">
+      <div class="callout-title">⚠️ Bảo mật ARP</div>
+      <p>ARP không có xác thực → kẻ tấn công có thể gửi ARP Reply giả mạo (ARP Spoofing/Poisoning)
+      để "độ" lưu lượng mạng (Man-in-the-Middle). Giải pháp: Dynamic ARP Inspection (DAI) trên Switch.</p>
+    </div>
+  </div>
+
+  <div class="callout callout-everyday" style="margin-top:1rem;">
+    <div class="callout-title">🏠 Ví dụ đời thường</div>
+    <p>
+      ARP giống bạn trong lớp hỏi to: "Ai ngồi chỗ số 192.168.1.5?" → cả lớp nghe → bạn C đứng lên "Tôi, MAC của tôi là CC:33...".
+      Bạn A ghi vào sổ tay. Lần sau muốn đưa bài cho C thì đưa luôn, không cần hỏi lại.
+    </p>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="../js/main.js"></script>
+<script>
+function runArp() {
+  resetArp();
+  const steps = ['as1','as2','as3','as4','as5','as6'];
+  const highlights = [
+    () => document.getElementById('pcA').classList.add('active'),
+    () => {},
+    () => {},
+    () => document.getElementById('pcC').classList.add('target'),
+    () => {
+      document.getElementById('cacheBox').style.display = 'block';
+      document.getElementById('cacheContent').innerHTML = '<span>192.168.1.5</span><span>CC:33:44:55:66:77</span>';
+    },
+    () => {}
+  ];
+  steps.forEach((id, i) => {
+    setTimeout(() => {
+      document.getElementById(id).classList.add('show');
+      highlights[i]();
+    }, 1000 * (i + 1));
+  });
+}
+function resetArp() {
+  ['as1','as2','as3','as4','as5','as6'].forEach(id => document.getElementById(id).classList.remove('show'));
+  document.getElementById('pcA').classList.remove('active');
+  document.getElementById('pcC').classList.remove('target');
+  document.getElementById('cacheBox').style.display = 'none';
+}
+</script>
+</body>
+</html>

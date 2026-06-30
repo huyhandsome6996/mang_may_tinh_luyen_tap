@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chương 4 · Địa chỉ IPv4 & Kỹ thuật chia mạng con (Subnetting)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="theory-layout">
+  <aside class="theory-sidebar">
+    <div class="toc-title">Mục lục</div>
+    <nav class="toc">
+      <a href="#ip-la-gi">Địa chỉ IP là gì</a>
+      <a href="#cau-truc">Cấu trúc IPv4</a>
+      <a href="#phan-lop">Phân lớp A/B/C/D/E</a>
+      <a href="#private">IP Private</a>
+      <a href="#subnet-mask">Subnet Mask</a>
+      <a href="#cidr">CIDR</a>
+      <a href="#3-loai-dia-chi">Net/Broadcast/Host</a>
+      <a href="#subnetting">Subnetting</a>
+      <a href="#cong-thuc">Công thức</a>
+      <a href="#vi-du">Ví dụ minh hoạ</a>
+      <a href="#tom-tat">Tóm tắt</a>
+    </nav>
+    <hr style="margin:1rem 0;border:0;border-top:1px solid var(--border);">
+    <div class="toc-title">Chương khác</div>
+    <nav class="toc">
+      <a href="chuong1.html">→ Chương 1</a>
+      <a href="chuong2.html">→ Chương 2</a>
+      <a href="chuong3.html">→ Chương 3</a>
+      <a href="chuong5.html">→ Chương 5</a>
+      <a href="chuong6.html">→ Chương 6</a>
+    </nav>
+  </aside>
+
+  <article class="theory-content">
+    <span class="section-eyebrow">Chương 4 · Phần tính toán quan trọng nhất</span>
+    <h1>Địa chỉ IPv4 & Kỹ thuật chia mạng con (Subnetting)</h1>
+    <p class="lead">
+      Đây là chương <strong>quan trọng nhất</strong> về tính toán trong môn học.
+      Học xong chương này bạn sẽ tính được: từ 1 địa chỉ IP + prefix length (/24, /26...) →
+      suy ra Network ID, Broadcast, dải host khả dụng, Subnet Mask.
+    </p>
+
+    <h2 id="ip-la-gi">4.1. Địa chỉ IP là gì?</h2>
+    <p>
+      Trong mạng TCP/IP, có 3 cách để xác định một máy tính:
+    </p>
+    <ul>
+      <li><strong>Địa chỉ vật lý (MAC):</strong> Ghi sẵn trên NIC, 48 bit, không thay đổi. Dùng trong LAN.</li>
+      <li><strong>Địa chỉ IP:</strong> Logic, 32 bit (IPv4) hoặc 128 bit (IPv6), có thể thay đổi. Dùng trong liên mạng.</li>
+      <li><strong>Tên miền:</strong> Dễ nhớ (google.com). DNS chuyển sang IP.</li>
+    </ul>
+
+    <div class="callout callout-everyday">
+      <div class="callout-title">🏠 Ví dụ đời thường</div>
+      <p>
+        <strong>MAC</strong> = số CMND (không đổi theo thời gian, định danh vĩnh viễn).
+        <strong>IP</strong> = địa chỉ nhà (có thể đổi khi chuyển nhà).
+        <strong>Tên miền</strong> = tên người (dễ nhớ, dùng để tìm trong danh bạ → ra số CMND và địa chỉ).
+      </p>
+    </div>
+
+    <h2 id="cau-truc">4.2. Cấu trúc địa chỉ IPv4</h2>
+    <p>
+      Địa chỉ IPv4 dài <strong>32 bit</strong>, được chia thành <strong>4 octet</strong> (mỗi octet 8 bit),
+      biểu diễn dạng thập phân (<strong>dotted-decimal</strong>), cách nhau bởi dấu chấm.
+    </p>
+    <pre><code>Ví dụ: 192.168.1.2
+
+Nhị phân: 11000000 . 10101000 . 00000001 . 00000010
+              192    .    168    .      1    .      2
+
+Mỗi octet: 8 bit → giá trị thập phân 0 - 255</code></pre>
+
+    <p>
+      Địa chỉ IP gồm 2 phần: <strong>Network ID</strong> (phần mạng, các bit cực trái) và <strong>Host ID</strong>
+      (phần máy, các bit cực phải). Ranh giới giữa 2 phần được xác định bởi <strong>Subnet Mask</strong>.
+    </p>
+
+    <h2 id="phan-lop">4.3. Phân lớp địa chỉ IP</h2>
+    <p>IPv4 chia thành 5 lớp: A, B, C (dùng được), D (multicast), E (dự trữ).</p>
+
+    <div class="table-wrap">
+      <table class="table-accent">
+        <thead><tr><th>Lớp</th><th>Bit đầu</th><th>Octet 1</th><th>Subnet Mask mặc định</th><th>Số NetID</th><th>Số HostID/Network</th><th>Phần Network</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A</strong></td><td>0</td><td>1 - 126</td><td>255.0.0.0 (/8)</td><td>2^7 - 2 = 126</td><td>2^24 - 2 = 16.777.214</td><td>Octet 1</td></tr>
+          <tr><td><strong>B</strong></td><td>10</td><td>128 - 191</td><td>255.255.0.0 (/16)</td><td>2^14 = 16.384</td><td>2^16 - 2 = 65.534</td><td>Octet 1, 2</td></tr>
+          <tr><td><strong>C</strong></td><td>110</td><td>192 - 223</td><td>255.255.255.0 (/24)</td><td>2^21 = 2.097.152</td><td>2^8 - 2 = 254</td><td>Octet 1, 2, 3</td></tr>
+          <tr><td>D</td><td>1110</td><td>224 - 239</td><td>—</td><td>—</td><td>Multicast</td><td>—</td></tr>
+          <tr><td>E</td><td>1111</td><td>240 - 255</td><td>—</td><td>—</td><td>Dự trữ</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">⚠️ Cần nhớ</div>
+      <ul>
+        <li><strong>127.x.x.x</strong> là Loopback (Localhost) — không gán cho máy, dùng để kiểm tra chính máy.</li>
+        <li><strong>127.0.0.1</strong> = địa chỉ loopback mặc định.</li>
+        <li>Lớp A: 126 mạng (không phải 128) vì mất mạng 0.0.0.0 và 127.0.0.0 (loopback).</li>
+        <li>Lớp C phổ biến nhất trong mạng gia đình/công ty nhỏ (254 host đủ dùng).</li>
+      </ul>
+    </div>
+
+    <h2 id="private">4.4. Dải IP Private (IP nội bộ)</h2>
+    <p>
+      IP Private là không gian địa chỉ <strong>dùng riêng trong tổ chức</strong>, không được định tuyến ra Internet công cộng.
+      Nhà cung cấp Internet sẽ chặn các gói tin có IP Private. Trong mạng nội bộ, dùng IP Private + NAT để ra Internet.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Lớp</th><th>Dải IP Private</th><th>Số lượng</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>10.0.0.0 → 10.255.255.255</td><td>16.777.216</td></tr>
+          <tr><td>B</td><td>172.16.0.0 → 172.31.255.255</td><td>1.048.576</td></tr>
+          <tr><td>C</td><td>192.168.0.0 → 192.168.255.255</td><td>65.536</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-everyday">
+      <div class="callout-title">🏠 Ví dụ đời thường</div>
+      <p>
+        Wifi nhà bạn thường cấp IP kiểu <code>192.168.1.x</code> — đó là IP Private lớp C.
+        Khi bạn vào web, router dùng <strong>NAT</strong> (Network Address Translation) để "dịch"
+        IP nội bộ thành IP public của nhà mạng → Internet chỉ thấy IP của router, không thấy IP nội bộ của bạn.
+      </p>
+    </div>
+
+    <h3>4.4.1. Dải APIPA</h3>
+    <p>
+      Khi máy không nhận được IP từ DHCP Server (sau 60 giây), Windows tự gán IP thuộc dải
+      <strong>APIPA (Automatic Private IP Addressing)</strong>: <code>169.254.x.x</code> (đây là dấu hiệu mạng có vấn đề).
+    </p>
+
+    <h2 id="subnet-mask">4.5. Subnet Mask (Mặt nạ mạng)</h2>
+    <p>
+      <strong>Subnet Mask</strong> là số 32 bit dùng để xác định trong 1 địa chỉ IP, phần nào là Network, phần nào là Host.
+    </p>
+    <ul>
+      <li>Các bit tương ứng phần <strong>Network = 1</strong></li>
+      <li>Các bit tương ứng phần <strong>Host = 0</strong></li>
+    </ul>
+    <p><strong>Subnet Mask mặc định theo lớp:</strong></p>
+    <ul>
+      <li>Lớp A: 255.0.0.0</li>
+      <li>Lớp B: 255.255.0.0</li>
+      <li>Lớp C: 255.255.255.0</li>
+    </ul>
+
+    <div class="callout callout-example">
+      <div class="callout-title">Ví dụ tính Net ID từ IP + Mask</div>
+      <p>Cho IP: <code>194.200.101.101</code>, Mask: <code>255.255.255.0</code></p>
+      <pre><code>IP   : 194 . 200 . 101 . 101
+Mask : 255 . 255 . 255 .   0
+                    ↑
+        Octet 4 là phần Host (vì mask octet 4 = 0)
+
+→ Network ID: 194 . 200 . 101 .   0   (bit Host = 0)
+→ Host ID   :   0 .   0 .   0 . 101</code></pre>
+    </div>
+
+    <h2 id="cidr">4.6. Ký pháp CIDR (/n)</h2>
+    <p>
+      CIDR (Classless Inter-Domain Routing) là cách viết tắt Subnet Mask bằng <strong>số bit 1 liên tiếp</strong>.
+    </p>
+    <ul>
+      <li><code>/24</code> = 24 bit Network = 255.255.255.0 (8 bit host)</li>
+      <li><code>/16</code> = 16 bit Network = 255.255.0.0 (16 bit host)</li>
+      <li><code>/8</code>  = 8 bit Network = 255.0.0.0 (24 bit host)</li>
+      <li><code>/26</code> = 26 bit Network = 255.255.255.192 (6 bit host)</li>
+      <li><code>/30</code> = 30 bit Network = 255.255.255.252 (2 bit host — chỉ 2 IP khả dụng, dùng cho point-to-point)</li>
+    </ul>
+
+    <h3>4.6.1. Bảng tra nhanh Subnet Mask theo CIDR</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>CIDR</th><th>Mask thập phân</th><th>Bit host</th><th>Số host khả dụng</th></tr></thead>
+        <tbody>
+          <tr><td>/8</td><td>255.0.0.0</td><td>24</td><td>16.777.214</td></tr>
+          <tr><td>/16</td><td>255.255.0.0</td><td>16</td><td>65.534</td></tr>
+          <tr><td>/24</td><td>255.255.255.0</td><td>8</td><td>254</td></tr>
+          <tr><td>/25</td><td>255.255.255.128</td><td>7</td><td>126</td></tr>
+          <tr><td>/26</td><td>255.255.255.192</td><td>6</td><td>62</td></tr>
+          <tr><td>/27</td><td>255.255.255.224</td><td>5</td><td>30</td></tr>
+          <tr><td>/28</td><td>255.255.255.240</td><td>4</td><td>14</td></tr>
+          <tr><td>/29</td><td>255.255.255.248</td><td>3</td><td>6</td></tr>
+          <tr><td>/30</td><td>255.255.255.252</td><td>2</td><td>2</td></tr>
+          <tr><td>/31</td><td>255.255.255.254</td><td>1</td><td>0 (point-to-point)</td></tr>
+          <tr><td>/32</td><td>255.255.255.255</td><td>0</td><td>1 (1 host duy nhất)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="3-loai-dia-chi">4.7. 3 loại địa chỉ trong 1 Subnet</h2>
+    <p>Trong một dải mạng, có 3 loại địa chỉ đặc biệt cần phân biệt:</p>
+    <ol>
+      <li><strong>Địa chỉ Network (Network ID):</strong> Tất cả bit phần Host = 0. <em>Định danh cả dải mạng, KHÔNG gán cho thiết bị.</em></li>
+      <li><strong>Địa chỉ Broadcast:</strong> Tất cả bit phần Host = 1. <em>Gửi tới tất cả máy trong mạng, KHÔNG gán cho thiết bị.</em></li>
+      <li><strong>Địa chỉ Host:</strong> Ít nhất 1 bit phần Host = 1 (nhưng không phải tất cả = 1). <em>Địa chỉ khả dụng, gán được cho PC/Router.</em></li>
+    </ol>
+
+    <div class="callout callout-tip">
+      <div class="callout-title">💡 Cách xác định loại địa chỉ</div>
+      <p>
+        Nhìn vào <strong>các bit host</strong> (bit cực phải, số bit = 32 - prefix):
+      </p>
+      <ul>
+        <li>Tất cả = 0 → địa chỉ <strong>Network</strong></li>
+        <li>Tất cả = 1 → địa chỉ <strong>Broadcast</strong></li>
+        <li>Có ít nhất 1 bit = 1 và ít nhất 1 bit = 0 → địa chỉ <strong>Host</strong></li>
+      </ul>
+    </div>
+
+    <h2 id="subnetting">4.8. Subnetting (Kỹ thuật chia mạng con)</h2>
+    <h3>4.8.1. Tại sao phải chia mạng con?</h3>
+    <ul>
+      <li>Giảm kích thước, phù hợp mô hình công ty</li>
+      <li>Phân cấp quản lý</li>
+      <li>Giảm nghẽn mạng (giới hạn phạm vi broadcast)</li>
+      <li>Cô lập sự cố trong từng subnet</li>
+      <li>Tăng bảo mật (áp dụng policy khác nhau từng subnet)</li>
+      <li>Áp dụng cấu hình khác nhau cho từng subnet</li>
+    </ul>
+
+    <h3>4.8.2. Nguyên tắc</h3>
+    <p>
+      Lấy (mượn) một số bit ở đầu phần <strong>Host ID</strong> để chuyển thành phần <strong>Network ID</strong>.
+      Số bit mượn tối thiểu = 2, tối đa:
+    </p>
+    <ul>
+      <li>Lớp A: tối đa 22 bit → 2^22 - 2 = 4.194.302 subnet</li>
+      <li>Lớp B: tối đa 14 bit → 2^14 - 2 = 16.382 subnet</li>
+      <li>Lớp C: tối đa 6 bit → 2^6 - 2 = 62 subnet</li>
+    </ul>
+
+    <h2 id="cong-thuc">4.9. Các công thức tính cốt lõi</h2>
+    <div class="callout callout-info" style="background:#EFF6FF;border-left-color:var(--info);">
+      <div class="callout-title">📐 Công thức</div>
+      <p>Gọi <strong>n</strong> = số bit mượn (để chia subnet), <strong>m</strong> = số bit Host còn lại.</p>
+      <ul>
+        <li><strong>Số Subnet mới</strong> = 2^n</li>
+        <li><strong>Số Host khả dụng/subnet</strong> = 2^m - 2 <em>(trừ Network và Broadcast)</em></li>
+        <li><strong>Bước nhảy (Block Size)</strong> = 256 - <em>giá trị thập phân của Octet mượn cuối cùng</em></li>
+      </ul>
+      <p>Ví dụ: /26 (lớp C, mượn 2 bit, host còn 6 bit)</p>
+      <ul>
+        <li>Số subnet = 2^2 = 4</li>
+        <li>Số host/subnet = 2^6 - 2 = 62</li>
+        <li>Block size = 256 - 192 = 64 → các Net ID kế tiếp: .0, .64, .128, .192</li>
+      </ul>
+    </div>
+
+    <h2 id="vi-du">4.10. Ví dụ minh hoạ chi tiết</h2>
+
+    <h3>📌 Ví dụ 1: IP 192.168.1.2/24</h3>
+    <p><strong>Bước 1:</strong> SM 24 bit → 8 bit host → host rơi vào octet 4.</p>
+    <p><strong>Bước 2:</strong> Octet 4 = 2 = <code>00000010</code> → có bit ≠ 0 → <strong>địa chỉ Host</strong>.</p>
+    <p><strong>Bước 3:</strong> Tính Network: bit host = 0 → octet 4 = <code>00000000</code> → <strong>192.168.1.0/24</strong></p>
+    <p><strong>Bước 4:</strong> Tính Broadcast: bit host = 1 → octet 4 = <code>11111111</code> = 255 → <strong>192.168.1.255/24</strong></p>
+    <p><strong>Bước 5:</strong> Dải khả dụng: <strong>192.168.1.1 → 192.168.1.254</strong> (254 host)</p>
+
+    <h3>📌 Ví dụ 2: IP 184.156.12.165/27</h3>
+    <p><strong>Bước 1:</strong> SM 27 bit → 5 bit host (cực phải, trong octet 4).</p>
+    <p><strong>Bước 2:</strong> Octet 4 = 165 = <code>10100101</code>. Bit host là 5 bit phải: <code>00101</code> ≠ 0 → <strong>địa chỉ Host</strong>.</p>
+    <p><strong>Bước 3:</strong> Tính Network: 5 bit host = 0 → octet 4 = <code>10100000</code> = 128+32 = 160 → <strong>184.156.12.160/27</strong></p>
+    <p><strong>Bước 4:</strong> Tính Broadcast: 5 bit host = 1 → octet 4 = <code>10111111</code> = 191 → <strong>184.156.12.191/27</strong></p>
+    <p><strong>Bước 5:</strong> Dải khả dụng: <strong>184.156.12.161 → 184.156.12.190</strong> (30 host)</p>
+
+    <h3>📌 Ví dụ 3: IP 184.156.168.30/19</h3>
+    <p><strong>Bước 1:</strong> SM 19 bit → 13 bit host (cực phải, ở octet 3 và 4).</p>
+    <p><strong>Bước 2:</strong> Octet 3 = 168 = <code>10101000</code>. Bit host ở octet 3 là 5 bit phải: <code>01000</code> ≠ 0 → <strong>địa chỉ Host</strong>.</p>
+    <p><strong>Bước 3:</strong> SM dạng nhị phân: <code>11111111.11111111.11100000.00000000</code> → <strong>255.255.224.0</strong></p>
+    <p><strong>Bước 4:</strong> Network: bit host = 0 → octet 3 = <code>10100000</code> = 160, octet 4 = 0 → <strong>184.156.160.0/19</strong></p>
+    <p><strong>Bước 5:</strong> Broadcast: octet 3 = <code>10111111</code> = 191, octet 4 = 255 → <strong>184.156.191.255/19</strong></p>
+    <p><strong>Bước 6:</strong> Dải khả dụng: <strong>184.156.160.1 → 184.156.191.254</strong> (8190 host)</p>
+
+    <h3>📌 Ví dụ 4: IP 175.25.37.110/28</h3>
+    <p><strong>Bước 1:</strong> SM 28 bit → 4 bit host (octet 4).</p>
+    <p><strong>Bước 2:</strong> Octet 4 = 110 = <code>01101110</code>. Bit host là 4 bit phải: <code>1110</code> ≠ 0 → <strong>địa chỉ Host</strong>.</p>
+    <p><strong>Bước 3:</strong> Network: 4 bit host = 0 → octet 4 = <code>01100000</code> = 96 → <strong>175.25.37.96/28</strong></p>
+    <p><strong>Bước 4:</strong> Broadcast: octet 4 = <code>01101111</code> = 111 → <strong>175.25.37.111/28</strong></p>
+    <p><strong>Bước 5:</strong> Dải khả dụng: <strong>175.25.37.97 → 175.25.37.110</strong> (14 host). SM = <strong>255.255.255.240</strong></p>
+
+    <h3>📌 Ví dụ 5: IP 163.128.170.0/19</h3>
+    <p><strong>Bước 1:</strong> SM 19 bit → 13 bit host (octet 3, 4).</p>
+    <p><strong>Bước 2:</strong> Octet 3 = 170 = <code>10101010</code>. Bit host ở octet 3 là 5 bit phải: <code>01010</code> ≠ 0 → <strong>địa chỉ Host</strong>.</p>
+    <p><strong>Bước 3:</strong> SM: <strong>255.255.224.0</strong></p>
+    <p><strong>Bước 4:</strong> Network: octet 3 = <code>10100000</code> = 160 → <strong>163.128.160.0/19</strong></p>
+    <p><strong>Bước 5:</strong> Broadcast: octet 3 = <code>10111111</code> = 191, octet 4 = 255 → <strong>163.128.191.255/19</strong></p>
+    <p><strong>Bước 6:</strong> Dải khả dụng: <strong>163.128.160.1 → 163.128.191.254</strong></p>
+
+    <h3>📌 Ví dụ 6: Chia subnet</h3>
+    <p>Cho mạng <strong>139.12.0.0/16</strong> (lớp B), chia thành 4 subnet.</p>
+    <p><strong>Bước 1:</strong> Y = 4 = 2^X → X = 2 bit mượn. Subnet mask mới = 16 + 2 = 18 bit → <strong>/18</strong></p>
+    <p><strong>Bước 2:</strong> Số host/subnet = 2^(32-18) - 2 = 2^14 - 2 = 16.382 host</p>
+    <p><strong>Bước 3:</strong> SM = 255.255.192.0</p>
+    <p><strong>Bước 4:</strong> Bước nhảy = 256 - 192 = 64 (ở octet 3)</p>
+    <p><strong>Bước 5:</strong> Liệt kê 4 subnet:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Subnet</th><th>Network ID</th><th>Host đầu</th><th>Host cuối</th><th>Broadcast</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>139.12.0.0/18</td><td>139.12.0.1</td><td>139.12.63.254</td><td>139.12.63.255</td></tr>
+          <tr><td>2</td><td>139.12.64.0/18</td><td>139.12.64.1</td><td>139.12.127.254</td><td>139.12.127.255</td></tr>
+          <tr><td>3</td><td>139.12.128.0/18</td><td>139.12.128.1</td><td>139.12.191.254</td><td>139.12.191.255</td></tr>
+          <tr><td>4</td><td>139.12.192.0/18</td><td>139.12.192.1</td><td>139.12.255.254</td><td>139.12.255.255</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="tom-tat">4.11. Tóm tắt & Lời khuyên làm bài</h2>
+    <div class="callout callout-tip">
+      <div class="callout-title">💡 Quy trình 5 bước khi gặp bài subnetting</div>
+      <ol>
+        <li><strong>Đọc prefix</strong> → biết số bit Network. Tính số bit Host = 32 - prefix.</li>
+        <li><strong>Xác định octet mượn</strong> (octet cuối cùng có bit = 1 trong mask) và số bit host trong octet đó.</li>
+        <li><strong>Đổi octet mượn của IP sang nhị phân</strong>, quan sát các bit host:
+          <ul>
+            <li>Tất cả = 0 → IP đã cho là Network</li>
+            <li>Tất cả = 1 → IP đã cho là Broadcast</li>
+            <li>Khác → IP đã cho là Host</li>
+          </ul>
+        </li>
+        <li><strong>Tính Network</strong>: bit host = 0. <strong>Tính Broadcast</strong>: bit host = 1.</li>
+        <li><strong>Dải khả dụng</strong>: từ Network+1 đến Broadcast-1.</li>
+      </ol>
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">⚠️ Lỗi thường gặp</div>
+      <ul>
+        <li>Quên trừ 2 khi tính số host (Network + Broadcast không gán được).</li>
+        <li>Nhầm octet mượn khi prefix không chia hết cho 8 (vd: /19, /26).</li>
+        <li>Sai khi đổi nhị phân sang thập phân (nhớ: 128-64-32-16-8-4-2-1).</li>
+        <li>Quên rằng IP 127.x.x.x là loopback (không gán được).</li>
+      </ul>
+    </div>
+
+    <h3>📌 Bảng tra nhanh giá trị 8 bit</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Bit</th><th>1</th><th>1</th><th>1</th><th>1</th><th>1</th><th>1</th><th>1</th><th>1</th></tr></thead>
+        <tbody>
+          <tr><td>Vị trí</td><td>128</td><td>64</td><td>32</td><td>16</td><td>8</td><td>4</td><td>2</td><td>1</td></tr>
+          <tr><td>Cộng dồn</td><td>128</td><td>192</td><td>224</td><td>240</td><td>248</td><td>252</td><td>254</td><td>255</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:.9rem;color:var(--text-muted);">
+      Khi mượn 1 bit → mask octet = 128. 2 bit = 192. 3 bit = 224. 4 bit = 240. 5 bit = 248. 6 bit = 252. 7 bit = 254. 8 bit = 255.
+    </p>
+
+    <div class="callout callout-info" style="margin-top:2rem;">
+      <div class="callout-title">➡️ Chương tiếp theo</div>
+      <p>
+        Sang <a href="chuong5.html" style="color:var(--accent);font-weight:600;">Chương 5: Quản trị Windows Server</a>,
+        bạn sẽ học về User/Group, Active Directory, Group Policy, NTFS Permission.
+      </p>
+    </div>
+
+    <div class="callout callout-info" style="margin-top:1rem;background:linear-gradient(135deg, rgba(99,102,241,.08), rgba(6,182,212,.08));">
+      <div class="callout-title">🧪 Thực hành ngay</div>
+      <p>
+        Bạn muốn tự tính subnet với IP bất kỳ? Mở <a href="../labs/subnet-calc.html" style="color:var(--accent);font-weight:600;">Subnet Calculator</a>
+        để thực hành với mọi địa chỉ IP và xem trực quan bit net/host.
+      </p>
+    </div>
+  </article>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="../js/main.js"></script>
+</body>
+</html>

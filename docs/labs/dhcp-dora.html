@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DHCP DORA · Mô phỏng cấp phát IP động</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<style>
+.dora-stage {
+  background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%);
+  border-radius: 16px; padding: 2rem; margin: 1.5rem 0;
+  min-height: 380px; color: white;
+}
+.dora-endpoints {
+  display: flex; justify-content: space-between; margin-bottom: 2rem;
+}
+.dora-node {
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2);
+  border-radius: 12px; padding: 1rem 1.25rem; text-align: center; min-width: 160px;
+}
+.dora-node-label { color: #C7D2FE; font-size: .82rem; }
+.dora-node-name { font-weight: 700; font-size: 1.05rem; margin: .25rem 0; }
+.dora-node-detail { font-family: 'JetBrains Mono', monospace; font-size: .8rem; color: #67E8F9; }
+
+.dora-flow {
+  display: flex; flex-direction: column; gap: 1rem;
+}
+.dora-arrow {
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem;
+  opacity: 0; transform: translateY(15px); transition: all .5s;
+}
+.dora-arrow.show { opacity: 1; transform: translateY(0); }
+.dora-arrow-from, .dora-arrow-to { font-size: .82rem; color: #CBD5E1; }
+.dora-arrow-from { text-align: right; }
+.dora-arrow-to { text-align: left; }
+.dora-pkt {
+  padding: .5rem 1rem; border-radius: 8px; font-weight: 600; font-size: .9rem;
+  border: 1px solid; text-align: center;
+}
+.dora-pkt.discover { background: rgba(245,158,11,.2); border-color: #F59E0B; color: #FCD34D; }
+.dora-pkt.offer { background: rgba(59,130,246,.2); border-color: #3B82F6; color: #93C5FD; }
+.dora-pkt.request { background: rgba(168,85,247,.2); border-color: #A855F7; color: #C4B5FD; }
+.dora-pkt.ack { background: rgba(16,185,129,.2); border-color: #10B981; color: #6EE7B7; }
+
+.dora-step { padding: .5rem 0; border-top: 1px dashed rgba(255,255,255,.1); }
+.dora-step-title { font-weight: 700; font-size: .95rem; margin-bottom: .25rem; }
+.dora-step-detail { font-size: .82rem; color: #CBD5E1; }
+
+.dora-result {
+  background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.4);
+  border-radius: 10px; padding: 1rem; margin-top: 1.5rem;
+  display: none;
+}
+.dora-result.show { display: block; }
+</style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="container" style="padding:2rem 1.25rem;">
+  <span class="section-eyebrow">Mô phỏng 4 · Animation</span>
+  <h1 style="font-size:2.2rem;font-weight:800;background:var(--gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem;">DHCP DORA · Cấp phát IP động</h1>
+  <p style="color:var(--text-muted);font-size:1.05rem;margin-bottom:1rem;max-width:780px;">
+    Khi máy tính kết nối vào mạng, nó cần 1 IP. DHCP Server cấp IP động qua quy trình 4 bước
+    <strong>D-O-R-A</strong>: Discover → Offer → Request → Acknowledge.
+  </p>
+
+  <div class="dora-stage">
+    <div class="dora-endpoints">
+      <div class="dora-node">
+        <div class="dora-node-label">Client</div>
+        <div class="dora-node-name">💻 PC mới kết nối</div>
+        <div class="dora-node-detail" id="clientIp">IP: 0.0.0.0</div>
+      </div>
+      <div class="dora-node">
+        <div class="dora-node-label">Server</div>
+        <div class="dora-node-name">🖥️ DHCP Server</div>
+        <div class="dora-node-detail">Pool: 192.168.1.10-100</div>
+      </div>
+    </div>
+
+    <div class="dora-flow" id="doraFlow">
+      <div class="dora-arrow" id="arr1">
+        <div class="dora-arrow-from">💻 Client<br><small style="opacity:.7;">broadcast</small></div>
+        <div class="dora-pkt discover">DHCPDISCOVER<br><small>(broadcast)</small></div>
+        <div class="dora-arrow-to">🖥️ Server<br><small style="opacity:.7;">nhận được</small></div>
+      </div>
+      <div class="dora-step" id="step1" style="display:none;">
+        <div class="dora-step-title">① DISCOVER</div>
+        <div class="dora-step-detail">Client mới vào mạng chưa có IP → gửi <strong>broadcast</strong> "Có DHCP Server nào không? Tôi cần IP!" (src: 0.0.0.0, dst: 255.255.255.255)</div>
+      </div>
+
+      <div class="dora-arrow" id="arr2">
+        <div class="dora-arrow-from">💻 Client<br><small style="opacity:.7;">nhận offer</small></div>
+        <div class="dora-pkt offer">DHCPOFFER<br><small>(unicast)</small></div>
+        <div class="dora-arrow-to">🖥️ Server<br><small style="opacity:.7;">đề xuất IP</small></div>
+      </div>
+      <div class="dora-step" id="step2" style="display:none;">
+        <div class="dora-step-title">② OFFER</div>
+        <div class="dora-step-detail">DHCP Server đề xuất IP cho client: "Tôi có IP 192.168.1.50 cho bạn, kèm Subnet Mask, Gateway, DNS"</div>
+      </div>
+
+      <div class="dora-arrow" id="arr3">
+        <div class="dora-arrow-from">💻 Client<br><small style="opacity:.7;">broadcast</small></div>
+        <div class="dora-pkt request">DHCPREQUEST<br><small>(broadcast)</small></div>
+        <div class="dora-arrow-to">🖥️ Server<br><small style="opacity:.7;">xin cấp IP đó</small></div>
+      </div>
+      <div class="dora-step" id="step3" style="display:none;">
+        <div class="dora-step-title">③ REQUEST</div>
+        <div class="dora-step-detail">Client đồng ý nhận IP đó. Gửi broadcast "Tôi xin nhận IP 192.168.1.50 từ DHCP Server này" (để các DHCP Server khác rút offer)</div>
+      </div>
+
+      <div class="dora-arrow" id="arr4">
+        <div class="dora-arrow-from">💻 Client<br><small style="opacity:.7;">nhận xác nhận</small></div>
+        <div class="dora-pkt ack">DHCPACK<br><small>(unicast)</small></div>
+        <div class="dora-arrow-to">🖥️ Server<br><small style="opacity:.7;">xác nhận cấp</small></div>
+      </div>
+      <div class="dora-step" id="step4" style="display:none;">
+        <div class="dora-step-title">④ ACK</div>
+        <div class="dora-step-detail">Server xác nhận cuối cùng: "OK, IP 192.168.1.50 là của bạn trong 8 giờ tới (lease time). Hết hạn xin lại!"</div>
+      </div>
+    </div>
+
+    <div class="dora-result" id="result">
+      <strong>✓ Hoàn tất!</strong> Client đã nhận IP <code style="background:rgba(0,0,0,.3);padding:.15rem .4rem;border-radius:4px;">192.168.1.50</code>,
+      Subnet Mask <code style="background:rgba(0,0,0,.3);padding:.15rem .4rem;border-radius:4px;">255.255.255.0</code>,
+      Gateway <code style="background:rgba(0,0,0,.3);padding:.15rem .4rem;border-radius:4px;">192.168.1.1</code>,
+      DNS <code style="background:rgba(0,0,0,.3);padding:.15rem .4rem;border-radius:4px;">8.8.8.8</code>.
+    </div>
+
+    <div class="sim-controls">
+      <button class="btn btn-primary" onclick="runDora()">▶ Chạy DORA</button>
+      <button class="btn btn-ghost" onclick="resetDora()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="callout callout-info" style="margin-top:2rem;">
+    <div class="callout-title">ℹ️ Khi Client và DHCP Server khác mạng</div>
+    <p>
+      DHCPDISCOVER là <strong>broadcast</strong> → bị Router chặn. Nếu Client ở mạng A, DHCP Server ở mạng B:
+      cần cấu hình trên cổng Router của mạng A:
+    </p>
+    <pre style="margin:.5rem 0;"><code>Router(config)# interface &lt;cổng mạng A&gt;
+Router(config-if)# ip helper-address &lt;IP DHCP Server&gt;</code></pre>
+    <p>Lệnh này chuyển DHCP Broadcast thành Unicast gửi thẳng tới DHCP Server.</p>
+  </div>
+
+  <div class="callout callout-everyday" style="margin-top:1rem;">
+    <div class="callout-title">🏠 Ví dụ đời thường</div>
+    <p>
+      DHCP giống bạn vào quán cafe, hỏi "Cho tôi 1 chỗ ngồi" (DISCOVER) → nhân viên "Còn bàn số 5, anh ngồi không?" (OFFER) →
+      bạn "Vâng, tôi ngồi bàn 5" (REQUEST) → nhân viên "Vâng mời anh, bàn 5 là của anh trong 2 tiếng" (ACK).
+    </p>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="../js/main.js"></script>
+<script>
+function runDora() {
+  resetDora();
+  const timeouts = [
+    () => { document.getElementById('arr1').classList.add('show'); document.getElementById('step1').style.display = 'block'; },
+    () => { document.getElementById('arr2').classList.add('show'); document.getElementById('step2').style.display = 'block'; },
+    () => { document.getElementById('arr3').classList.add('show'); document.getElementById('step3').style.display = 'block'; },
+    () => { document.getElementById('arr4').classList.add('show'); document.getElementById('step4').style.display = 'block';
+            document.getElementById('clientIp').textContent = 'IP: 192.168.1.50';
+            document.getElementById('result').classList.add('show'); }
+  ];
+  timeouts.forEach((fn, i) => setTimeout(fn, 1200 * (i + 1)));
+}
+function resetDora() {
+  ['arr1','arr2','arr3','arr4'].forEach(id => document.getElementById(id).classList.remove('show'));
+  ['step1','step2','step3','step4'].forEach(id => document.getElementById(id).style.display = 'none');
+  document.getElementById('clientIp').textContent = 'IP: 0.0.0.0';
+  document.getElementById('result').classList.remove('show');
+}
+</script>
+</body>
+</html>

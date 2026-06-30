@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chương 3 · Mô hình OSI & TCP/IP và các giao thức</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="theory-layout">
+  <aside class="theory-sidebar">
+    <div class="toc-title">Mục lục</div>
+    <nav class="toc">
+      <a href="#giao-thuc">Giao thức là gì</a>
+      <a href="#tai-sao-phan-tang">Tại sao phân tầng</a>
+      <a href="#osi-7-tang">OSI 7 tầng</a>
+      <a href="#encap">Đóng gói & Gỡ gói</a>
+      <a href="#tcp-ip">TCP/IP 4 tầng</a>
+      <a href="#so-sanh">So sánh OSI & TCP/IP</a>
+      <a href="#tcp-udp">TCP vs UDP</a>
+      <a href="#giao-thuc-chinh">Các giao thức chính</a>
+      <a href="#dhcp">DHCP</a>
+      <a href="#dns">DNS</a>
+      <a href="#arp-icmp">ARP & ICMP</a>
+      <a href="#tom-tat">Tóm tắt</a>
+    </nav>
+    <hr style="margin:1rem 0;border:0;border-top:1px solid var(--border);">
+    <div class="toc-title">Chương khác</div>
+    <nav class="toc">
+      <a href="chuong1.html">→ Chương 1: Khái niệm cơ bản</a>
+      <a href="chuong2.html">→ Chương 2: Môi trường & Thiết bị</a>
+      <a href="chuong4.html">→ Chương 4: IPv4 & Subnetting</a>
+      <a href="chuong5.html">→ Chương 5: Quản trị Windows</a>
+      <a href="chuong6.html">→ Chương 6: Cloud Computing</a>
+    </nav>
+  </aside>
+
+  <article class="theory-content">
+    <span class="section-eyebrow">Chương 3</span>
+    <h1>Mô hình OSI & TCP/IP và các giao thức</h1>
+    <p class="lead">
+      Để các máy tính khác hãng, khác hệ điều hành vẫn "nói chuyện" được với nhau,
+      người ta chuẩn hóa kiến trúc mạng theo <strong>mô hình phân tầng</strong>.
+      Hai mô hình quan trọng nhất là <strong>OSI (7 tầng, lý thuyết)</strong> và <strong>TCP/IP (4 tầng, thực tế)</strong>.
+    </p>
+
+    <h2 id="giao-thuc">3.1. Giao thức (Protocol) là gì?</h2>
+    <p>
+      <strong>Giao thức</strong> là tập hợp các nguyên tắc, quy định về <em>truyền nhận thông tin</em>
+      giữa các máy tính và thiết bị trên mạng — bao gồm cấu trúc dữ liệu và phương thức truyền.
+    </p>
+    <p>Một số bộ giao thức lịch sử:</p>
+    <ul>
+      <li><strong>NetBEUI:</strong> IBM + Microsoft thiết kế cho LAN nhỏ/cỡ vừa. <em>Không hỗ trợ định tuyến</em>.</li>
+      <li><strong>IPX/SPX:</strong> Dùng trong mạng Novell Netware. Nhỏ, nhanh, có hỗ trợ định tuyến.</li>
+      <li><strong>TCP/IP:</strong> Chuẩn toàn cầu của Internet hiện nay.</li>
+    </ul>
+
+    <div class="callout callout-everyday">
+      <div class="callout-title">🌐 Ví dụ đời thường</div>
+      <p>
+        Giao thức giống như <strong>ngôn ngữ giao tiếp</strong>. Nếu 2 người đều nói tiếng Anh thì nói chuyện được.
+        Nếu 1 nói Việt, 1 nói Trung thì cần "Gateway" phiên dịch. TCP/IP như tiếng Anh quốc tế — ai cũng dùng.
+      </p>
+    </div>
+
+    <h2 id="tai-sao-phan-tang">3.2. Tại sao phải phân tầng?</h2>
+    <ul>
+      <li><strong>Giảm độ phức tạp:</strong> Chia bài toán lớn thành các phần nhỏ, mỗi tầng lo 1 việc.</li>
+      <li><strong>Chuẩn hóa:</strong> Các hãng khác nhau làm theo cùng chuẩn → tương thích.</li>
+      <li><strong>Modun hóa:</strong> Có thể thay đổi 1 tầng mà không ảnh hưởng tầng khác (vd: đổi cáp đồng sang quang mà ứng dụng web vẫn chạy bình thường).</li>
+      <li><strong>Dễ bảo trì, sửa lỗi:</strong> Lỗi ở tầng nào tìm tầng đó, không phải kiểm tra toàn hệ thống.</li>
+      <li><strong>Thúc đẩy tiến hóa:</strong> Phát triển từng tầng độc lập.</li>
+    </ul>
+
+    <h2 id="osi-7-tang">3.3. Mô hình OSI (7 tầng)</h2>
+    <p>
+      <strong>OSI (Open Systems Interconnection)</strong> ra đời năm 1984, là mô hình tham chiếu lý thuyết
+      gồm 7 tầng. Tầng thấp nhất (1) định nghĩa giao tiếp vật lý, tầng cao nhất (7) định nghĩa ứng dụng.
+    </p>
+
+    <div class="osi-stack">
+      <div class="osi-layer">
+        <div class="osi-layer-num">7</div>
+        <div class="osi-layer-info"><h4>Application (Ứng dụng)</h4><p>Giao tiếp trực tiếp với người dùng & ứng dụng</p></div>
+        <div class="osi-layer-protocol">HTTP, FTP, SMTP, DNS, Telnet</div>
+      </div>
+      <div class="osi-layer">
+        <div class="osi-layer-num">6</div>
+        <div class="osi-layer-info"><h4>Presentation (Trình diễn)</h4><p>Định dạng, mã hóa, nén dữ liệu</p></div>
+        <div class="osi-layer-protocol">JPEG, MPEG, SSL/TLS, ASCII</div>
+      </div>
+      <div class="osi-layer">
+        <div class="osi-layer-num">5</div>
+        <div class="osi-layer-info"><h4>Session (Phiên)</h4><p>Thiết lập, duy trì, kết thúc phiên giao dịch</p></div>
+        <div class="osi-layer-protocol">NetBIOS, RPC, PPTP</div>
+      </div>
+      <div class="osi-layer">
+        <div class="osi-layer-num">4</div>
+        <div class="osi-layer-info"><h4>Transport (Giao vận)</h4><p>Truyền tải đầu cuối, đảm bảo tin cậy</p></div>
+        <div class="osi-layer-protocol">TCP, UDP</div>
+      </div>
+      <div class="osi-layer">
+        <div class="osi-layer-num">3</div>
+        <div class="osi-layer-info"><h4>Network (Mạng)</h4><p>Định tuyến, cấp địa chỉ logic IP</p></div>
+        <div class="osi-layer-protocol">IP, ICMP, ARP, RIP, OSPF</div>
+      </div>
+      <div class="osi-layer">
+        <div class="osi-layer-num">2</div>
+        <div class="osi-layer-info"><h4>Data Link (Liên kết dữ liệu)</h4><p>Đóng frame, gắn MAC, kiểm soát truy nhập</p></div>
+        <div class="osi-layer-protocol">Ethernet, PPP, HDLC</div>
+      </div>
+      <div class="osi-layer">
+        <div class="osi-layer-num">1</div>
+        <div class="osi-layer-info"><h4>Physical (Vật lý)</h4><p>Truyền bit nhị phân qua cáp/sóng</p></div>
+        <div class="osi-layer-protocol">RS-232, DSL, Wi-Fi PHY</div>
+      </div>
+    </div>
+
+    <p>Cách nhớ: <strong>"All People Seem To Need Data Processing"</strong> (Application → Physical, từ trên xuống).</p>
+
+    <h3>3.3.1. Chi tiết từng tầng</h3>
+
+    <h4>Tầng 7 — Application (Ứng dụng)</h4>
+    <p>
+      Cung cấp giao tiếp trực tiếp giữa chương trình ứng dụng và hệ thống mạng.
+      Ví dụ: trình duyệt web dùng HTTP, FTP client dùng FTP, mail client dùng SMTP/POP3/IMAP.
+      Cung cấp cơ chế xác thực người dùng.
+    </p>
+
+    <h4>Tầng 6 — Presentation (Trình diễn)</h4>
+    <p>
+      Đảm bảo bên nhận hiểu được dữ liệu bên gửi. Chuyển đổi cú pháp, định dạng (ASCII, EBCDIC, JPEG, GIF, MPEG),
+      mã hóa/giải mã bảo mật (SSL/TLS), nén/giải nén dữ liệu để tiết kiệm băng thông.
+    </p>
+
+    <h4>Tầng 5 — Session (Phiên)</h4>
+    <p>
+      Thiết lập, duy trì, đồng bộ và kết thúc các "phiên" (session) giao dịch giữa ứng dụng 2 máy.
+      Có cơ chế checkpoint để phục hồi nếu phiên bị gián đoạn.
+    </p>
+
+    <h4>Tầng 4 — Transport (Giao vận)</h4>
+    <p>
+      Đảm bảo truyền tải <strong>đầu cuối (End-to-End)</strong> — từ máy nguồn đến máy đích.
+      Cắt dữ liệu thành các <strong>Segment</strong>, đánh số thứ tự, kiểm soát luồng, phát hiện và sửa lỗi.
+      Có 2 giao thức chính: <strong>TCP (tin cậy)</strong> và <strong>UDP (nhanh nhưng không tin cậy)</strong>.
+    </p>
+
+    <h4>Tầng 3 — Network (Mạng)</h4>
+    <p>
+      Định tuyến gói tin, chọn đường đi tốt nhất. Cấp <strong>địa chỉ logic IP</strong> cho thiết bị.
+      Đơn vị dữ liệu: <strong>Packet (Gói tin)</strong>. Router hoạt động ở tầng này.
+    </p>
+
+    <h4>Tầng 2 — Data Link (Liên kết dữ liệu)</h4>
+    <p>
+      Đóng dữ liệu thành <strong>Frame</strong>, gắn <strong>địa chỉ MAC</strong> nguồn & đích.
+      Kiểm soát truy nhập môi trường truyền (ai được gửi khi), phát hiện lỗi qua trailer (FCS).
+      Switch, Bridge hoạt động ở tầng này.
+    </p>
+
+    <h4>Tầng 1 — Physical (Vật lý)</h4>
+    <p>
+      Chuyển đổi dữ liệu thành các <strong>bit nhị phân (0, 1)</strong> và phát các xung tín hiệu
+      điện/quang/sóng lên dây cáp. Quy định loại cáp, mức điện áp, tốc độ bit, đầu nối vật lý.
+      Repeater, Hub hoạt động ở tầng này.
+    </p>
+
+    <h2 id="encap">3.4. Quá trình Đóng gói (Encapsulation) & Gỡ gói (Decapsulation)</h2>
+    <p>
+      Khi dữ liệu đi từ tầng 7 xuống tầng 1 ở máy gửi, mỗi tầng thêm 1 header (và tầng 2 thêm cả trailer) — gọi là <strong>đóng gói (Encapsulation)</strong>.
+      Khi đến máy nhận, dữ liệu đi từ tầng 1 lên tầng 7, mỗi tầng gỡ bỏ 1 header — gọi là <strong>gỡ gói (Decapsulation)</strong>.
+    </p>
+
+    <div class="table-wrap">
+      <table class="table-accent">
+        <thead><tr><th>Tầng</th><th>Đơn vị dữ liệu (PDU)</th><th>Header thêm vào</th></tr></thead>
+        <tbody>
+          <tr><td>7,6,5</td><td>Data</td><td>Application Header (H7)</td></tr>
+          <tr><td>4</td><td><strong>Segment</strong> (TCP) / <strong>Datagram</strong> (UDP)</td><td>Transport Header (port, seq, ack)</td></tr>
+          <tr><td>3</td><td><strong>Packet</strong></td><td>Network Header (IP nguồn, IP đích)</td></tr>
+          <tr><td>2</td><td><strong>Frame</strong></td><td>Frame Header (MAC) + Trailer (FCS)</td></tr>
+          <tr><td>1</td><td><strong>Bit</strong></td><td>(Tín hiệu vật lý)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-everyday">
+      <div class="callout-title">🏠 Ví dụ đời thường</div>
+      <p>
+        Bạn gửi 1 bức thư: <strong>thư</strong> (data) → <strong>phong bì</strong> (transport header) →
+        <strong>ghi địa chỉ người nhận</strong> (network header IP) → <strong>mã bưu chính</strong> (MAC) →
+        <strong>bưu tá đưa</strong> (bit vật lý). Mỗi lớp thêm 1 thông tin để định tuyến.
+      </p>
+    </div>
+
+    <h2 id="tcp-ip">3.5. Mô hình TCP/IP (4 tầng)</h2>
+    <p>
+      Là mô hình <strong>thực tế</strong> vận hành Internet ngày nay, rút gọn từ OSI.
+    </p>
+    <ul>
+      <li><strong>Application:</strong> Gộp tầng 5,6,7 OSI. (HTTP, FTP, SMTP, DNS, DHCP...)</li>
+      <li><strong>Transport:</strong> Tương đương tầng 4 OSI. (TCP, UDP)</li>
+      <li><strong>Internet:</strong> Tương đương tầng 3 OSI. (IP, ICMP, ARP, IGMP)</li>
+      <li><strong>Network Access:</strong> Gộp tầng 1,2 OSI. (Ethernet, Wi-Fi, PPP)</li>
+    </ul>
+
+    <h2 id="so-sanh">3.6. So sánh OSI và TCP/IP</h2>
+    <div class="table-wrap">
+      <table class="compare-table">
+        <thead><tr><th>Tiêu chí</th><th>OSI</th><th>TCP/IP</th></tr></thead>
+        <tbody>
+          <tr><td>Số tầng</td><td>7</td><td>4</td></tr>
+          <tr><td>Bản chất</td><td>Mô hình tham chiếu lý thuyết</td><td>Mô hình thực tế, chạy Internet</td></tr>
+          <tr><td>Tầng Application</td><td>Tách 3 tầng: Application, Presentation, Session</td><td>Gộp thành 1 tầng Application</td></tr>
+          <tr><td>Tầng Network Access</td><td>Tách 2 tầng: Data Link + Physical</td><td>Gộp thành 1 tầng Network Access</td></tr>
+          <tr><td>Năm ra đời</td><td>1984</td><td>1978 (hoàn thiện)</td></tr>
+          <tr><td>Độ phổ biến</td><td>Dạy học, thiết kế</td><td>Triển khai thực tế</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="tcp-udp">3.7. TCP vs UDP — Hai giao thức tầng Transport</h2>
+    <div class="grid-2">
+      <div class="callout callout-info">
+        <div class="callout-title">TCP (Transmission Control Protocol)</div>
+        <p><strong>Hướng kết nối, tin cậy cao.</strong></p>
+        <ul>
+          <li>Thiết lập kết nối trước bằng <strong>3-way handshake</strong> (SYN → SYN-ACK → ACK).</li>
+          <li>Đánh số thứ tự (Sequence number) các gói tin.</li>
+          <li>Yêu cầu xác nhận (ACK) — mất gói thì gửi lại.</li>
+          <li>Điều khiển luồng, kiểm soát tắc nghẽn.</li>
+          <li><strong>Ứng dụng:</strong> Web (HTTP), Email (SMTP), FTP, SSH — cần chính xác.</li>
+        </ul>
+      </div>
+      <div class="callout callout-warn">
+        <div class="callout-title">UDP (User Datagram Protocol)</div>
+        <p><strong>Không kết nối, không tin cậy, nhưng cực nhanh.</strong></p>
+        <ul>
+          <li>Không thiết lập kết nối — gửi ngay.</li>
+          <li>Không đánh số thứ tự, không ACK, không gửi lại.</li>
+          <li>Tiết kiệm overhead, độ trễ thấp.</li>
+          <li><strong>Ứng dụng:</strong> Streaming video, Voice/Video call, Game online, DNS — cần tốc độ, chấp nhận mất gói.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout callout-everyday">
+      <div class="callout-title">🏠 Ví dụ đời thường</div>
+      <p>
+        <strong>TCP</strong> như gửi hàng <strong>bằng đường bưu điện có EMS</strong>: ký nhận, nếu mất thì gửi lại, chậm nhưng chắc.
+        <strong>UDP</strong> như phát <strong>sóng radio</strong>: đài cứ phát, ai bắt được thì nghe, mất 1 đoạn thì cũng kệ — quan trọng là nghe tức thời.
+      </p>
+    </div>
+
+    <h2 id="giao-thuc-chinh">3.8. Các giao thức Application phổ biến</h2>
+    <div class="table-wrap">
+      <table class="table-accent">
+        <thead><tr><th>Giao thức</th><th>Tên đầy đủ</th><th>Port</th><th>Tầng</th><th>Chức năng</th></tr></thead>
+        <tbody>
+          <tr><td><strong>HTTP</strong></td><td>Hypertext Transfer Protocol</td><td>80</td><td>App</td><td>Web browsing</td></tr>
+          <tr><td><strong>HTTPS</strong></td><td>HTTP Secure (SSL/TLS)</td><td>443</td><td>App</td><td>Web bảo mật</td></tr>
+          <tr><td><strong>FTP</strong></td><td>File Transfer Protocol</td><td>21</td><td>App</td><td>Truyền file (TCP)</td></tr>
+          <tr><td><strong>TFTP</strong></td><td>Trivial FTP</td><td>69</td><td>App</td><td>FTP rút gọn (UDP)</td></tr>
+          <tr><td><strong>SMTP</strong></td><td>Simple Mail Transfer Protocol</td><td>25</td><td>App</td><td>Gửi email đi</td></tr>
+          <tr><td><strong>POP3</strong></td><td>Post Office Protocol v3</td><td>110</td><td>App</td><td>Nhận email (tải về xong xoá)</td></tr>
+          <tr><td><strong>IMAP</strong></td><td>Internet Message Access Protocol</td><td>143</td><td>App</td><td>Nhận email (đồng bộ folder)</td></tr>
+          <tr><td><strong>DNS</strong></td><td>Domain Name System</td><td>53</td><td>App</td><td>Phân giải tên miền → IP</td></tr>
+          <tr><td><strong>DHCP</strong></td><td>Dynamic Host Configuration Protocol</td><td>67/68</td><td>App</td><td>Cấp IP động</td></tr>
+          <tr><td><strong>Telnet</strong></td><td>—</td><td>23</td><td>App</td><td>Điều khiển từ xa (không mã hoá)</td></tr>
+          <tr><td><strong>SSH</strong></td><td>Secure Shell</td><td>22</td><td>App</td><td>Điều khiển từ xa (mã hoá)</td></tr>
+          <tr><td><strong>RDP</strong></td><td>Remote Desktop Protocol</td><td>3389</td><td>App</td><td>Điều khiển Windows từ xa</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="dhcp">3.9. DHCP (Dynamic Host Configuration Protocol)</h2>
+    <p>
+      <strong>DHCP</strong> là giao thức <em>cấp phát địa chỉ IP động</em> cho thiết bị khi tham gia mạng.
+      Hoạt động theo mô hình Client-Server.
+    </p>
+
+    <h3>3.9.1. Ưu điểm DHCP</h3>
+    <ul>
+      <li>Quản lý mạng dễ dàng, không cần cấu hình thủ công từng máy.</li>
+      <li>Tránh trùng lặp IP.</li>
+      <li>Giảm IP không sử dụng (thu hồi khi hết hạn).</li>
+      <li>Thiết bị tự cấu hình khi kết nối → tiện lợi.</li>
+    </ul>
+
+    <h3>3.9.2. Quy trình DORA (4 bước)</h3>
+    <ol>
+      <li><strong>D</strong>iscover: Client broadcast "Tôi cần IP!" (DHCPDISCOVER)</li>
+      <li><strong>O</strong>ffer: DHCP Server đề xuất 1 IP cho client (DHCPOFFER)</li>
+      <li><strong>R</strong>equest: Client đồng ý và xin cấp IP đó (DHCPREQUEST)</li>
+      <li><strong>A</strong>cknowledge: Server xác nhận, cấp IP + Subnet Mask + Gateway + DNS (DHCPACK)</li>
+    </ol>
+
+    <div class="callout callout-info">
+      <div class="callout-title">ℹ️ Tĩnh vs Động</div>
+      <p>
+        <strong>IP tĩnh:</strong> Cố định, do người cấu hình thủ công — không đổi đến khi cấu hình lại. Phù hợp Server, Printer, Router.
+        <br><strong>IP động:</strong> Do DHCP Server cấp, có thời hạn (lease time), hết hạn thì xin lại hoặc cấp IP khác. Phù hợp PC user, mobile.
+      </p>
+    </div>
+
+    <h3>3.9.3. Lệnh kiểm tra trên Windows</h3>
+    <pre><code><span class="code-comment"># Xem cấu hình IP hiện tại</span>
+C:\> ipconfig
+
+<span class="code-comment"># Xem chi tiết kèm MAC</span>
+C:\> ipconfig /all
+
+<span class="code-comment"># Trả IP về DHCP Server</span>
+C:\> ipconfig /release
+
+<span class="code-comment"># Xin cấp lại IP</span>
+C:\> ipconfig /renew</code></pre>
+
+    <h3>3.9.4. ip helper-address</h3>
+    <p>
+      Khi DHCP Client và DHCP Server khác mạng (qua Router), gói tin DHCPDISCOVER (broadcast)
+      sẽ bị Router chặn. Để giải quyết, dùng lệnh trên cổng Router:
+    </p>
+    <pre><code>Router(config)# interface &lt;tên cổng&gt;
+Router(config-if)# ip helper-address &lt;địa chỉ IP DHCP Server&gt;</code></pre>
+    <p>Lệnh này chuyển tiếp gói DHCP Broadcast thành Unicast tới DHCP Server.</p>
+
+    <h3>3.9.5. Vấn đề bảo mật DHCP</h3>
+    <ul>
+      <li><strong>DHCP Client bất hợp pháp:</strong> Kẻ tấn công xin nhiều IP → cạn kiệt pool IP. Giải pháp: port security trên Switch.</li>
+      <li><strong>Man-in-the-middle:</strong> Kẻ tấn công mạo danh DHCP Server cấp IP giả. Giải pháp: <strong>DHCP Snooping</strong> trên Switch.</li>
+    </ul>
+
+    <h2 id="dns">3.10. DNS (Domain Name System)</h2>
+    <p>
+      <strong>DNS</strong> là hệ thống <em>phân giải tên miền</em> — dịch tên miền dễ nhớ (google.com)
+      sang địa chỉ IP khó nhớ (142.250.74.14) để máy tính kết nối được.
+    </p>
+
+    <h3>3.10.1. Nguyên tắc hoạt động</h3>
+    <ol>
+      <li>Nhập "google.com" vào trình duyệt.</li>
+      <li>Máy hỏi <strong>DNS Server sơ cấp</strong> (thường là của ISP hoặc 8.8.8.8 của Google).</li>
+      <li>Nếu DNS sơ cấp không biết → hỏi lên DNS cấp cao hơn (TLD .com, rồi DNS của google.com).</li>
+      <li>DNS trả IP cho máy → máy kết nối tới web server của google.com.</li>
+      <li>Máy lưu IP vào DNS cache để lần sau không phải hỏi lại.</li>
+    </ol>
+
+    <h3>3.10.2. Các loại DNS Record</h3>
+    <ul>
+      <li><strong>A Record:</strong> Trỏ tên miền → IPv4</li>
+      <li><strong>AAAA Record:</strong> Trỏ tên miền → IPv6</li>
+      <li><strong>CNAME:</strong> Tên miền bí danh (alias) trỏ tới tên miền khác</li>
+      <li><strong>MX Record:</strong> Mail Exchange — chỉ định mail server cho domain</li>
+      <li><strong>TXT Record:</strong> Lưu thông tin văn bản (SPF, DKIM...)</li>
+      <li><strong>NS Record:</strong> Name Server — chỉ định DNS server quản lý domain</li>
+    </ul>
+
+    <h3>3.10.3. Bảo mật DNS</h3>
+    <ul>
+      <li><strong>Tấn công DoS/DDoS DNS:</strong> Làm quá tải DNS server → user không vào web được.</li>
+      <li><strong>Giả mạo DNS (DNS Spoofing/Poisoning):</strong> Đổi record DNS → dẫn user tới web giả mạo.</li>
+      <li><strong>DNS Leak:</strong> Khi dùng VPN mà truy vấn DNS không đi qua VPN → lộ lịch sử web.</li>
+      <li><strong>Giải pháp:</strong> DNSSEC (chữ ký số), cập nhật vá lỗi, giới hạn truy vấn.</li>
+    </ul>
+
+    <h2 id="arp-icmp">3.11. ARP & ICMP</h2>
+    <h3>3.11.1. ARP (Address Resolution Protocol)</h3>
+    <p>
+      <strong>ARP</strong> phân giải chiều ngược lại DNS: tìm <strong>địa chỉ MAC</strong> từ <strong>địa chỉ IP</strong> đã biết.
+      Khi PC A muốn nói chuyện với PC B cùng mạng LAN, A chỉ biết IP của B → cần MAC để đóng frame.
+    </p>
+    <ol>
+      <li>A gửi <strong>ARP Request broadcast</strong>: "Ai có IP 192.168.1.5, cho tôi xin MAC!"</li>
+      <li>Tất cả máy trong mạng nhận request.</li>
+      <li>B (có IP trùng) trả <strong>ARP Reply unicast</strong>: "Tôi đây, MAC là XX:XX:XX:XX:XX:XX"</li>
+      <li>A lưu vào ARP Cache để lần sau không phải hỏi lại.</li>
+    </ol>
+
+    <h3>3.11.2. ICMP (Internet Control Message Protocol)</h3>
+    <p>
+      <strong>ICMP</strong> là giao thức <em>báo lỗi</em> hoạt động hợp nhất với IP. Các lệnh mạng phổ biến dùng ICMP:
+    </p>
+    <ul>
+      <li><strong>ping:</strong> Gửi ICMP Echo Request → đích trả Echo Reply. Kiểm tra thông mạng và đo thời gian往返.</li>
+      <li><strong>traceroute / tracert:</strong> Liệt kê danh sách các Router (hop) mà gói tin đi qua để tới đích.</li>
+    </ul>
+    <pre><code><span class="code-comment"># Ping 4 gói tới google</span>
+C:\> ping google.com
+
+<span class="code-comment"># Trace đường đi tới google (Windows)</span>
+C:\> tracert google.com
+
+<span class="code-comment"># Trace (Linux/Mac)</span>
+$ traceroute google.com</code></pre>
+
+    <h2 id="tom-tat">3.12. Tóm tắt chương</h2>
+    <ul>
+      <li><strong>Giao thức</strong> = quy tắc truyền nhận dữ liệu. TCP/IP là chuẩn toàn cầu.</li>
+      <li><strong>Phân tầng</strong> để giảm phức tạp, chuẩn hóa, dễ bảo trì.</li>
+      <li><strong>OSI 7 tầng:</strong> Application → Presentation → Session → Transport → Network → Data Link → Physical.</li>
+      <li><strong>TCP/IP 4 tầng:</strong> Application (gộp 5,6,7) → Transport → Internet (tầng 3) → Network Access (gộp 1,2).</li>
+      <li><strong>Đóng gói (xuống):</strong> Data → Segment → Packet → Frame → Bit. <strong>Gỡ gói (lên):</strong> ngược lại.</li>
+      <li><strong>TCP</strong> = tin cậy (3-way handshake, ACK). <strong>UDP</strong> = nhanh (streaming, game).</li>
+      <li><strong>DHCP</strong> cấp IP động qua DORA. <strong>DNS</strong> phân giải tên miền → IP.</li>
+      <li><strong>ARP</strong> tìm MAC từ IP. <strong>ICMP</strong> báo lỗi (ping, traceroute).</li>
+    </ul>
+
+    <div class="callout callout-info" style="margin-top:2rem;">
+      <div class="callout-title">➡️ Chương tiếp theo</div>
+      <p>
+        Sang <a href="chuong4.html" style="color:var(--accent);font-weight:600;">Chương 4: IPv4 & Subnetting</a>,
+        bạn sẽ học cách tính Net ID, Broadcast, dải host khả dụng — phần tính toán quan trọng nhất của môn học.
+      </p>
+    </div>
+  </article>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="../js/main.js"></script>
+</body>
+</html>
