@@ -183,8 +183,8 @@ window.closeDonateCard = closeDonateCard;
 window.reopenDonateCard = reopenDonateCard;
 
 /* ===========================================
-   VISITOR COUNTER (v20260701e)
-   - Hiển thị "đang online" + "tổng lượt truy cập"
+   VISITOR COUNTER (v20260701f)
+   - Hiển thị "đang online" + "tổng lượt truy cập" + "tổng người đã truy cập"
    - Dùng CounterAPI.dev (free, no signup, có CORS)
    - Widget ở góc dưới-trái (donate card đã ở dưới-phải)
    - Tự fallback im lặng nếu API lỗi → không phá web
@@ -193,6 +193,7 @@ window.reopenDonateCard = reopenDonateCard;
 const VC_API_BASE = 'https://api.counterapi.dev/v1/huytin2a-mmt';
 const VC_KEY_VISITS = 'visits';
 const VC_KEY_ONLINE = 'online';
+const VC_KEY_UNIQUE = 'unique-visitors';
 
 function renderVisitorCounter() {
   // Tránh render 2 lần (nếu script bị include nhầm)
@@ -210,10 +211,11 @@ function renderVisitorCounter() {
       }
       #visitor-counter {
         position: fixed; bottom: 20px; left: 20px; z-index: 999;
-        display: flex; gap: .4rem;
+        display: flex; flex-direction: column; gap: .4rem;
         font-family: 'Be Vietnam Pro', 'Inter', system-ui, sans-serif;
         pointer-events: none;
         animation: vcSlideIn .4s ease-out;
+        max-width: calc(100vw - 40px);
       }
       @keyframes vcSlideIn {
         from { opacity: 0; transform: translateY(10px); }
@@ -248,7 +250,8 @@ function renderVisitorCounter() {
       @media (max-width: 600px) {
         #visitor-counter {
           bottom: 12px; left: 12px;
-          flex-direction: column; gap: .25rem;
+          gap: .25rem;
+          max-width: calc(100vw - 24px);
         }
         #visitor-counter .vc-pill {
           padding: .3rem .55rem;
@@ -268,10 +271,15 @@ function renderVisitorCounter() {
       <span class="vc-num" id="vc-online">—</span>
       <span>đang online</span>
     </div>
-    <div class="vc-pill" title="Tổng lượt truy cập">
+    <div class="vc-pill" title="Tổng số lượt xem trang (mỗi lần tải trang = +1)">
       <span style="font-size:.78rem;">👁️</span>
       <span class="vc-num" id="vc-visits">—</span>
-      <span>lượt truy cập</span>
+      <span>lượt xem</span>
+    </div>
+    <div class="vc-pill" title="Tổng số người đã từng truy cập (mỗi thiết bị = 1 người, dùng cho nghiên cứu)">
+      <span style="font-size:.78rem;">👥</span>
+      <span class="vc-num" id="vc-unique">—</span>
+      <span>người đã xem</span>
     </div>
   `;
   document.body.appendChild(widget);
@@ -283,6 +291,7 @@ function renderVisitorCounter() {
 async function initVisitorCounter() {
   const onlineEl = document.getElementById('vc-online');
   const visitsEl = document.getElementById('vc-visits');
+  const uniqueEl = document.getElementById('vc-unique');
 
   // Helper: fetch JSON an toàn
   async function safeGet(url) {
@@ -293,7 +302,7 @@ async function initVisitorCounter() {
     } catch (e) { return null; }
   }
 
-  // Tăng cả 2 counter ngay khi trang load
+  // Tăng "visits" (lượt xem) và "online" (đang online) mỗi lần load trang
   const [visitsResp, onlineResp] = await Promise.all([
     safeGet(`${VC_API_BASE}/${VC_KEY_VISITS}/up`),
     safeGet(`${VC_API_BASE}/${VC_KEY_ONLINE}/up`),
@@ -308,6 +317,38 @@ async function initVisitorCounter() {
     onlineEl.textContent = vcFormat(Math.max(0, onlineResp.count));
   } else if (onlineEl) {
     onlineEl.textContent = '—';
+  }
+
+  // ====== UNIQUE VISITOR TRACKING (dùng cho nghiên cứu khoa học) ======
+  // Cơ chế: client sinh 1 UUID ngẫu nhiên, lưu vào localStorage.
+  // - Nếu chưa có UUID (user mới) → gọi /up để tăng counter unique
+  // - Nếu đã có UUID (user cũ) → chỉ GET count hiện tại, KHÔNG tăng
+  // Nhờ đó counter "unique-visitors" phản ánh số thiết bị/người đã từng truy cập.
+  // Lưu ý: localStorage có thể bị clear → số thực tế có thể cao hơn hiển thị.
+  try {
+    const STORAGE_KEY_ID = 'vc_user_id_v1';
+    let userId = localStorage.getItem(STORAGE_KEY_ID);
+    const isFirstVisit = !userId;
+    if (!userId) {
+      // Sinh UUID v4 đơn giản
+      userId = 'u-' + ([1e7]+1e3+4e3+8e3+1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c/4).toString(16)
+      );
+      try { localStorage.setItem(STORAGE_KEY_ID, userId); } catch (e) {}
+    }
+
+    // Nếu user mới → /up (tăng counter); nếu user cũ → chỉ GET (không tăng)
+    const uniqueResp = isFirstVisit
+      ? await safeGet(`${VC_API_BASE}/${VC_KEY_UNIQUE}/up`)
+      : await safeGet(`${VC_API_BASE}/${VC_KEY_UNIQUE}/`);
+
+    if (uniqueEl && uniqueResp && typeof uniqueResp.count === 'number') {
+      uniqueEl.textContent = vcFormat(Math.max(0, uniqueResp.count));
+    } else if (uniqueEl) {
+      uniqueEl.textContent = '—';
+    }
+  } catch (e) {
+    if (uniqueEl) uniqueEl.textContent = '—';
   }
 
   // Heartbeat mỗi 60s — chỉ refresh "online" (không tăng visits)
