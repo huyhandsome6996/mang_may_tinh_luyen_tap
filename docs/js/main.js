@@ -129,57 +129,58 @@ function renderFooter() {
   if (ph) ph.innerHTML = html;
 }
 
-// Render floating Donate button + modal
+// Render floating Donate QR card (hiện luôn, có nút X để tắt)
 function renderDonate() {
   const r = getRoot();
-  // Tạo nút nổi ở góc dưới phải
-  const btn = document.createElement('div');
-  btn.id = 'donate-fab';
-  btn.innerHTML = `
+
+  // Tạo card QR nổi ở góc dưới phải
+  const card = document.createElement('div');
+  card.id = 'donate-card';
+  card.innerHTML = `
+    <button class="donate-close" onclick="closeDonateCard()" aria-label="Đóng QR">✕</button>
+    <div class="donate-card-header">
+      <span class="donate-emoji">☕</span>
+      <div>
+        <div class="donate-title">Ủng hộ tác giả</div>
+        <div class="donate-subtitle">Mời ly cafe nhé! ❤️</div>
+      </div>
+    </div>
+    <img src="${r}assets/donate-qr.png" alt="QR Donate" class="donate-qr-img" />
+    <div class="donate-hint">Quét mã QR để ủng hộ</div>
+  `;
+  document.body.appendChild(card);
+
+  // Tạo nút nổi nhỏ (ẩn mặc định) - hiện lại khi user đã tắt QR card
+  const fab = document.createElement('div');
+  fab.id = 'donate-fab';
+  fab.style.display = 'none';
+  fab.innerHTML = `
     <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
       <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
     </svg>
     <span>Donate</span>
   `;
-  btn.title = 'Ủng hộ tác giả';
-  btn.addEventListener('click', openDonateModal);
-  document.body.appendChild(btn);
-
-  // Tạo modal (ẩn mặc định)
-  const modal = document.createElement('div');
-  modal.id = 'donate-modal';
-  modal.innerHTML = `
-    <div class="donate-modal-backdrop" onclick="closeDonateModal()"></div>
-    <div class="donate-modal-content">
-      <button class="donate-close" onclick="closeDonateModal()" aria-label="Đóng">✕</button>
-      <h3>☕ Ủng hộ tác giả</h3>
-      <p style="color:var(--text-muted);font-size:.92rem;margin:.5rem 0 1rem;">
-        Nếu tài liệu giúp ích cho bạn ôn thi, hãy mời tác giả ly cafe nhé! ❤️
-      </p>
-      <img src="${r}assets/donate-qr.png" alt="QR Donate" class="donate-qr-img" />
-      <p style="font-size:.85rem;color:var(--text-muted);margin-top:.75rem;">Quét mã QR để ủng hộ</p>
-    </div>
-  `;
-  document.body.appendChild(modal);
+  fab.title = 'Hiện lại QR ủng hộ';
+  fab.addEventListener('click', reopenDonateCard);
+  document.body.appendChild(fab);
 }
 
-function openDonateModal() {
-  const m = document.getElementById('donate-modal');
-  if (m) m.classList.add('show');
-  document.body.style.overflow = 'hidden';
+function closeDonateCard() {
+  const card = document.getElementById('donate-card');
+  if (card) card.style.display = 'none';
+  const fab = document.getElementById('donate-fab');
+  if (fab) fab.style.display = 'inline-flex';
 }
-function closeDonateModal() {
-  const m = document.getElementById('donate-modal');
-  if (m) m.classList.remove('show');
-  document.body.style.overflow = '';
-}
-window.openDonateModal = openDonateModal;
-window.closeDonateModal = closeDonateModal;
 
-// Đóng modal khi ấn ESC
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeDonateModal();
-});
+function reopenDonateCard() {
+  const card = document.getElementById('donate-card');
+  if (card) card.style.display = 'block';
+  const fab = document.getElementById('donate-fab');
+  if (fab) fab.style.display = 'none';
+}
+
+window.closeDonateCard = closeDonateCard;
+window.reopenDonateCard = reopenDonateCard;
 
 // Init
 document.addEventListener('DOMContentLoaded', () => {

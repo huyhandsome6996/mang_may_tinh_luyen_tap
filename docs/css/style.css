@@ -720,86 +720,90 @@ pre code { background: transparent; color: inherit; padding: 0; }
   color: rgba(255,255,255,.4); font-size: 1.2rem;
 }
 
-/* === DONATE FLOATING BUTTON + MODAL === */
+
+/* === DONATE QR CARD (hiện luôn ở góc dưới phải) === */
+#donate-card {
+  position: fixed; bottom: 24px; right: 24px; z-index: 1000;
+  width: 240px;
+  background: white;
+  border-radius: 18px;
+  padding: 1rem;
+  box-shadow: 0 12px 32px -8px rgba(15,23,42,.25), 0 4px 8px -4px rgba(15,23,42,.1);
+  border: 1px solid var(--border);
+  font-family: inherit;
+  animation: cardSlideIn .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes cardSlideIn {
+  from { opacity: 0; transform: translateY(20px) scale(.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+#donate-card .donate-close {
+  position: absolute; top: 8px; right: 8px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--surface-2); border: 0;
+  cursor: pointer; font-size: .9rem; color: var(--text-muted);
+  display: grid; place-items: center;
+  transition: all .2s; line-height: 1;
+}
+#donate-card .donate-close:hover { background: var(--danger); color: white; transform: rotate(90deg); }
+
+#donate-card .donate-card-header {
+  display: flex; align-items: center; gap: .55rem;
+  margin-bottom: .65rem; padding-right: 1.5rem;
+}
+#donate-card .donate-emoji { font-size: 1.6rem; line-height: 1; }
+#donate-card .donate-title {
+  font-weight: 700; font-size: .92rem; color: var(--primary);
+  line-height: 1.2;
+}
+#donate-card .donate-subtitle {
+  font-size: .76rem; color: var(--text-muted); margin-top: 2px;
+}
+
+#donate-card .donate-qr-img {
+  width: 100%; height: auto; display: block;
+  border-radius: 10px; border: 1px solid var(--border);
+}
+#donate-card .donate-hint {
+  text-align: center; font-size: .76rem; color: var(--text-muted);
+  margin-top: .5rem;
+}
+
+/* Nút FAB nhỏ - hiện khi user đã tắt QR card */
 #donate-fab {
   position: fixed; bottom: 24px; right: 24px; z-index: 1000;
   display: inline-flex; align-items: center; gap: .45rem;
-  padding: .7rem 1.1rem; border-radius: 999px;
+  padding: .65rem 1rem; border-radius: 999px;
   background: linear-gradient(135deg, #EC4899 0%, #F43F5E 100%);
-  color: white; font-weight: 600; font-size: .92rem;
-  box-shadow: 0 8px 24px -6px rgba(236,72,153,.6), 0 4px 8px -4px rgba(0,0,0,.15);
+  color: white; font-weight: 600; font-size: .88rem;
+  box-shadow: 0 8px 24px -6px rgba(236,72,153,.6);
   cursor: pointer; transition: all .25s ease;
   border: 0; user-select: none;
   animation: donatePulse 2.5s ease-in-out infinite;
 }
 #donate-fab:hover {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 12px 32px -6px rgba(236,72,153,.75), 0 6px 12px -4px rgba(0,0,0,.2);
+  box-shadow: 0 12px 32px -6px rgba(236,72,153,.75);
   animation: none;
 }
 #donate-fab svg { flex-shrink: 0; }
-#donate-fab span { white-space: nowrap; }
 
 @keyframes donatePulse {
-  0%, 100% { box-shadow: 0 8px 24px -6px rgba(236,72,153,.6), 0 4px 8px -4px rgba(0,0,0,.15), 0 0 0 0 rgba(236,72,153,.4); }
-  50% { box-shadow: 0 8px 24px -6px rgba(236,72,153,.6), 0 4px 8px -4px rgba(0,0,0,.15), 0 0 0 12px rgba(236,72,153,0); }
+  0%, 100% { box-shadow: 0 8px 24px -6px rgba(236,72,153,.6), 0 0 0 0 rgba(236,72,153,.4); }
+  50% { box-shadow: 0 8px 24px -6px rgba(236,72,153,.6), 0 0 0 12px rgba(236,72,153,0); }
 }
 
-/* Modal */
-#donate-modal {
-  position: fixed; inset: 0; z-index: 2000;
-  display: none; align-items: center; justify-content: center;
-  padding: 1rem;
-}
-#donate-modal.show { display: flex; }
-.donate-modal-backdrop {
-  position: absolute; inset: 0;
-  background: rgba(15,23,42,.7);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  animation: fadeIn .25s ease;
-}
-@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
-
-.donate-modal-content {
-  position: relative; z-index: 1;
-  background: white; border-radius: 20px;
-  padding: 2rem; max-width: 360px; width: 100%;
-  text-align: center;
-  box-shadow: 0 24px 48px -12px rgba(15,23,42,.4);
-  animation: modalIn .3s cubic-bezier(.34,1.56,.64,1);
-}
-@keyframes modalIn {
-  from { opacity: 0; transform: scale(.85) translateY(20px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-.donate-modal-content h3 {
-  font-size: 1.3rem; font-weight: 800; margin: 0;
-  background: linear-gradient(135deg, #EC4899 0%, #F43F5E 100%);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.donate-close {
-  position: absolute; top: 12px; right: 12px;
-  width: 32px; height: 32px; border-radius: 50%;
-  background: var(--surface-2); border: 0;
-  cursor: pointer; font-size: 1rem; color: var(--text-muted);
-  display: grid; place-items: center;
-  transition: all .2s;
-}
-.donate-close:hover { background: var(--danger); color: white; }
-.donate-qr-img {
-  width: 100%; max-width: 280px; height: auto;
-  border-radius: 12px; border: 1px solid var(--border);
-  margin: 0 auto; display: block;
-}
-
-/* Trên mobile, donate button nhỏ hơn */
+/* Trên mobile, QR card nhỏ hơn để không che nội dung */
 @media (max-width: 600px) {
-  #donate-fab { bottom: 16px; right: 16px; padding: .6rem .9rem; font-size: .85rem; }
+  #donate-card { bottom: 16px; right: 16px; width: 200px; padding: .85rem; }
+  #donate-card .donate-emoji { font-size: 1.3rem; }
+  #donate-card .donate-title { font-size: .85rem; }
+  #donate-card .donate-subtitle { font-size: .7rem; }
+  #donate-card .donate-hint { font-size: .7rem; }
+  #donate-fab { bottom: 16px; right: 16px; padding: .55rem .85rem; font-size: .82rem; }
   #donate-fab span { display: none; }
   #donate-fab::after { content: 'Donate'; }
-  .donate-modal-content { padding: 1.5rem; }
 }
 
 /* Brand title - cho chữ "Huy Tin2A" nổi bật */
