@@ -1,30 +1,32 @@
 /* ===========================================
-   MAIN JS - Shared utilities & nav
-   Auto-detect depth to generate correct relative paths
+   MAIN JS v3 - Shared utilities & nav
+   - Bypass cache bằng version query string
+   - Dùng absolute path (từ root repo) để tránh lỗi depth
    =========================================== */
 
-// Detect depth: index.html at root = depth 0, subfolder pages = depth 1
-function getDepth() {
+// Lấy root path của website (ví dụ: /mang_may_tinh_luyen_tap/)
+function getRoot() {
   const path = window.location.pathname;
-  // Count '/' segments after the repo root
-  // e.g. /mang_may_tinh_luyen_tap/  -> depth 0
-  //      /mang_may_tinh_luyen_tap/theory/chuong1.html -> depth 1
-  //      /mang_may_tinh_luyen_tap/labs/subnet-calc.html -> depth 1
-  // Strip trailing slash and filename
-  let p = path.replace(/\/[^/]*\.(html?|php)$/, '');
-  p = p.replace(/\/$/, '');
-  // Count remaining slashes
-  const matches = p.match(/\//g) || [];
-  // First slash is the leading slash, so depth = matches.length - 1
-  // But on GitHub Pages the path includes the repo name as first segment
-  // So /repo/ -> depth 0, /repo/theory -> depth 1
-  // matches for "/repo" = 1, for "/repo/theory" = 2
-  // depth = matches.length - 1
-  return Math.max(0, matches.length - 1);
-}
-
-function prefix() {
-  return getDepth() === 0 ? '' : '../';
+  // Tìm vị trí '/docs/' cuối cùng trong path
+  // Trên GitHub Pages: /mang_may_tinh_luyen_tap/theory/chuong1.html
+  // Trên localhost: /docs/theory/chuong1.html hoặc /theory/chuong1.html
+  const docsIdx = path.lastIndexOf('/docs/');
+  if (docsIdx >= 0) {
+    return path.substring(0, docsIdx + 6); // include '/docs/'
+  }
+  // Không có /docs/ → có thể là root deploy hoặc localhost
+  // Trường hợp: /mang_may_tinh_luyen_tap/ hoặc /mang_may_tinh_luyen_tap/theory/...
+  // Heuristic: nếu path kết thúc bằng /index.html hoặc /, ta ở root
+  // Nếu path có subfolder như /theory/, /labs/, /quiz/ → trả về path trước subfolder
+  const segments = path.split('/').filter(s => s.length > 0);
+  // Tìm subfolder đã biết
+  const knownSubs = ['theory', 'labs', 'quiz', 'css', 'js', 'assets'];
+  const subIdx = segments.findIndex(s => knownSubs.includes(s));
+  if (subIdx > 0) {
+    return '/' + segments.slice(0, subIdx).join('/') + '/';
+  }
+  // Mặc định: root
+  return path.endsWith('/') ? path : path.substring(0, path.lastIndexOf('/') + 1);
 }
 
 // Mobile menu toggle
@@ -65,11 +67,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Render shared top nav into placeholder
 function renderNav(active) {
-  const p = prefix();
+  const r = getRoot();
   const html = `
   <header class="topbar">
     <div class="topbar-inner">
-      <a href="${p}index.html" class="brand">
+      <a href="${r}index.html" class="brand">
         <div class="brand-logo">M</div>
         <span>Mạng Máy Tính<br><small style="font-size:.7rem;color:var(--text-muted);font-weight:500;">Review Hub</small></span>
       </a>
@@ -77,11 +79,11 @@ function renderNav(active) {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
       </button>
       <nav class="nav-links">
-        <a class="nav-link ${active==='home'?'active':''}" href="${p}index.html">Trang chủ</a>
-        <a class="nav-link ${active==='theory'?'active':''}" href="${p}theory/chuong1.html">Lý thuyết</a>
-        <a class="nav-link ${active==='labs'?'active':''}" href="${p}labs/subnet-calc.html">Mô phỏng</a>
-        <a class="nav-link ${active==='quiz'?'active':''}" href="${p}quiz/trac-nghiem.html">Trắc nghiệm</a>
-        <a class="nav-link ${active==='essay'?'active':''}" href="${p}quiz/tu-luan.html">Tự luận</a>
+        <a class="nav-link ${active==='home'?'active':''}" href="${r}index.html">Trang chủ</a>
+        <a class="nav-link ${active==='theory'?'active':''}" href="${r}theory/chuong1.html">Lý thuyết</a>
+        <a class="nav-link ${active==='labs'?'active':''}" href="${r}labs/subnet-calc.html">Mô phỏng</a>
+        <a class="nav-link ${active==='quiz'?'active':''}" href="${r}quiz/trac-nghiem.html">Trắc nghiệm</a>
+        <a class="nav-link ${active==='essay'?'active':''}" href="${r}quiz/tu-luan.html">Tự luận</a>
       </nav>
     </div>
   </header>`;
@@ -97,7 +99,7 @@ function renderNav(active) {
 }
 
 function renderFooter() {
-  const p = prefix();
+  const r = getRoot();
   const html = `
   <footer class="footer">
     <div class="footer-inner">
@@ -110,21 +112,20 @@ function renderFooter() {
       </div>
       <div>
         <h4>Nội dung</h4>
-        <a href="${p}theory/chuong1.html">Khái niệm cơ bản</a>
-        <a href="${p}theory/chuong2.html">Môi trường & Thiết bị</a>
-        <a href="${p}theory/chuong3.html">Mô hình OSI</a>
-        <a href="${p}theory/chuong4.html">IPv4 & Subnetting</a>
-        <a href="${p}theory/chuong5.html">Quản trị Windows</a>
-        <a href="${p}theory/chuong6.html">Cloud Computing</a>
+        <a href="${r}theory/chuong1.html">Khái niệm cơ bản</a>
+        <a href="${r}theory/chuong2.html">Môi trường & Thiết bị</a>
+        <a href="${r}theory/chuong3.html">Mô hình OSI & TCP/IP</a>
+        <a href="${r}theory/chuong4.html">IPv4 & Subnetting</a>
+        <a href="${r}theory/chuong6.html">Cloud Computing</a>
       </div>
       <div>
         <h4>Luyện tập</h4>
-        <a href="${p}labs/subnet-calc.html">Subnet Calculator</a>
-        <a href="${p}labs/osi-encap.html">OSI Encapsulation</a>
-        <a href="${p}labs/tcp-handshake.html">TCP Handshake</a>
-        <a href="${p}labs/dhcp-dora.html">DHCP DORA</a>
-        <a href="${p}labs/collision.html">Hub vs Switch</a>
-        <a href="${p}quiz/trac-nghiem.html">Trắc nghiệm</a>
+        <a href="${r}labs/subnet-calc.html">Subnet Calculator</a>
+        <a href="${r}labs/osi-encap.html">OSI Encapsulation</a>
+        <a href="${r}labs/tcp-handshake.html">TCP Handshake</a>
+        <a href="${r}labs/dhcp-dora.html">DHCP DORA</a>
+        <a href="${r}labs/collision.html">Hub vs Switch</a>
+        <a href="${r}quiz/trac-nghiem.html">Trắc nghiệm</a>
       </div>
     </div>
     <div class="footer-bottom">

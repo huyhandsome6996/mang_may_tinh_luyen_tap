@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/style.css?v=20260701a">
 <style>
 .essay-filter { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
 .filter-btn {
@@ -34,7 +34,6 @@
     <button class="filter-btn" onclick="filterEssay(2, this)">Chương 2</button>
     <button class="filter-btn" onclick="filterEssay(3, this)">Chương 3</button>
     <button class="filter-btn" onclick="filterEssay(4, this)">Chương 4</button>
-    <button class="filter-btn" onclick="filterEssay(5, this)">Chương 5</button>
     <button class="filter-btn" onclick="filterEssay(6, this)">Chương 6</button>
   </div>
 
@@ -42,7 +41,7 @@
 </div>
 
 <div id="footer-placeholder"></div>
-<script src="../js/main.js"></script>
+<script src="../js/main.js?v=20260701a"></script>
 <script>
 const ESSAY_QUESTIONS = [
   // Chương 1
@@ -103,19 +102,7 @@ const ESSAY_QUESTIONS = [
   {chapter: 4, q: "Phân biệt IP Private và IP Public. Nêu dải IP Private của 3 lớp A, B, C.",
    a: "IP Private (IP nội bộ): không gian địa chỉ dùng riêng trong tổ chức, KHÔNG định tuyến ra Internet công cộng. Nhà cung cấp Internet sẽ chặn gói có IP Private. Trong mạng nội bộ, dùng Private + NAT để ra Internet.\n\nIP Public: IP mua từ ISP, định tuyến được trên Internet. Độc nhất toàn cầu.\n\nDải Private:\n- Lớp A: 10.0.0.0 → 10.255.255.255 (16.777.216 địa chỉ)\n- Lớp B: 172.16.0.0 → 172.31.255.255 (1.048.576 địa chỉ)\n- Lớp C: 192.168.0.0 → 192.168.255.255 (65.536 địa chỉ)\n\nNgoài ra: 127.0.0.0/8 là Loopback. 169.254.0.0/16 là APIPA (tự cấp khi không có DHCP)."},
 
-  // Chương 5
-  {chapter: 5, q: "Phân biệt Workgroup và Domain. File nào lưu DB tài khoản trong mỗi mô hình?",
-   a: "WORKGROUP (Peer-to-Peer):\n- Các máy bình đẳng, vừa client vừa server.\n- Quản trị phân tán, từng máy tự quản.\n- DB tài khoản lưu file SAM (Security Accounts Manager) cục bộ trên từng máy.\n- Chứng thực do máy cục bộ đảm nhiệm.\n- Bảo mật kém, phù hợp <15 máy.\n\nDOMAIN (Client-Server):\n- Phân rõ server/client. Có Domain Controller (DC).\n- Quản trị tập trung tại DC.\n- DB tài khoản lưu file NTDS.DIT trên DC (Active Directory).\n- Chứng thực do DC đảm nhiệm qua Kerberos.\n- Bảo mật cao, phù hợp công ty lớn."},
-  {chapter: 5, q: "Active Directory là gì? Trình bày các thành phần và lợi ích.",
-   a: "Active Directory (AD) là dịch vụ thư mục của Microsoft, lưu thông tin tài nguyên mạng (File Server, Printer, User, Group, Web Server) và cho phép tra cứu/sử dụng.\n\nThành phần:\n- Object: đối tượng cơ bản (user, máy in, server...)\n- Attribute: thuộc tính mô tả object (tên, IP, mật khẩu)\n- Schema: định nghĩa thuộc tính cho mỗi loại object\n- Container: vật chứa. 3 loại:\n  + Domain: đơn vị nòng cốt của AD\n  + Site: phân biệt vị trí cục bộ/xa\n  + OU (Organizational Unit): chứa user, group, máy tính\n- Global Catalog: xác định vị trí object\n\nLợi ích: Quản lý tập trung, uỷ quyền, tích hợp DNS, mở rộng tốt (10 triệu object/domain)."},
-  {chapter: 5, q: "DCPROMO là gì? Trình bày các bước cài đặt và gia nhập máy trạm vào Domain.",
-   a: "DCPROMO (Active Directory Installation Wizard) nâng cấp Standalone Server → Domain Controller (DC) hoặc giáng cấp DC → Standalone Server.\n\nCác bước cài đặt DC:\n1. Start → Run → dcpromo\n2. Cảnh báo: DOS/Win95/WinNT SP3 trở trước bị loại khỏi AD → Next\n3. Chọn 'Domain in a new forest' (nếu domain đầu)\n4. Nhập tên DNS đầy đủ (vd: netclass.local)\n5. Nhập tên NetBIOS\n6. Chỉ định vị trí database AD + log\n7. Chỉ định thư mục SYSVOL (bắt buộc NTFS)\n8. Nếu DNS chưa cài → chọn cài tự động\n9. Chọn mức tương thích server\n10. Nhập mật khẩu Restore Mode\n11. Tóm tắt → Next → cài → Reboot\n\nGia nhập máy trạm vào Domain:\n- Đăng nhập máy cục bộ bằng Administrator\n- Right click My Computer → Properties → Computer Name → Change\n- Nhập tên domain → máy tìm DC → DC yêu cầu xác thực admin domain\n- Reboot → hộp logon có 2 lựa chọn: domain hoặc máy cục bộ."},
-  {chapter: 5, q: "Group Policy là gì? Trình bày Password Policy và Account Lockout Policy.",
-   a: "Group Policy (gpedit.msc) là công cụ cấu hình chính sách cho máy và user. Có 2 nhánh: Computer Configuration (toàn user) và User Configuration (user hiện tại).\n\nPASSWORD POLICY (mặc định):\n- Enforce password history: 24 lần không trùng\n- Maximum password age: 42 ngày\n- Minimum password age: 1 ngày\n- Minimum password length: 7 ký tự\n- Password must meet complexity: Yes\n- Store passwords using reversible encryption: No\n\nACCOUNT LOCKOUT POLICY:\n- Account Lockout Threshold: số lần đăng nhập sai → khoá (vd: 5)\n- Account Lockout Duration: thời gian khoá (mặc định 30 phút)\n- Reset Lockout Counter After: thời gian đếm lại (mặc định 30 phút)\n\nMục đích: chống brute force, tăng bảo mật tài khoản."},
-  {chapter: 5, q: "NTFS Permission là gì? So sánh với Share Permission. Cách cấp quyền?",
-   a: "NTFS Permission: 13 quyền chi tiết để bảo mật file/folder trên partition NTFS.\n\nCác quyền: Traverse Folder, List Folder, Read Attributes, Read Extended, Create File, Create Folder, Write Attributes, Write Extended, Delete Subfolders, Delete, Read Permissions, Change Permissions, Take Ownership.\n\nSo sánh:\n- SHARE PERMISSION: chỉ áp dụng khi truy cập QUA MẠNG.\n- NTFS PERMISSION: áp dụng CẢ khi truy cập mạng VÀ local.\n- NTFS chi tiết hơn, bảo mật hơn.\n\nCấp quyền:\n1. Right click folder → Properties → Security → Add\n2. Find Now → chọn user/group → OK\n3. Mặc định 3 quyền tối thiểu. Có thể cấp thêm.\n4. Để cấu hình riêng: tắt inherit (Advanced → bỏ check 'Inherit from parent')\n5. Check 'Replace permission entries' để áp cho thư mục con\n6. Apply → OK"},
-  {chapter: 5, q: "Disk Quota là gì? Cách cấu hình và lưu ý quan trọng.",
-   a: "Disk Quota: giới hạn dung lượng ổ cứng tối đa cho từng user trên partition NTFS. Tránh lãng phí, quản lý hiệu quả.\n\nQuota chỉ set cho từng PARTITION (không set cả ổ cứng).\n\nCấu hình:\n1. Properties partition → tab Quota\n2. Check 'Enable quota management'\n3. Check 'Deny disk space to users exceeding quota limit'\n4. Quota Entries → New Quota Entry → Add user\n5. Nhập dung lượng tối đa → OK\n\nLƯU Ý QUAN TRỌNG:\n- Nếu chỉ check 'Enable quota management' mà KHÔNG check 'Deny disk space...' → user vẫn ghi vượt dung lượng (chỉ bị cảnh báo). PHẢI CHECK CẢ 2 Ô mới chặn được thật.\n- Quota áp dụng cho từng user riêng, không cho group.\n- Có thể set warning level (cảnh báo trước khi đạt giới hạn)."},
+  // Chương 5 (đã xoá - không có trong file ôn tập)
 
   // Chương 6
   {chapter: 6, q: "Điện toán đám mây là gì? Nêu 5 đặc trưng cơ bản theo NIST.",

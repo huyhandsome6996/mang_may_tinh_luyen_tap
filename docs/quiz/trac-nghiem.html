@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/style.css?v=20260701a">
 </head>
 <body>
 <div id="nav-placeholder"></div>
@@ -27,13 +27,12 @@
       <div class="calc-field">
         <label>Chương</label>
         <select id="chapterSelect">
-          <option value="0">Tổng hợp (100 câu)</option>
-          <option value="1">Chương 1 · Khái niệm cơ bản (20 câu)</option>
-          <option value="2">Chương 2 · Môi trường & Thiết bị (20 câu)</option>
-          <option value="3">Chương 3 · OSI & TCP/IP (20 câu)</option>
-          <option value="4">Chương 4 · IPv4 & Subnetting (20 câu)</option>
-          <option value="5">Chương 5 · Windows Server (10 câu)</option>
-          <option value="6">Chương 6 · Cloud Computing (10 câu)</option>
+          <option value="0">Tổng hợp (150+ câu)</option>
+          <option value="1">Chương 1 · Khái niệm cơ bản (30 câu)</option>
+          <option value="2">Chương 2 · Môi trường & Thiết bị (25 câu)</option>
+          <option value="3">Chương 3 · OSI & TCP/IP (35 câu)</option>
+          <option value="4">Chương 4 · IPv4 & Subnetting (45 câu)</option>
+          <option value="6">Chương 6 · Cloud Computing (15 câu)</option>
         </select>
       </div>
       <div class="calc-field">
@@ -44,6 +43,7 @@
           <option value="30">30 câu</option>
           <option value="50">50 câu (chuyên sâu)</option>
           <option value="100">100 câu (full)</option>
+          <option value="150">150 câu (full++)</option>
         </select>
       </div>
     </div>
@@ -123,8 +123,8 @@
 </div>
 
 <div id="footer-placeholder"></div>
-<script src="../js/main.js"></script>
-<script src="../js/quiz-data.js"></script>
+<script src="../js/main.js?v=20260701a"></script>
+<script src="../js/quiz-data.js?v=20260701a"></script>
 <script>
 let quiz = {
   questions: [], current: 0, answers: [], startTime: 0, timer: null, timeLimit: 0

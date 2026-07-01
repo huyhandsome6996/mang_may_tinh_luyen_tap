@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/style.css?v=20260701a">
 </head>
 <body>
 <div id="nav-placeholder"></div>
@@ -19,7 +19,6 @@
     <nav class="toc">
       <a href="#dinh-nghia">Định nghĩa</a>
       <a href="#loi-ich">Lợi ích</a>
-      <a href="#lich-su">Lịch sử</a>
       <a href="#phan-loai-khoang-cach">Phân loại theo khoảng cách</a>
       <a href="#phan-loai-ket-noi">Phân loại theo kết nối</a>
       <a href="#phan-loai-chuc-nang">Phân loại theo chức năng</a>
@@ -32,7 +31,6 @@
       <a href="chuong2.html">→ Chương 2: Môi trường & Thiết bị</a>
       <a href="chuong3.html">→ Chương 3: OSI & TCP/IP</a>
       <a href="chuong4.html">→ Chương 4: IPv4 & Subnetting</a>
-      <a href="chuong5.html">→ Chương 5: Quản trị Windows</a>
       <a href="chuong6.html">→ Chương 6: Cloud Computing</a>
     </nav>
   </aside>
@@ -42,7 +40,7 @@
     <span class="section-eyebrow">Chương 1</span>
     <h1>Khái niệm cơ bản về mạng máy tính</h1>
     <p class="lead">
-      Chương này giới thiệu định nghĩa, mục đích, lịch sử và các cách phân loại mạng máy tính.
+      Chương này giới thiệu định nghĩa, mục đích và các cách phân loại mạng máy tính.
       Đây là nền tảng để hiểu các chương sau về giao thức, địa chỉ IP và quản trị mạng.
     </p>
 
@@ -88,23 +86,7 @@
       </p>
     </div>
 
-    <h2 id="lich-su">1.3. Lịch sử phát triển</h2>
-    <p>
-      Lịch sử mạng máy tính gắn liền với 3 mốc quan trọng: <strong>ARPANET (1970)</strong>,
-      <strong>PC & LAN (1980)</strong> và sự ra đời của <strong>Internet (1983)</strong>.
-    </p>
-    <ul>
-      <li><strong>ARPANET (1970):</strong> Mạng chuyển mạch gói đầu tiên, do Bộ Quốc phòng Mỹ tài trợ (Advanced Research Project Agency). Liên kết các cơ sở nghiên cứu, phòng thí nghiệm, trường đại học. Nó dần trở thành đường trục của Internet, chính thức "về hưu" năm 1990.</li>
-      <li><strong>PC & LAN (1980):</strong> Sự bùng nổ máy tính cá nhân (PC) dẫn đến nhu cầu nối mạng nội bộ trong văn phòng — ra đời mạng LAN.</li>
-      <li><strong>Internet (1983):</strong> Khi DARPA yêu cầu mọi máy kết nối ARPANET phải dùng TCP/IP, Internet chính thức ra đời. Đây cũng là lúc khái niệm "mạng toàn cầu" bắt đầu成形.</li>
-    </ul>
-
-    <div class="callout callout-tip">
-      <div class="callout-title">💡 Mẹo thi</div>
-      <p>Nhớ thứ tự: <strong>ARPANET (1970) → PC&LAN (1980) → Internet (1983)</strong>. Hay bị hỏi "mạng nào là tiền thân của Internet?" → đáp án: ARPANET.</p>
-    </div>
-
-    <h2 id="phan-loai-khoang-cach">1.4. Phân loại theo khoảng cách địa lý</h2>
+    <h2 id="phan-loai-khoang-cach">1.3. Phân loại theo khoảng cách địa lý</h2>
     <p>Đây là cách phân loại phổ biến nhất, dựa trên diện tích phủ sóng của mạng.</p>
 
     <div class="table-wrap">
@@ -128,16 +110,16 @@
       </p>
     </div>
 
-    <h2 id="phan-loai-ket-noi">1.5. Phân loại theo phương thức kết nối</h2>
+    <h2 id="phan-loai-ket-noi">1.4. Phân loại theo phương thức kết nối</h2>
     <ul>
       <li><strong>Point-to-Point (Điểm-điểm):</strong> Đường truyền riêng biệt nối 2 cặp máy (hoặc Hub-Hub). Mỗi đường chỉ phục vụ 2 thiết bị.</li>
       <li><strong>Point-to-Multipoint (Điểm-đa điểm):</strong> Từ một trạm có thể kết nối đến nhiều trạm khác (kiểu trạm chủ - trạm tớ).</li>
     </ul>
 
-    <h2 id="phan-loai-chuc-nang">1.6. Phân loại theo chức năng (kiến trúc logic)</h2>
+    <h2 id="phan-loai-chuc-nang">1.5. Phân loại theo chức năng (kiến trúc logic)</h2>
     <p>Đây là cách phân loại quan trọng nhất, hay bị hỏi trong thi.</p>
 
-    <h3>1.6.1. Mạng Peer-to-Peer (Workgroup / Ngang hàng)</h3>
+    <h3>1.5.1. Mạng Peer-to-Peer (Workgroup / Ngang hàng)</h3>
     <p>
       Các máy tính trong mạng <strong>hoàn toàn bình đẳng</strong>, mỗi máy vừa đóng vai trò client
       vừa đóng vai trò server. Không có máy phục vụ chuyên dụng.
@@ -148,7 +130,7 @@
       <li><strong>Nhược điểm:</strong> Bảo mật kém, khó quản lý tập trung; hiệu năng giảm mạnh khi nhiều máy; chỉ phù hợp mạng nhỏ (&lt;15 máy).</li>
     </ul>
 
-    <h3>1.6.2. Mạng Client-Server (Domain / Khách-Chủ)</h3>
+    <h3>1.5.2. Mạng Client-Server (Domain / Khách-Chủ)</h3>
     <p>
       Phân chia rõ ràng vai trò: có <strong>máy chủ (Server)</strong> cấu hình mạnh chuyên cung cấp dịch vụ
       và <strong>máy khách (Client)</strong> truy cập để sử dụng.
@@ -182,7 +164,7 @@
       </p>
     </div>
 
-    <h2 id="topology">1.7. Cấu trúc topo mạng (Topology)</h2>
+    <h2 id="topology">1.6. Cấu trúc topo mạng (Topology)</h2>
     <p>Topology là cách sắp xếp vật lý hoặc logic các thiết bị trong mạng. Có 4 loại chính:</p>
 
     <div class="topology-grid">
@@ -268,7 +250,7 @@
       </ul>
     </div>
 
-    <h2 id="tom-tat">1.8. Tóm tắt chương</h2>
+    <h2 id="tom-tat">1.7. Tóm tắt chương</h2>
     <ul>
       <li><strong>Mạng máy tính</strong> = tập hợp thiết bị kết nối để trao đổi thông tin & chia sẻ tài nguyên.</li>
       <li><strong>Lợi ích:</strong> chia sẻ phần cứng/phần mềm, tăng độ tin cậy, tiết kiệm chi phí, truyền thông.</li>
@@ -289,6 +271,6 @@
 </div>
 
 <div id="footer-placeholder"></div>
-<script src="../js/main.js"></script>
+<script src="../js/main.js?v=20260701a"></script>
 </body>
 </html>

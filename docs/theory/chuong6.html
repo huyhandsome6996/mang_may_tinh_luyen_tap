@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/style.css?v=20260701a">
 </head>
 <body>
 <div id="nav-placeholder"></div>
@@ -17,7 +17,6 @@
     <div class="toc-title">Mục lục</div>
     <nav class="toc">
       <a href="#khai-niem">Khái niệm</a>
-      <a href="#lich-su">Lịch sử</a>
       <a href="#dong-luc">Động lực phát triển</a>
       <a href="#so-sanh-truyen-thong">So sánh on-premise</a>
       <a href="#5-dac-trung">5 đặc trưng</a>
@@ -33,7 +32,6 @@
       <a href="chuong2.html">→ Chương 2</a>
       <a href="chuong3.html">→ Chương 3</a>
       <a href="chuong4.html">→ Chương 4</a>
-      <a href="chuong5.html">→ Chương 5</a>
     </nav>
   </aside>
 
@@ -74,24 +72,14 @@
       </p>
     </div>
 
-    <h2 id="lich-su">6.2. Lịch sử phát triển</h2>
-    <ul>
-      <li><strong>1961:</strong> Giáo sư John McCarthy (MIT) dự báo năng lực tính toán sẽ được cung cấp như dịch vụ tiện ích (điện, nước).</li>
-      <li><strong>1970-1990:</strong> Mô hình time-sharing, grid computing — nhưng giới hạn bởi hạ tầng mạng và chi phí.</li>
-      <li><strong>2006:</strong> <strong>Amazon ra mắt EC2</strong> — máy chủ ảo pay-as-you-go. Bước ngoặt cloud hiện đại.</li>
-      <li><strong>2008:</strong> Google Cloud Platform ra mắt.</li>
-      <li><strong>2010:</strong> Microsoft Azure ra mắt.</li>
-      <li><strong>Hiện nay:</strong> Cloud hỗ trợ Big Data, AI/ML, IoT, Blockchain, Edge Computing.</li>
-    </ul>
-
-    <h2 id="dong-luc">6.3. Ba động lực phát triển</h2>
+    <h2 id="dong-luc">6.2. Ba động lực phát triển</h2>
     <ul>
       <li><strong>Kinh tế:</strong> Chuyển CapEx (đầu tư vốn) sang OpEx (chi phí vận hành) — trả phí theo mức sử dụng, giảm chi phí, nâng hiệu quả.</li>
       <li><strong>Kỹ thuật:</strong> Ứng dụng hiện đại (TMĐT, MXH, streaming) cần mở rộng nhanh, phân phối toàn cầu → cloud đáp ứng tính co giãn.</li>
       <li><strong>Xã hội:</strong> Chuyển đổi số, làm việc từ xa, học trực tuyến → nhu cầu truy cập mọi lúc mọi nơi.</li>
     </ul>
 
-    <h2 id="so-sanh-truyen-thong">6.4. So sánh với mô hình truyền thống (On-premise)</h2>
+    <h2 id="so-sanh-truyen-thong">6.3. So sánh với mô hình truyền thống (On-premise)</h2>
     <div class="table-wrap">
       <table class="compare-table">
         <thead><tr><th>Tiêu chí</th><th>Mạng truyền thống (On-premise)</th><th>Cloud Computing</th></tr></thead>
@@ -107,7 +95,7 @@
       </table>
     </div>
 
-    <h2 id="5-dac-trung">6.5. 5 đặc trưng cơ bản của Cloud (theo NIST)</h2>
+    <h2 id="5-dac-trung">6.4. 5 đặc trưng cơ bản của Cloud (theo NIST)</h2>
     <p>Một hệ thống chỉ được xem là cloud khi đáp ứng đủ 5 đặc trưng:</p>
 
     <div class="grid-2">
@@ -137,7 +125,7 @@
       </div>
     </div>
 
-    <h2 id="service-models">6.6. Các mô hình dịch vụ (Service Models)</h2>
+    <h2 id="service-models">6.5. Các mô hình dịch vụ (Service Models)</h2>
     <p>
       3 mô hình dịch vụ kinh điển — hình dung như các "tầng" dịch vụ từ thấp đến cao,
       thể hiện phân chia trách nhiệm giữa nhà cung cấp và khách hàng.
@@ -179,7 +167,7 @@
       </div>
     </div>
 
-    <h3>6.6.1. IaaS (Infrastructure as a Service)</h3>
+    <h3>6.5.1. IaaS (Infrastructure as a Service)</h3>
     <p>
       Cung cấp thành phần hạ tầng cơ bản: <strong>máy chủ ảo, lưu trữ, mạng</strong>.
       Nhà cung cấp lo phần cứng, mạng, ảo hóa. Khách hàng toàn quyền cài HĐH, phần mềm, ứng dụng.
@@ -190,7 +178,7 @@
       <li><strong>Ví dụ:</strong> Amazon EC2, Google Compute Engine. Công ty khởi nghiệp triển khai TMĐT toàn cầu vài giờ mà không cần mua server.</li>
     </ul>
 
-    <h3>6.6.2. PaaS (Platform as a Service)</h3>
+    <h3>6.5.2. PaaS (Platform as a Service)</h3>
     <p>
       Nhà cung cấp lo cả <strong>môi trường phát triển và triển khai ứng dụng</strong>. Lập trình viên chỉ việc code và deploy.
     </p>
@@ -200,7 +188,7 @@
       <li><strong>Ví dụ:</strong> Google App Engine, AWS Elastic Beanstalk, Heroku. Upload code → auto scale.</li>
     </ul>
 
-    <h3>6.6.3. SaaS (Software as a Service)</h3>
+    <h3>6.5.3. SaaS (Software as a Service)</h3>
     <p>
       Tầng cao nhất. Khách hàng dùng trực tiếp <strong>phần mềm hoàn chỉnh</strong> qua Internet. Không cần lo gì cả.
     </p>
@@ -219,10 +207,10 @@
       </p>
     </div>
 
-    <h2 id="deployment-models">6.7. Các mô hình triển khai (Deployment Models)</h2>
+    <h2 id="deployment-models">6.6. Các mô hình triển khai (Deployment Models)</h2>
     <p>Mô hình triển khai trả lời câu hỏi: "Hạ tầng cloud này thuộc về ai, đặt ở đâu, phục vụ cho ai?"</p>
 
-    <h3>6.7.1. Public Cloud (Đám mây công cộng)</h3>
+    <h3>6.6.1. Public Cloud (Đám mây công cộng)</h3>
     <p>
       Toàn bộ hạ tầng thuộc nhà cung cấp (AWS, Azure, Google Cloud), phân phối tới nhiều khách hàng qua Internet.
       Phổ biến nhất.
@@ -232,7 +220,7 @@
       <li><strong>Nhược:</strong> Lo ngại bảo mật (dùng chung hạ tầng với nhiều khách hàng).</li>
     </ul>
 
-    <h3>6.7.2. Private Cloud (Đám mây riêng)</h3>
+    <h3>6.6.2. Private Cloud (Đám mây riêng)</h3>
     <p>
       Thiết kế riêng cho 1 tổ chức. Có thể xây tại datacenter nội bộ hoặc thuê bên thứ 3 nhưng chỉ phục vụ 1 đơn vị.
     </p>
@@ -242,7 +230,7 @@
       <li>Phù hợp: tổ chức tài chính, ngân hàng, y tế, chính phủ.</li>
     </ul>
 
-    <h3>6.7.3. Hybrid Cloud (Đám mây lai)</h3>
+    <h3>6.6.3. Hybrid Cloud (Đám mây lai)</h3>
     <p>
       Kết hợp Public + Private. Dữ liệu nhạy cảm (tài khoản ngân hàng) → Private. Website bán hàng/Marketing → Public.
     </p>
@@ -251,7 +239,7 @@
       <li><strong>Nhược:</strong> Phức tạp quản trị, cần tích hợp 2 môi trường.</li>
     </ul>
 
-    <h3>6.7.4. Community Cloud (Đám mây cộng đồng)</h3>
+    <h3>6.6.4. Community Cloud (Đám mây cộng đồng)</h3>
     <p>
       Hạ tầng phục vụ nhóm tổ chức có cùng lợi ích — trường đại học, viện nghiên cứu, cơ quan chính phủ.
     </p>
@@ -260,7 +248,7 @@
       <li><strong>Nhược:</strong> Ít phổ biến, đòi hỏi hợp tác.</li>
     </ul>
 
-    <h2 id="multi-cloud">6.8. Xu hướng Multi-cloud</h2>
+    <h2 id="multi-cloud">6.7. Xu hướng Multi-cloud</h2>
     <p>
       Ranh giới giữa các mô hình ngày càng mờ. Nhiều doanh nghiệp không chỉ chọn 1 nhà cung cấp
       mà kết hợp nhiều nền tảng — đó là <strong>multi-cloud</strong>.
@@ -285,7 +273,7 @@
       </ul>
     </div>
 
-    <h2 id="tom-tat">6.9. Tóm tắt chương</h2>
+    <h2 id="tom-tat">6.8. Tóm tắt chương</h2>
     <ul>
       <li><strong>Cloud Computing</strong> (NIST): Mô hình truy cập tài nguyên tính toán qua mạng, theo nhu cầu, pay-as-you-go.</li>
       <li><strong>3 động lực:</strong> Kinh tế (CapEx→OpEx), Kỹ thuật (co giãn), Xã hội (chuyển đổi số).</li>
@@ -309,6 +297,6 @@
 </div>
 
 <div id="footer-placeholder"></div>
-<script src="../js/main.js"></script>
+<script src="../js/main.js?v=20260701a"></script>
 </body>
 </html>
