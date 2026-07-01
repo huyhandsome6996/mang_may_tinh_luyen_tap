@@ -721,14 +721,15 @@ pre code { background: transparent; color: inherit; padding: 0; }
 }
 
 
-/* === DONATE QR CARD (hiện luôn ở góc dưới phải) === */
+
+/* === DONATE QR CARD (hiện luôn ở góc dưới phải - size nhỏ gọn) === */
 #donate-card {
-  position: fixed; bottom: 24px; right: 24px; z-index: 1000;
-  width: 240px;
+  position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+  width: 170px;
   background: white;
-  border-radius: 18px;
-  padding: 1rem;
-  box-shadow: 0 12px 32px -8px rgba(15,23,42,.25), 0 4px 8px -4px rgba(15,23,42,.1);
+  border-radius: 14px;
+  padding: .65rem;
+  box-shadow: 0 10px 28px -8px rgba(15,23,42,.22), 0 4px 8px -4px rgba(15,23,42,.1);
   border: 1px solid var(--border);
   font-family: inherit;
   animation: cardSlideIn .4s cubic-bezier(.34,1.56,.64,1);
@@ -739,44 +740,44 @@ pre code { background: transparent; color: inherit; padding: 0; }
 }
 
 #donate-card .donate-close {
-  position: absolute; top: 8px; right: 8px;
-  width: 26px; height: 26px; border-radius: 50%;
+  position: absolute; top: 6px; right: 6px;
+  width: 22px; height: 22px; border-radius: 50%;
   background: var(--surface-2); border: 0;
-  cursor: pointer; font-size: .9rem; color: var(--text-muted);
+  cursor: pointer; font-size: .78rem; color: var(--text-muted);
   display: grid; place-items: center;
   transition: all .2s; line-height: 1;
 }
 #donate-card .donate-close:hover { background: var(--danger); color: white; transform: rotate(90deg); }
 
 #donate-card .donate-card-header {
-  display: flex; align-items: center; gap: .55rem;
-  margin-bottom: .65rem; padding-right: 1.5rem;
+  display: flex; align-items: center; gap: .4rem;
+  margin-bottom: .45rem; padding-right: 1.2rem;
 }
-#donate-card .donate-emoji { font-size: 1.6rem; line-height: 1; }
+#donate-card .donate-emoji { font-size: 1.15rem; line-height: 1; }
 #donate-card .donate-title {
-  font-weight: 700; font-size: .92rem; color: var(--primary);
+  font-weight: 700; font-size: .78rem; color: var(--primary);
   line-height: 1.2;
 }
 #donate-card .donate-subtitle {
-  font-size: .76rem; color: var(--text-muted); margin-top: 2px;
+  font-size: .66rem; color: var(--text-muted); margin-top: 1px;
 }
 
 #donate-card .donate-qr-img {
   width: 100%; height: auto; display: block;
-  border-radius: 10px; border: 1px solid var(--border);
+  border-radius: 8px; border: 1px solid var(--border);
 }
 #donate-card .donate-hint {
-  text-align: center; font-size: .76rem; color: var(--text-muted);
-  margin-top: .5rem;
+  text-align: center; font-size: .66rem; color: var(--text-muted);
+  margin-top: .4rem;
 }
 
 /* Nút FAB nhỏ - hiện khi user đã tắt QR card */
 #donate-fab {
-  position: fixed; bottom: 24px; right: 24px; z-index: 1000;
-  display: inline-flex; align-items: center; gap: .45rem;
-  padding: .65rem 1rem; border-radius: 999px;
+  position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .55rem .9rem; border-radius: 999px;
   background: linear-gradient(135deg, #EC4899 0%, #F43F5E 100%);
-  color: white; font-weight: 600; font-size: .88rem;
+  color: white; font-weight: 600; font-size: .82rem;
   box-shadow: 0 8px 24px -6px rgba(236,72,153,.6);
   cursor: pointer; transition: all .25s ease;
   border: 0; user-select: none;
@@ -787,24 +788,25 @@ pre code { background: transparent; color: inherit; padding: 0; }
   box-shadow: 0 12px 32px -6px rgba(236,72,153,.75);
   animation: none;
 }
-#donate-fab svg { flex-shrink: 0; }
+#donate-fab svg { flex-shrink: 0; width: 18px; height: 18px; }
 
 @keyframes donatePulse {
   0%, 100% { box-shadow: 0 8px 24px -6px rgba(236,72,153,.6), 0 0 0 0 rgba(236,72,153,.4); }
-  50% { box-shadow: 0 8px 24px -6px rgba(236,72,153,.6), 0 0 0 12px rgba(236,72,153,0); }
+  50% { box-shadow: 0 8px 24px -6px rgba(236,72,153,.6), 0 0 0 10px rgba(236,72,153,0); }
 }
 
-/* Trên mobile, QR card nhỏ hơn để không che nội dung */
+/* Trên mobile, QR card nhỏ hơn nữa */
 @media (max-width: 600px) {
-  #donate-card { bottom: 16px; right: 16px; width: 200px; padding: .85rem; }
-  #donate-card .donate-emoji { font-size: 1.3rem; }
-  #donate-card .donate-title { font-size: .85rem; }
-  #donate-card .donate-subtitle { font-size: .7rem; }
-  #donate-card .donate-hint { font-size: .7rem; }
-  #donate-fab { bottom: 16px; right: 16px; padding: .55rem .85rem; font-size: .82rem; }
+  #donate-card { bottom: 12px; right: 12px; width: 140px; padding: .5rem; }
+  #donate-card .donate-emoji { font-size: 1rem; }
+  #donate-card .donate-title { font-size: .72rem; }
+  #donate-card .donate-subtitle { font-size: .62rem; }
+  #donate-card .donate-hint { font-size: .6rem; }
+  #donate-card .donate-close { width: 20px; height: 20px; font-size: .72rem; }
+  #donate-fab { bottom: 12px; right: 12px; padding: .5rem .8rem; font-size: .78rem; }
   #donate-fab span { display: none; }
   #donate-fab::after { content: 'Donate'; }
 }
 
-/* Brand title - cho chữ "Huy Tin2A" nổi bật */
+/* Brand title */
 .brand span small { display: block; line-height: 1.1; }
