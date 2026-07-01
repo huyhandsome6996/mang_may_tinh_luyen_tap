@@ -1,31 +1,24 @@
 /* ===========================================
-   MAIN JS v3 - Shared utilities & nav
+   MAIN JS v4 - Shared utilities & nav
    - Bypass cache bằng version query string
    - Dùng absolute path (từ root repo) để tránh lỗi depth
+   - Brand: "Mạng Máy Tính - Huy Tin2A"
+   - Floating Donate button với QR code
    =========================================== */
 
 // Lấy root path của website (ví dụ: /mang_may_tinh_luyen_tap/)
 function getRoot() {
   const path = window.location.pathname;
-  // Tìm vị trí '/docs/' cuối cùng trong path
-  // Trên GitHub Pages: /mang_may_tinh_luyen_tap/theory/chuong1.html
-  // Trên localhost: /docs/theory/chuong1.html hoặc /theory/chuong1.html
   const docsIdx = path.lastIndexOf('/docs/');
   if (docsIdx >= 0) {
-    return path.substring(0, docsIdx + 6); // include '/docs/'
+    return path.substring(0, docsIdx + 6);
   }
-  // Không có /docs/ → có thể là root deploy hoặc localhost
-  // Trường hợp: /mang_may_tinh_luyen_tap/ hoặc /mang_may_tinh_luyen_tap/theory/...
-  // Heuristic: nếu path kết thúc bằng /index.html hoặc /, ta ở root
-  // Nếu path có subfolder như /theory/, /labs/, /quiz/ → trả về path trước subfolder
   const segments = path.split('/').filter(s => s.length > 0);
-  // Tìm subfolder đã biết
   const knownSubs = ['theory', 'labs', 'quiz', 'css', 'js', 'assets'];
   const subIdx = segments.findIndex(s => knownSubs.includes(s));
   if (subIdx > 0) {
     return '/' + segments.slice(0, subIdx).join('/') + '/';
   }
-  // Mặc định: root
   return path.endsWith('/') ? path : path.substring(0, path.lastIndexOf('/') + 1);
 }
 
@@ -73,7 +66,7 @@ function renderNav(active) {
     <div class="topbar-inner">
       <a href="${r}index.html" class="brand">
         <div class="brand-logo">M</div>
-        <span>Mạng Máy Tính<br><small style="font-size:.7rem;color:var(--text-muted);font-weight:500;">Review Hub</small></span>
+        <span>Mạng Máy Tính - Huy Tin2A<br><small style="font-size:.7rem;color:var(--text-muted);font-weight:500;">Review Hub</small></span>
       </a>
       <button class="menu-toggle" aria-label="Menu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
@@ -104,7 +97,7 @@ function renderFooter() {
   <footer class="footer">
     <div class="footer-inner">
       <div>
-        <h4>Mạng Máy Tính - Review Hub</h4>
+        <h4>Mạng Máy Tính - Huy Tin2A</h4>
         <p style="color:#94A3B8;font-size:.92rem;line-height:1.6;">
           Tài liệu ôn tập đầy đủ, sinh động, trực quan cho môn Nhập môn Mạng máy tính.
           Bao gồm lý thuyết chi tiết, mô phỏng tương tác, ngân hàng câu hỏi trắc nghiệm và tự luận.
@@ -129,15 +122,68 @@ function renderFooter() {
       </div>
     </div>
     <div class="footer-bottom">
-      © 2026 Mạng Máy Tính Review Hub · Tài liệu học tập · Made with ❤ for students
+      © 2026 Mạng Máy Tính - Huy Tin2A · Tài liệu học tập · Made with ❤ for students
     </div>
   </footer>`;
   const ph = document.getElementById('footer-placeholder');
   if (ph) ph.innerHTML = html;
 }
 
+// Render floating Donate button + modal
+function renderDonate() {
+  const r = getRoot();
+  // Tạo nút nổi ở góc dưới phải
+  const btn = document.createElement('div');
+  btn.id = 'donate-fab';
+  btn.innerHTML = `
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+    </svg>
+    <span>Donate</span>
+  `;
+  btn.title = 'Ủng hộ tác giả';
+  btn.addEventListener('click', openDonateModal);
+  document.body.appendChild(btn);
+
+  // Tạo modal (ẩn mặc định)
+  const modal = document.createElement('div');
+  modal.id = 'donate-modal';
+  modal.innerHTML = `
+    <div class="donate-modal-backdrop" onclick="closeDonateModal()"></div>
+    <div class="donate-modal-content">
+      <button class="donate-close" onclick="closeDonateModal()" aria-label="Đóng">✕</button>
+      <h3>☕ Ủng hộ tác giả</h3>
+      <p style="color:var(--text-muted);font-size:.92rem;margin:.5rem 0 1rem;">
+        Nếu tài liệu giúp ích cho bạn ôn thi, hãy mời tác giả ly cafe nhé! ❤️
+      </p>
+      <img src="${r}assets/donate-qr.png" alt="QR Donate" class="donate-qr-img" />
+      <p style="font-size:.85rem;color:var(--text-muted);margin-top:.75rem;">Quét mã QR để ủng hộ</p>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+function openDonateModal() {
+  const m = document.getElementById('donate-modal');
+  if (m) m.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeDonateModal() {
+  const m = document.getElementById('donate-modal');
+  if (m) m.classList.remove('show');
+  document.body.style.overflow = '';
+}
+window.openDonateModal = openDonateModal;
+window.closeDonateModal = closeDonateModal;
+
+// Đóng modal khi ấn ESC
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeDonateModal();
+});
+
 // Init
 document.addEventListener('DOMContentLoaded', () => {
   renderNav();
   renderFooter();
+  renderDonate();
 });
