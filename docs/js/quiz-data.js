@@ -1,15 +1,15 @@
 /* ===========================================
    NGÂN HÀNG CÂU HỎI TRẮC NGHIỆM v2
-   150+ câu, chia 5 chương theo file ôn tập mới
-   - Chương 1: Khái niệm cơ bản (topology, phân loại mạng)
-   - Chương 2: Môi trường & Thiết bị mạng
-   - Chương 3: OSI/TCP-IP, giao thức (DHCP, DNS, TCP/UDP, ARP, CLI router)
-   - Chương 4: IPv4 & Subnetting (đông nhất)
-   - Chương 6: Cloud Computing (NIST, IaaS/PaaS/SaaS, Public/Private/Hybrid)
+   158 câu, chia 5 chương theo file ôn tập mới
+   - Chương 1: Khái niệm cơ bản (topology, phân loại mạng) — 31 câu
+   - Chương 2: Môi trường & Thiết bị mạng — 25 câu
+   - Chương 3: OSI/TCP-IP, giao thức (DHCP, DNS, TCP/UDP, ARP, CLI router) — 38 câu
+   - Chương 4: IPv4 & Subnetting (đông nhất) — 49 câu
+   - Chương 6: Cloud Computing (NIST, IaaS/PaaS/SaaS, Public/Private/Hybrid) — 15 câu
    =========================================== */
 
 const QUIZ_QUESTIONS = [
-  // ============ CHƯƠNG 1: KHÁI NIỆM CƠ BẢN (30 câu) ============
+  // ============ CHƯƠNG 1: KHÁI NIỆM CƠ BẢN (31 câu) ============
   {
     q: "Một doanh nghiệp có các máy tính sử dụng hệ điều hành khác nhau (Windows, Linux) nhưng vẫn có thể trao đổi dữ liệu với nhau. Nguyên nhân quan trọng nhất là:",
     options: ["Các máy tính có cùng hãng sản xuất", "Các máy tính tuân thủ các chuẩn giao thức mạng chung", "Các máy tính đều sử dụng WiFi", "Các máy tính có cùng cấu hình phần cứng"],
@@ -190,6 +190,12 @@ const QUIZ_QUESTIONS = [
     answer: 1, chapter: 1,
     explain: "Nối mạng cho phép chia sẻ máy in, ổ cứng, dữ liệu, phần mềm; tăng độ tin cậy; tiết kiệm chi phí."
   },
+  {
+    q: "Trong một hệ thống mạng sử dụng thiết bị từ nhiều nhà cung cấp (Cisco, HP, MikroTik...), điều gì có khả năng xảy ra nếu không có chuẩn hóa kiến trúc mạng?",
+    options: ["Các thiết bị vẫn giao tiếp bình thường do cùng dùng địa chỉ IP", "Tăng hiệu năng do giảm lớp giao thức trung gian", "Các hệ thống có thể không tương thích, gây gián đoạn truyền thông", "Giảm nhu cầu sử dụng các giao thức định tuyến"],
+    answer: 2, chapter: 1,
+    explain: "Khi nhiều nhà cung cấp, không chuẩn hóa (OSI/TCP-IP, IEEE) → thiết bị có thể không hiểu nhau do khác cách triển khai giao thức → không tương thích, gián đoạn truyền thông."
+  },
 
   // ============ CHƯƠNG 2: MÔI TRƯỜNG & THIẾT BỊ (25 câu) ============
   {
@@ -343,7 +349,7 @@ const QUIZ_QUESTIONS = [
     explain: "Repeater chỉ khuếch đại tín hiệu vật lý → tầng 1 (Physical Layer)."
   },
 
-  // ============ CHƯƠNG 3: OSI/TCP-IP & GIAO THỨC (35 câu) ============
+  // ============ CHƯƠNG 3: OSI/TCP-IP & GIAO THỨC (38 câu) ============
   {
     q: "Khi một trình duyệt web gửi yêu cầu truy cập website, giao thức HTTP hoạt động ở tầng nào của mô hình TCP/IP?",
     options: ["Network Access", "Internet", "Transport", "Application"],
@@ -560,8 +566,20 @@ const QUIZ_QUESTIONS = [
     answer: 1, chapter: 3,
     explain: "ip helper-address chuyển tiếp DHCP broadcast thành unicast để đi qua Router tới DHCP Server ở mạng khác."
   },
+  {
+    q: "Trong một hệ thống mạng sử dụng DHCP, nhiều máy tính nhận được địa chỉ IP nhưng không truy cập được Internet. Nguyên nhân nào sau đây có khả năng cao nhất?",
+    options: ["Thiếu NIC", "Gateway mặc định cấp phát không chính xác", "Switch bị tắt nguồn", "Địa chỉ MAC bị thay đổi"],
+    answer: 1, chapter: 3,
+    explain: "Máy có IP (DHCP OK) nhưng không ra Internet → Default Gateway sai/thiếu. Gateway là Router để gửi gói ra ngoài LAN. NIC/Switch hỏng thì máy không nhận IP được."
+  },
+  {
+    q: "Chức năng của DHCP khi được cấu hình trong mạng là để:",
+    options: ["Cấp phát IP động (kèm Subnet Mask, Gateway, DNS)", "Tăng tốc mạng", "Mã hóa dữ liệu", "Kết nối Internet"],
+    answer: 0, chapter: 3,
+    explain: "DHCP tự động cấp phát IP + các thông số mạng (Subnet Mask, Default Gateway, DNS Server) cho thiết bị. Không làm tăng tốc/mã hóa/kết nối Internet."
+  },
 
-  // ============ CHƯƠNG 4: IPv4 & SUBNETTING (45 câu) ============
+  // ============ CHƯƠNG 4: IPv4 & SUBNETTING (49 câu) ============
   {
     q: "IPv4 có độ dài bao nhiêu bit?",
     options: ["16", "32", "64", "128"],
@@ -843,6 +861,18 @@ const QUIZ_QUESTIONS = [
     options: ["0", "1", "2", "6"],
     answer: 2, chapter: 4,
     explain: "/30 → 2 bit host → 2^2 - 2 = 2 host. Thường dùng cho point-to-point giữa 2 router."
+  },
+  {
+    q: "Một doanh nghiệp dự kiến mở rộng từ 40 lên khoảng 100 máy tính trong vòng hai năm tới. Khi thiết kế hệ thống địa chỉ IP, giải pháp nào là hợp lý nhất?",
+    options: ["Thiết kế đúng cho 40 máy hiện tại", "Sử dụng subnet chỉ đủ cho 50 host", "Dự phòng không gian địa chỉ để hỗ trợ mở rộng trong tương lai", "Cấp phát IP ngẫu nhiên cho từng thiết bị"],
+    answer: 2, chapter: 4,
+    explain: "Thiết kế mạng cần tính đến khả năng mở rộng (Scalability). Chọn dải IP có đủ không gian cho 100 máy tương lai để tránh phải chia lại subnet, giảm chi phí quản trị."
+  },
+  {
+    q: "Tính địa chỉ Broadcast của net chứa địa chỉ 184.156.12.65/26:",
+    options: ["184.156.12.63/26", "184.156.12.127/26", "184.156.12.255/26", "184.156.12.0/26"],
+    answer: 1, chapter: 4,
+    explain: "/26 → SM=255.255.255.192, mỗi subnet 64 địa chỉ. 65 thuộc subnet 184.156.12.64/26 (64-127) → Broadcast = 184.156.12.127."
   },
 
   // ============ CHƯƠNG 6: CLOUD COMPUTING (15 câu) ============
